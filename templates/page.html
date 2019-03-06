@@ -1,0 +1,289 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>HooHacks QR Code System</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/png">
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jsQR.js') }}"></script>
+  <style>
+  body{
+    font-family: 'Ropa Sans', sans-serif;
+    color: #333;
+    max-width: 640px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  @media (min-width : 997px) {
+      canvas{
+          transform: rotateY(180deg);
+          -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+          -moz-transform:rotateY(180deg);
+      }
+  }
+  #githubLink {
+    position: absolute;
+    right: 0;
+    top: 12px;
+    color: #2D99FF;
+  }
+  h1 {
+    margin: 10px 0;
+    font-size: 40px;
+  }
+  #loadingMessage {
+    text-align: center;
+    padding: 40px;
+    background-color: #eee;
+  }
+  #canvas {
+    width: 100%;
+  }
+  #output {
+    margin-top: 20px;
+    background: #eee;
+    padding: 10px;
+    padding-bottom: 0;
+  }
+  #output div {
+    padding-bottom: 10px;
+    word-wrap: break-word;
+  }
+  #noQRFound {
+    text-align: center;
+  }
+  .donate-now {
+   list-style-type:none;
+   margin:25px 0 0 0;
+   padding:0;
+  }
+
+  .donate-now li {
+   float:left;
+   margin:0 5px 0 0;
+  width:100px;
+  height:40px;
+  position:relative;
+  }
+
+  .donate-now label, .donate-now input {
+  display:block;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  }
+
+  .donate-now input[type="radio"] {
+  opacity:0.011;
+  z-index:100;
+  }
+
+  .donate-now input[type="radio"]:checked + label {
+  background:yellow;
+  }
+
+  .donate-now label {
+   padding:5px;
+   border:1px solid #CCC;
+   cursor:pointer;
+  z-index:90;
+  }
+
+  .donate-now label:hover {
+   background:#DDD;
+  }
+  /* latin-ext */
+  @font-face {
+    font-family: 'Ropa Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Ropa Sans Regular'), local('RopaSans-Regular'), url(https://fonts.gstatic.com/s/ropasans/v8/EYqxmaNOzLlWtsZSScy6UzNpcZGf20NE.woff2) format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* latin */
+  @font-face {
+    font-family: 'Ropa Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Ropa Sans Regular'), local('RopaSans-Regular'), url(https://fonts.gstatic.com/s/ropasans/v8/EYqxmaNOzLlWtsZSScy6XTNpcZGf2w.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  </style>
+</head>
+<body>
+  <h1>HooHacks QR Code System</h1>
+  <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
+  <canvas id="canvas" hidden></canvas>
+  <div id="output" hidden>
+    <div style="font-size:24px;" id="outputMessage">No QR code detected.</div>
+    <div style="font-size:24px;" hidden><b></b> <span id="outputData"></span><span id="dietary"></span></div>
+  </div>
+  <ul class="donate-now" id='rates'>
+    <li>
+        <input type="radio" id="check-in" name="typ" checked="checked"/>
+        <label for="check-in">Check In</label>
+    </li>
+    <li>
+        <input type="radio" id="sat-breakfast" name="typ" />
+        <label for="sat-breakfast">Saturday Breakfast</label>
+    </li>
+    <li>
+        <input type="radio" id="sat-lunch" name="typ" />
+        <label for="sat-lunch">Saturday Lunch</label>
+    </li>
+    <li>
+        <input type="radio" id="sat-dinner" name="typ" />
+        <label for="sat-dinner">Saturday Dinner</label>
+    </li>
+    <li>
+        <input type="radio" id="sun-breakfast" name="typ" />
+        <label for="sun-breakfast">Sunday Breakfast</label>
+    </li>
+    <li>
+        <input type="radio" id="sun-lunch" name="typ" />
+        <label for="sun-lunch">Sunday Lunch</label>
+    </li>
+    <li>
+        <input type="radio" id="hardware-out" name="typ" />
+        <label for="hardware-out">Hardware Out</label>
+    </li>
+    <li>
+        <input type="radio" id="hardware-in" name="typ" />
+        <label for="hardware-in">Hardware In</label>
+    </li>
+    <li>
+        <input type="text" id="hardware-msg" name="msg" placeholder="Hardware Type"/>
+    </li>
+</ul>
+<script>
+window.allowed = true;
+var video = document.createElement("video");
+var canvasElement = document.getElementById("canvas");
+var canvas = canvasElement.getContext("2d");
+var loadingMessage = document.getElementById("loadingMessage");
+var outputContainer = document.getElementById("output");
+var outputMessage = document.getElementById("outputMessage");
+var outputData = document.getElementById("outputData");
+var dietaryData = document.getElementById("dietary");
+var hardwareMsg = document.getElementById("hardware-msg");
+function drawLine(begin, end, color) {
+    canvas.beginPath();
+    canvas.moveTo(begin.x, begin.y);
+    canvas.lineTo(end.x, end.y);
+    canvas.lineWidth = 4;
+    canvas.strokeStyle = color;
+    canvas.stroke();
+}
+// Use facingMode: environment to attemt to get the back camera on phones
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+    video.srcObject = stream;
+    video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+    video.play();
+    requestAnimationFrame(tick);
+});
+function tick() {
+    loadingMessage.innerText = "⌛ Loading video..."
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      loadingMessage.hidden = true;
+      canvasElement.hidden = false;
+      outputContainer.hidden = false;
+      canvasElement.height = video.videoHeight;
+      canvasElement.width = video.videoWidth;
+      canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+      var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+      var code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert",
+      });
+      if (code && window.allowed) {
+        window.allowed = false;
+        drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+        drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+        drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+        drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+        outputMessage.hidden = true;
+        outputData.parentElement.hidden = false;
+
+        outputData.innerText = code.data;
+        var task = "";
+        var tname = "";
+        if (document.getElementById('check-in').checked){
+            task = "check-in";
+            tname = "Registration";
+        }
+        else if (document.getElementById('sat-breakfast').checked){
+            task = "sat-breakfast";
+            tname = "Saturday Breakfast";
+        }
+        else if (document.getElementById('sat-lunch').checked){
+            task = "sat-lunch";
+            tname = "Saturday Lunch";
+        }
+        else if (document.getElementById('sat-dinner').checked){
+            task = "sat-dinner";
+            tname = "Saturday Dinner";
+        }
+        else if (document.getElementById('sun-breakfast').checked){
+            task = "sun-breakfast";
+            tname = "Sunday Breakfast";
+        }
+        else if (document.getElementById('sun-lunch').checked){
+            task = "sun-lunch";
+            tname = "Saturday Lunch";
+        }
+        else if (document.getElementById('hardware-out').checked){
+            task = "hardware-out";
+            tname = "Hardware Out";
+        }
+        else if (document.getElementById('hardware-in').checked){
+            task = "hardware-in";
+            tname = "Hardware in";
+        }
+        var msg = hardwareMsg.value;
+        if (msg == "" && !(task=="hardware-out")){
+            msg = "none"
+        }
+        else{
+            outputData.innerText = "Must specify hardware type!"
+            requestAnimationFrame(tick);
+        }
+        var url = window.location.href + "req/" + task + "/" + code.data + "/" + URLify(msg);
+        if (code.data.length == 0){
+            window.allowed = true;
+        }
+        else{
+            $.get(url, function( data ) {
+                if (!data.approved){
+                    outputData.innerText = "❌ " + data.error + " ❌";
+                    return;
+                }
+                if (task == "check-in"){
+                    outputData.innerText = "✅ " + data.name  + " has checked in for: " + tname  + ". ✅ " + " \nDietary: " + data.dietary + " \n T-Shirt: " + data.tshirt;
+                }
+                else{
+                    outputData.innerText = "✅ " + data.name  + " has checked in for: " + tname  + ". ✅ " + " \nDietary: " + data.dietary;
+                }
+                hardwareMsg.value = "";
+            });
+            setTimeout(function(){
+                window.allowed = true;
+            }, 4000);
+        }
+    } else if (window.allowed){
+        outputMessage.hidden = false;
+        outputData.parentElement.hidden = true;
+        dietaryData.innerText = "";
+      }
+    }
+    requestAnimationFrame(tick);
+}
+
+
+
+function URLify(string) {
+  return string.trim().replace(/\s/g, '_');
+}
+</script>
+</body>
+</html>
