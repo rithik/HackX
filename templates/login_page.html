@@ -8,15 +8,23 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
-
     </head>
     <body>
   <div class="container">
     <div class="row">
       <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-        <div class="card card-signin my-5" style="margin-top:15rem !important;">
+        <div class="card card-signin my-5" style="margin-top:10rem !important;">
+
           <div class="card-body">
-            <form class="form-signin">
+              <img src="{{ url_for('static', filename='img/main.png') }}" style="width:100px;border-radius:0.25rem;display:block;margin:auto;" />
+                <br/>
+            
+                {% if message != "None" %}
+                <div class="alert alert-info" role="alert">
+                    <center><strong> {{ message }} </strong></center>
+                </div>
+                {% endif %}
+            <form class="form-signin" method="POST" action="/">
               <div class="form-label-group">
                 <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required autofocus>
                 <label for="inputEmail">Email address</label>
@@ -29,8 +37,10 @@
 
               <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="login">Sign in</button>
               <hr class="my-4">
-              <button class="btn btn-lg btn-danger btn-block text-uppercase" name="button-type" value="register" type="submit">Register</button>
+              <button class="btn btn-lg btn-info btn-block text-uppercase" name="button-type" value="register" type="submit">Register</button>
+              <button class="btn btn-lg btn-danger btn-block text-uppercase">Forgot my password</button>
             </form>
+
           </div>
         </div>
       </div>

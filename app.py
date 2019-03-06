@@ -15,6 +15,7 @@ from flask_admin.contrib.sqla import ModelView as MV
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 import qrcode
+import uuid
 
 app = Flask(__name__)
 
@@ -53,22 +54,32 @@ def get_user(request):
     login_hash = request.cookies.get('login_hash')
     u = User.query.filter_by(hash=login_hash)
     if u.count() == 0:
-        return None
+        return False
     return u.first()
+
+@app.route('/logout', methods=["GET", "POST"])
+def logout():
+    resp = make_response(redirect('/'))
+    resp.set_cookie('login_hash', expires=0)
+    return resp
 
 @app.route('/', methods=["GET", "POST"])
 def login_page():
     if request.method == "GET":
-        return render_template("login_page.html", message="None")
+        user = get_user(request)
+        if user:
+            return "LOGGED IN"
+        else:
+            return render_template("login_page.html", message="None")
     else:
-        if request.form.get('submit') == "register":
+        if request.form.get('button-type') == "register":
             u = User()
             u.email = request.form['email']
             u.password = generate_password_hash(request.form['password'])
             db.session.add(u)
             db.session.commit()
             return render_template("login_page.html", message="User created!")
-        elif request.form.get('submit') == "login":
+        elif request.form.get('button-type') == "login":
             u = User.query.filter_by(email=request.form['email'])
             if u.count() == 0:
                 return render_template("login_page.html", message="No account found with this email address!")
@@ -83,7 +94,9 @@ def login_page():
             else:
                 return render_template("login_page.html", message="Incorrect Password!")
 
-
+@app.route('/main', methods=["GET", "POST"])
+def main_page():
+    return render_template("main_page.html")
 
 if __name__ == '__main__':
     app.run()
