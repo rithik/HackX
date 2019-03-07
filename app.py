@@ -107,7 +107,9 @@ def application():
     if not u:
         return redirect("/")
     if request.method == "GET":
-        return render_template("application.html", user=u, schools=settings.SCHOOLS)
+        return render_template("application.html", user=u,
+            schools=settings.SCHOOLS, genders=settings.GENDERS,
+            races=settings.RACES, grad_year=settings.GRADUATION_YEARS)
 
 
 if __name__ == '__main__':

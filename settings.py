@@ -14,6 +14,11 @@ tz = timezone('US/Eastern')
 APPLICATION_SUBMISSION_DEADLINE = tz.localize(datetime.datetime(2019, 4, 30, 23, 59, 59, 0))
 
 SCHOOLS = []
+GRADUATION_YEARS = [2019, 2020, 2021, 2022, 2023, 2024]
+RACES = ["African American", "American Indian", "Asian",
+    "Hispanic", "Native Hawaiian", "White", "Other"]
+GENDERS = ["Male", "Female", "Other", "Prefer not to say"]
+
 
 f = open("schools.csv", "r")
 for school in f:

@@ -22,6 +22,7 @@ class User(db.Model):
     race = db.Column(db.String(length=100), default="")
     describe = db.Column(db.String(length=200), default="")
     why = db.Column(db.String(length=1800), default="")
+    major = db.Column(db.String(length=1000), default="")
     month = db.Column(db.Integer, default=0)
     day = db.Column(db.Integer, default=0)
     year = db.Column(db.Integer, default=0)
