@@ -2,9 +2,5 @@ secret.py
 __pycache__/
 *.db
 venv/
-*.csv
 *.json
 *.zip
-Official_QR/
-QR/
-populate.py

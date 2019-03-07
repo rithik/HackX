@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>HooHacks</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0/css/bootstrap-select.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style4.css') }}">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified CSS -->
+    <!-- Latest compiled and minified JavaScript -->
+
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', filename='img/main.png') }}" class="header-img" />
+                <br/>
+                <h3><center>HooHacks</center></h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="/dashboard">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="#">
+                        <i class="fas fa-newspaper"></i>
+                        Application
+                    </a>
+                </li>
+                <li>
+                    <a href="/logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+
+
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content">
+            <h2 class="main-title"> <center>Application</center> </h2>
+            <hr style="width:50%">
+
+            <br/>
+            <br/>
+
+            <h4 class="sub-title"> <center>Basic Information</center> </h4>
+            <hr style="width:30%">
+            <br/>
+
+            <form class="form-signin" method="POST" action="/" style="width:60%; margin:auto; display:block;">
+             <div class="form-group">
+               <label for="full-name">Full Name</label>
+               <input type="name" class="form-control" id="full-name" placeholder="Full Name" name="full-name">
+             </div>
+
+             <div class="form-group">
+               <label for="school">School</label>
+               <br/>
+               <select name="school" id="school" class="selectpicker" data-live-search="true" data-width="100%">
+                  {% for s in schools %}
+                    <option value="{{s}}" {% if s == "The University of Virginia" %} selected {% endif %}>{{ s }}</option>
+                  {% endfor %}
+                </select>
+             </div>
+
+             <div class="form-group">
+               <label for="grad-year">Graduation Year</label>
+               <br/>
+                 <select name="grad-year" class="selectpicker" data-width="100%">
+                      <option>2019</option>
+                      <option>2020</option>
+                      <option>2021</option>
+                      <option>2022</option>
+                      <option>2022</option>
+                      <option>2022</option>
+                  </select>
+              </div>
+
+              <div class="form-group">
+                <label for="gender">Gender</label>
+                <br/>
+                  <select name="gender" class="selectpicker" data-width="100%">
+                       <option>Male</option>
+                       <option>Female</option>
+                       <option>Other</option>
+                       <option>Prefer not to say</option>
+                   </select>
+               </div>
+
+               <div class="form-group">
+                 <label for="race">Race</label>
+                 <br/>
+                   <select name="race" class="selectpicker" data-width="100%">
+                        <option>African American</option>
+                        <option>American Indian</option>
+                        <option>Asian</option>
+                        <option>Hispanic</option>
+                        <option>Native Hawaiian</option>
+                        <option>White</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+              <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="login">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.0/js/bootstrap-select.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

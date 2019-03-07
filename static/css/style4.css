@@ -60,6 +60,13 @@ span {
     align-items: stretch;
 }
 
+.header-img{
+    width:70%;
+    border-radius:0.25rem;
+    display:block;
+    margin:auto;
+}
+
 #sidebar {
     min-width: 250px;
     max-width: 250px;
@@ -251,4 +258,28 @@ a.article:hover {
     #sidebarCollapse span {
         display: none;
     }
+}
+
+.main-title{
+    font-size:60px;
+    color:#002868;
+}
+
+.sub-title{
+    color:#002868;
+}
+
+.filter-option{
+    background-color:white;
+}
+
+.dropdown{
+    border:1px solid #ced4da;
+    border-radius:.25rem;
+}
+
+.main-card{
+    width: 75%;
+    margin:auto;
+    display:block;
 }

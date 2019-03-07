@@ -25,7 +25,7 @@
         <!-- Sidebar  -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <img src="{{ url_for('static', filename='img/main.png') }}" style="width:70%;border-radius:0.25rem;display:block;margin:auto;" />
+                <img src="{{ url_for('static', filename='img/main.png') }}" class="header-img" />
                 <br/>
                 <h3><center>HooHacks</center></h3>
             </div>
@@ -38,7 +38,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="/application">
                         <i class="fas fa-newspaper"></i>
                         Application
                     </a>
@@ -56,23 +56,25 @@
 
         <!-- Page Content  -->
         <div id="content">
-            <h2 style="font-size:60px;color:#002868"> <center>Dashboard</center> </h2>
+            <h2 class="main-title"> <center>Dashboard</center> </h2>
             <hr style="width:50%">
             <br/>
-            <div class="card" style="width: 75%; margin:auto; display:block; ">
+            <div class="card" class="main-card">
               <div class="card-body">
                 <h4 class="card-title"><center>Your application status is: </center></h4>
                 <div style="background-color:#e3e3e3; padding:5px;">
-                    <p class="card-text"><center style="font-size:20px;">INCOMPLETE</center></p>
+                    <p class="card-text"><center style="font-size:20px;">{% if user.app_complete %} COMPLETE {% else %} INCOMPLETE {% endif %}</center></p>
                 </div>
                 <p class="card-text" style="color:#212529;">
-                    <center>Registration Deadline: Saturday, February 29th 2020, 11:19 am (EST)</center>
+                    <center><b>Registration Deadline:</b> {{ submission_deadline }}</center>
                         <br/>
-                        <center>You still need to complete your application!</center>
+                        {% if not user.app_complete %}
+                            <center>You still need to complete your application!</center>
+                        {% endif %}
                         <br/>
                         <center>If you do not complete your application before the Saturday,
-                            February 29th 2020, 11:19 am (Eastern)
-                            , you will not be considered for the admissions lottery!</center></p>
+                             {{ submission_deadline }},
+                            you will not be considered for the admissions lottery!</center></p>
 
                             <center><a href="/application" class="btn btn-primary" style="background-color:#002868">Go to Application</a></center>
               </div>

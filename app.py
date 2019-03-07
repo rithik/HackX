@@ -68,7 +68,7 @@ def login_page():
     if request.method == "GET":
         user = get_user(request)
         if user:
-            return "LOGGED IN"
+            return redirect("/dashboard")
         else:
             return render_template("login_page.html", message="None")
     else:
@@ -94,9 +94,21 @@ def login_page():
             else:
                 return render_template("login_page.html", message="Incorrect Password!")
 
-@app.route('/main', methods=["GET", "POST"])
-def main_page():
-    return render_template("main_page.html")
+@app.route('/dashboard', methods=["GET", "POST"])
+def dashboard():
+    u = get_user(request)
+    if not u:
+        return redirect("/")
+    return render_template("dashboard.html", user=u, submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z"))
+
+@app.route('/application', methods=["GET", "POST"])
+def application():
+    u = get_user(request)
+    if not u:
+        return redirect("/")
+    if request.method == "GET":
+        return render_template("application.html", user=u, schools=settings.SCHOOLS)
+
 
 if __name__ == '__main__':
     app.run()
