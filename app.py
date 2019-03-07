@@ -85,7 +85,7 @@ def login_page():
                 return render_template("login_page.html", message="No account found with this email address!")
             u = u.first()
             if check_password_hash(u.password, request.form['password']):
-                resp = make_response("LOGGED IN")
+                resp = make_response(redirect("/dashboard"))
                 u.hash = uuid.uuid1()
                 db.session.add(u)
                 db.session.commit()
@@ -99,18 +99,75 @@ def dashboard():
     u = get_user(request)
     if not u:
         return redirect("/")
-    return render_template("dashboard.html", user=u, submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z"))
+    return render_template("dashboard.html", user=u,
+        submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z"))
 
 @app.route('/application', methods=["GET", "POST"])
 def application():
     u = get_user(request)
     if not u:
         return redirect("/")
-    if request.method == "GET":
+    if not request.method == "POST":
         return render_template("application.html", user=u,
             schools=settings.SCHOOLS, genders=settings.GENDERS,
-            races=settings.RACES, grad_year=settings.GRADUATION_YEARS)
-
+            races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
+            travel_methods=settings.TRAVEL_METHODS, msg="")
+    if request.method == "POST":
+        button_type = request.form.get('button-type', '')
+        if button_type == "travel":
+            travel = request.form.get('travel', '')
+            where_from = request.form.get('where-from', '')
+            travel_method = request.form.get('travel-method', '')
+            miles = request.form.get('miles', '')
+            cost = request.form.get('cost', '')
+            if travel == "on":
+                u.travel = True
+                u.where_from = where_from
+                u.travel_method = travel_method
+                u.miles = miles
+                u.cost = cost
+            else:
+                u.travel = False
+            db.session.add(u)
+            db.session.commit()
+            return render_template("application.html", user=u,
+                schools=settings.SCHOOLS, genders=settings.GENDERS,
+                races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
+                travel_methods=settings.TRAVEL_METHODS,
+                msg="Your travel application has been submitted!")
+        full_name = request.form.get('full-name', '')
+        birthday = request.form.get('birthday', '')
+        school = request.form.get('school', '')
+        grad_year = request.form.get('grad-year', '')
+        gender = request.form.get('gender', '')
+        race = request.form.get('race', '')
+        describe = request.form.get('describe', '')
+        major = request.form.get('major', '')
+        hackathons = request.form.get('hackathons', '')
+        why = request.form.get('why', '')
+        mlh = request.form.get('mlh', '')
+        u.full_name = full_name
+        u.birthday = birthday
+        u.school = school
+        u.grad_year = grad_year
+        u.gender = gender
+        u.race = race
+        u.describe = describe
+        u.major = major
+        u.hackathons = hackathons
+        u.why = why
+        if mlh == "on":
+            u.mlh_rules = True
+        else:
+            u.mlh_rules = False
+        u.app_complete = True
+        db.session.add(u)
+        db.session.commit()
+        return render_template("application.html", user=u,
+            schools=settings.SCHOOLS, genders=settings.GENDERS,
+            races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
+            travel_methods=settings.TRAVEL_METHODS,
+            msg="Your application has been submitted!")
 
 if __name__ == '__main__':
     app.run()

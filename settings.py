@@ -18,6 +18,7 @@ GRADUATION_YEARS = [2019, 2020, 2021, 2022, 2023, 2024]
 RACES = ["African American", "American Indian", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
 GENDERS = ["Male", "Female", "Other", "Prefer not to say"]
+TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
 
 
 f = open("schools.csv", "r")

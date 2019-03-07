@@ -23,12 +23,16 @@ class User(db.Model):
     describe = db.Column(db.String(length=200), default="")
     why = db.Column(db.String(length=1800), default="")
     major = db.Column(db.String(length=1000), default="")
-    month = db.Column(db.Integer, default=0)
-    day = db.Column(db.Integer, default=0)
-    year = db.Column(db.Integer, default=0)
+    birthday = db.Column(db.String(length=1000), default="")
     mlh_rules = db.Column(db.Boolean, default=False)
     hackathons = db.Column(db.Integer, default=0)
     app_complete = db.Column(db.Boolean, default=False)
+
+    travel = db.Column(db.Boolean, default=False)
+    where_from = db.Column(db.String(length=1000), default="")
+    travel_method = db.Column(db.String(length=1000), default="")
+    miles = db.Column(db.String(length=1000), default="")
+    cost = db.Column(db.String(length=1000), default="")
 
     def __repr__(self):
         return '<User: {}>'.format(self.email)
