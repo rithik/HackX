@@ -34,15 +34,19 @@
                 <h3><center>HooHacks</center></h3>
             </div>
 
+            <script>
+                console.log('{{highlight}}');
+            </script>
+
             <ul class="list-unstyled components">
-                <li>
+                <li {% if highlight=="dashboard" %} class="active" {% endif %}>
                     <a href="/dashboard">
                         <i class="fas fa-home"></i>
                         Dashboard
                     </a>
                 </li>
-                <li class="active">
-                    <a href="#">
+                <li {% if highlight=="application" %} class="active" {% endif %}>
+                    <a href="/application">
                         <i class="fas fa-newspaper"></i>
                         Application
                     </a>

@@ -122,6 +122,7 @@ def dashboard():
     if not u or not a:
         return redirect("/logout")
     return render_template("dashboard.html", user=u, app=a,
+        highlight="dashboard",
         submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE_FMT)
 
 @app.route('/application', methods=["GET", "POST"])
@@ -134,6 +135,7 @@ def application():
         return render_template("application.html", user=u, app=a,
             schools=settings.SCHOOLS, genders=settings.GENDERS,
             races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
+            highlight="application",
             travel_methods=settings.TRAVEL_METHODS, msg="")
     if request.method == "POST":
         button_type = request.form.get('button-type', '')
@@ -157,6 +159,7 @@ def application():
                 schools=settings.SCHOOLS, genders=settings.GENDERS,
                 races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
                 travel_methods=settings.TRAVEL_METHODS,
+                highlight="application",
                 msg="Your travel application has been submitted!")
         full_name = request.form.get('full-name', '')
         birthday = request.form.get('birthday', '')
@@ -190,6 +193,7 @@ def application():
             schools=settings.SCHOOLS, genders=settings.GENDERS,
             races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
             travel_methods=settings.TRAVEL_METHODS,
+            highlight="application",
             msg="Your application has been submitted!")
 
 if __name__ == '__main__':
