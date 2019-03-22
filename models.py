@@ -15,6 +15,16 @@ class User(db.Model):
     is_mentor = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
 
+    application_id = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<User: {}>'.format(self.email)
+
+class Application(db.Model):
+    __tablename__ = 'applications'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(length=1000), unique=True)
+
     full_name = db.Column(db.String(length=1000), default="")
     school = db.Column(db.String(length=1000), default="")
     grad_year = db.Column(db.Integer, default=0)
@@ -35,4 +45,4 @@ class User(db.Model):
     cost = db.Column(db.String(length=1000), default="")
 
     def __repr__(self):
-        return '<User: {}>'.format(self.email)
+        return '<Application: {}>'.format(self.email)

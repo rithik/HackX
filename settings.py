@@ -12,6 +12,7 @@ EVENT_NAME = "HooHacks"
 
 tz = timezone('US/Eastern')
 APPLICATION_SUBMISSION_DEADLINE = tz.localize(datetime.datetime(2019, 4, 30, 23, 59, 59, 0))
+APPLICATION_SUBMISSION_DEADLINE_FMT = APPLICATION_SUBMISSION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
 SCHOOLS = []
 GRADUATION_YEARS = [2019, 2020, 2021, 2022, 2023, 2024]
@@ -23,5 +24,5 @@ TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
 
 f = open("schools.csv", "r")
 for school in f:
-    SCHOOLS.append(school)
+    SCHOOLS.append(school.strip())
 f.close()

@@ -48,7 +48,7 @@ except:
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from models import User
+from models import User, Application
 
 def get_user(request):
     login_hash = request.cookies.get('login_hash')
@@ -56,6 +56,18 @@ def get_user(request):
     if u.count() == 0:
         return False
     return u.first()
+
+def get_application(request):
+    login_hash = request.cookies.get('login_hash')
+    u = User.query.filter_by(hash=login_hash)
+    if u.count() == 0:
+        return False
+    user = u.first()
+    email = user.email
+    a = Application.query.filter_by(email=email)
+    if u.count() == 0:
+        return False
+    return a.first()
 
 @app.route('/logout', methods=["GET", "POST"])
 def logout():
@@ -73,9 +85,18 @@ def login_page():
             return render_template("login_page.html", message="None")
     else:
         if request.form.get('button-type') == "register":
+            email = request.form['email']
+            f = User.query.filter_by(email=email)
+            if not f.count() == 0:
+                return render_template("login_page.html", message="There is already an account found with this email address!")
+            a = Application()
+            a.email = email
+            db.session.add(a)
             u = User()
-            u.email = request.form['email']
+            u.email = email
             u.password = generate_password_hash(request.form['password'])
+            u.is_hacker = True
+            u.application_id = a.id
             db.session.add(u)
             db.session.commit()
             return render_template("login_page.html", message="User created!")
@@ -97,18 +118,20 @@ def login_page():
 @app.route('/dashboard', methods=["GET", "POST"])
 def dashboard():
     u = get_user(request)
-    if not u:
-        return redirect("/")
-    return render_template("dashboard.html", user=u,
-        submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z"))
+    a = get_application(request)
+    if not u or not a:
+        return redirect("/logout")
+    return render_template("dashboard.html", user=u, app=a,
+        submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE_FMT)
 
 @app.route('/application', methods=["GET", "POST"])
 def application():
     u = get_user(request)
+    a = get_application(request)
     if not u:
-        return redirect("/")
+        return redirect("/logout")
     if not request.method == "POST":
-        return render_template("application.html", user=u,
+        return render_template("application.html", user=u, app=a,
             schools=settings.SCHOOLS, genders=settings.GENDERS,
             races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
             travel_methods=settings.TRAVEL_METHODS, msg="")
@@ -121,16 +144,16 @@ def application():
             miles = request.form.get('miles', '')
             cost = request.form.get('cost', '')
             if travel == "on":
-                u.travel = True
-                u.where_from = where_from
-                u.travel_method = travel_method
-                u.miles = miles
-                u.cost = cost
+                a.travel = True
+                a.where_from = where_from
+                a.travel_method = travel_method
+                a.miles = miles
+                a.cost = cost
             else:
-                u.travel = False
-            db.session.add(u)
+                a.travel = False
+            db.session.add(a)
             db.session.commit()
-            return render_template("application.html", user=u,
+            return render_template("application.html", user=u,app=a,
                 schools=settings.SCHOOLS, genders=settings.GENDERS,
                 races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
                 travel_methods=settings.TRAVEL_METHODS,
@@ -146,24 +169,24 @@ def application():
         hackathons = request.form.get('hackathons', '')
         why = request.form.get('why', '')
         mlh = request.form.get('mlh', '')
-        u.full_name = full_name
-        u.birthday = birthday
-        u.school = school
-        u.grad_year = grad_year
-        u.gender = gender
-        u.race = race
-        u.describe = describe
-        u.major = major
-        u.hackathons = hackathons
-        u.why = why
+        a.full_name = full_name
+        a.birthday = birthday
+        a.school = school
+        a.grad_year = grad_year
+        a.gender = gender
+        a.race = race
+        a.describe = describe
+        a.major = major
+        a.hackathons = hackathons
+        a.why = why
         if mlh == "on":
-            u.mlh_rules = True
+            a.mlh_rules = True
         else:
-            u.mlh_rules = False
-        u.app_complete = True
-        db.session.add(u)
+            a.mlh_rules = False
+        a.app_complete = True
+        db.session.add(a)
         db.session.commit()
-        return render_template("application.html", user=u,
+        return render_template("application.html", user=u, app=a,
             schools=settings.SCHOOLS, genders=settings.GENDERS,
             races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
             travel_methods=settings.TRAVEL_METHODS,

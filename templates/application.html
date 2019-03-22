@@ -79,13 +79,13 @@
                 {% endif %}
              <div class="form-group">
                <label for="full-name">Full Name</label>
-               <input type="name" required class="form-control" id="full-name" {% if user.app_complete %} value="{{ user.full_name }}" {% endif %} placeholder="Full Name" name="full-name">
+               <input type="name" required class="form-control" id="full-name" {% if app.app_complete %} value="{{ app.full_name }}" {% endif %} placeholder="Full Name" name="full-name">
              </div>
 
              <div class="form-group">
                <label for="date">Birthday</label>
                <br/>
-                  <input type="date" required class="form-control" id="date" {% if user.app_complete %} value="{{ user.birthday }}" {% endif %} name="birthday">
+                  <input type="date" required class="form-control" id="date" {% if app.app_complete %} value="{{ app.birthday }}" {% endif %} name="birthday">
               </div>
 
              <div class="form-group">
@@ -93,7 +93,10 @@
                <br/>
                <select name="school" id="school" required class="selectpicker" data-live-search="true" data-width="100%">
                   {% for s in schools %}
-                    <option value="{{s}}" {% if s == user.school %} selected {% endif %}>{{ s }}</option>
+                    <script>
+                        console.log('{{s}}');
+                    </script>
+                    <option value="{{s}}" {% if s == app.school %} selected {% endif %}>{{ s }}</option>
                   {% endfor %}
                 </select>
              </div>
@@ -103,7 +106,7 @@
                <br/>
                  <select name="grad-year" required class="selectpicker" data-width="100%">
                      {% for s in grad_year %}
-                       <option value="{{s}}" {% if s == user.grad_year %} selected {% endif %}>{{ s }}</option>
+                       <option value="{{s}}" {% if s == app.grad_year %} selected {% endif %}>{{ s }}</option>
                      {% endfor %}
                   </select>
               </div>
@@ -113,7 +116,7 @@
                 <br/>
                   <select name="gender" required class="selectpicker" data-width="100%">
                       {% for s in genders %}
-                        <option value="{{s}}" {% if s == user.gender %} selected {% endif %}>{{ s }}</option>
+                        <option value="{{s}}" {% if s == app.gender %} selected {% endif %}>{{ s }}</option>
                       {% endfor %}
                    </select>
                </div>
@@ -123,7 +126,7 @@
                  <br/>
                    <select name="race" required class="selectpicker" data-width="100%">
                        {% for s in races %}
-                         <option value="{{s}}" {% if s == user.race %} selected {% endif %}>{{ s }}</option>
+                         <option value="{{s}}" {% if s == app.race %} selected {% endif %}>{{ s }}</option>
                        {% endfor %}
                     </select>
                 </div>
@@ -131,35 +134,35 @@
                 <div class="form-group">
                   <label for="describe">I would describe myself as a...</label>
                   <br/>
-                     <input type="text" required class="form-control" id="describe" {% if user.app_complete %} value="{{ user.describe }}" {% endif %} placeholder="Designer, Data Scientist, iOS Wizard, Hacker Extraordinaire" name="describe">
+                     <input type="text" required class="form-control" id="describe" {% if app.app_complete %} value="{{ app.describe }}" {% endif %} placeholder="Designer, Data Scientist, iOS Wizard, Hacker Extraordinaire" name="describe">
                  </div>
 
                  <div class="form-group">
                    <label for="major">Major</label>
                    <br/>
-                      <input type="text" required class="form-control" id="major" {% if user.app_complete %} value="{{ user.major }}" {% endif %} placeholder="Your current major" name="major">
+                      <input type="text" required class="form-control" id="major" {% if app.app_complete %} value="{{ app.major }}" {% endif %} placeholder="Your current major" name="major">
                   </div>
 
                   <div class="form-group">
                     <label for="hackathons">How many hackathons have you attended?</label>
                     <br/>
-                       <input type="number" required class="form-control" id="hackathons" {% if user.app_complete %} value="{{ user.hackathons }}" {% endif %} placeholder="Number of hackathons attended" name="hackathons">
+                       <input type="number" required class="form-control" id="hackathons" {% if app.app_complete %} value="{{ app.hackathons }}" {% endif %} placeholder="Number of hackathons attended" name="hackathons">
                    </div>
 
                    <div class="form-group">
                      <label for="why">What do you hope to get out of HooHacks?</label>
                      <br/>
-                        <textarea required class="form-control" id="why" placeholder="Tell us why you want to attend HooHacks" name="why">{% if user.app_complete %}{{ user.why }}{% endif %}</textarea>
+                        <textarea required class="form-control" id="why" placeholder="Tell us why you want to attend HooHacks" name="why">{% if app.app_complete %}{{ app.why }}{% endif %}</textarea>
                     </div>
 
                 <div class="form-check">
-                   <input required type="checkbox" class="form-check-input" name="mlh" {% if user.mlh_rules %} checked {% endif %} id="exampleCheck1">
+                   <input required type="checkbox" class="form-check-input" name="mlh" {% if app.mlh_rules %} checked {% endif %} id="exampleCheck1">
                    <label class="form-check-label" for="exampleCheck1">I agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>.</label>
                  </div>
 
                  <br/>
 
-              <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="application">Save</button>
+              <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="application">Save Appliation</button>
             </form>
 
             <br/>
@@ -175,13 +178,13 @@
             <b>Do you need travel reimbursement?</b>
 
             <div class="form-check">
-               <input type="checkbox" class="form-check-input" name="travel" {% if user.travel %} checked {% endif %} id="exampleCheck2">
+               <input type="checkbox" class="form-check-input" name="travel" {% if app.travel %} checked {% endif %} id="exampleCheck2">
                <label class="form-check-label" for="exampleCheck2">Yes, I need travel reimbursement.</label>
              </div>
              <br/>
              <div class="form-group">
                <label for="where-from">If you need travel reimbursement, where are you travelling from?</label>
-               <input type="name" class="form-control" id="where-from" {% if user.where_from %} value="{{ user.where_from }}" {% endif %} placeholder="Where are you travelling from?" name="where-from">
+               <input type="name" class="form-control" id="where-from" {% if app.where_from %} value="{{ app.where_from }}" {% endif %} placeholder="Where are you travelling from?" name="where-from">
              </div>
 
              <div class="form-group">
@@ -189,7 +192,7 @@
                <br/>
                <select name="travel-method" id="travel-method" required class="selectpicker" data-live-search="true" data-width="100%">
                   {% for s in travel_methods %}
-                    <option value="{{s}}" {% if s == user.travel_method %} selected {% endif %}>{{ s }}</option>
+                    <option value="{{s}}" {% if s == app.travel_method %} selected {% endif %}>{{ s }}</option>
                   {% endfor %}
                 </select>
              </div>
@@ -197,17 +200,17 @@
                 <div class="form-group">
                   <label for="miles">If you need travel reimbursement, how many miles are you travelling?</label>
                   <br/>
-                     <input type="text" class="form-control" id="miles" {% if user.miles %} value="{{ user.miles }}" {% endif %} placeholder="Number of miles" name="miles">
+                     <input type="text" class="form-control" id="miles" {% if app.miles %} value="{{ app.miles }}" {% endif %} placeholder="Number of miles" name="miles">
                  </div>
 
                  <div class="form-group">
                    <label for="cost">If you need travel reimbursement, how much reimbursement will you need?</label>
                    <br/>
-                      <input type="text" class="form-control" id="cost" {% if user.cost %} value="{{ user.cost }}" {% endif %} placeholder="Cost" name="cost">
+                      <input type="number" class="form-control" id="cost" {% if app.cost %} value="{{ app.cost }}" {% endif %} placeholder="Cost" name="cost">
                   </div>
                  <br/>
 
-              <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="travel">Save</button>
+              <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="travel">Save Travel Application</button>
             </form>
         </div>
     </div>
