@@ -196,5 +196,16 @@ def application():
             highlight="application",
             msg="Your application has been submitted!")
 
+@app.route('/admin', methods=["GET", "POST"])
+def admin_main():
+    u = get_user(request)
+    if not u:
+        return redirect("/logout")
+    return render_template("admin.html")
+
+@app.context_processor
+def event_name():
+    return dict(event_name=settings.EVENT_NAME)
+
 if __name__ == '__main__':
     app.run()

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>{% block title %} {% endblock %}</title>
+    <title>{{ event_name }} - {% block title %}{% endblock %}</title>
 
     <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
@@ -31,12 +31,8 @@
             <div class="sidebar-header">
                 <img src="{{ url_for('static', filename='img/main.png') }}" class="header-img" />
                 <br/>
-                <h3><center>HooHacks</center></h3>
+                <h3><center>{{ event_name }}</center></h3>
             </div>
-
-            <script>
-                console.log('{{highlight}}');
-            </script>
 
             <ul class="list-unstyled components">
                 <li {% if highlight=="dashboard" %} class="active" {% endif %}>
@@ -49,6 +45,12 @@
                     <a href="/application">
                         <i class="fas fa-newspaper"></i>
                         Application
+                    </a>
+                </li>
+                <li {% if highlight=="admin" %} class="active" {% endif %}>
+                    <a href="/admin">
+                        <i class="fas fa-user"></i>
+                        Admin
                     </a>
                 </li>
                 <li>
