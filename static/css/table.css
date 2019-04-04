@@ -1,0 +1,85 @@
+table th {
+	font-size: .9rem;
+	font-weight: 400
+}
+
+table td {
+	font-size: .9rem;
+	font-weight: 300
+}
+
+table.table thead th {
+	border-top: none
+}
+
+table.table td,
+table.table th {
+	padding-top: 1.1rem;
+	padding-bottom: 1rem
+}
+
+table.table a {
+	margin: 0;
+	color: #212529
+}
+
+table.table .label-table {
+	margin: 0;
+	padding: 0;
+	line-height: .94rem;
+	height: .94rem
+}
+
+table.table.btn-table td {
+	vertical-align: middle
+}
+
+table.table-hover tbody tr:hover {
+	-webkit-transition: .5s;
+	-o-transition: .5s;
+	transition: .5s;
+	background-color: rgba(0, 0, 0, .075)
+}
+
+table .th-lg {
+	min-width: 9rem
+}
+
+table .th-sm {
+	min-width: 6rem
+}
+
+table.table-sm td,
+table.table-sm th {
+	padding-top: .6rem;
+	padding-bottom: .6rem
+}
+
+.table-scroll-vertical {
+	max-height: 300px;
+	overflow-y: auto
+}
+
+.table-fixed {
+	table-layout: fixed
+}
+
+.table-responsive-lg>.table-bordered,
+.table-responsive-md>.table-bordered,
+.table-responsive-sm>.table-bordered,
+.table-responsive-xl>.table-bordered,
+.table-responsive>.table-bordered {
+	border-top: 1px solid #dee2e6
+}
+
+.bg-accepted{
+	background-color:#6cbf6c !important;
+}
+
+.bg-waitlisted{
+	background-color:#f1b55f !important;
+}
+
+.bg-danger{
+	background-color:#dc6460 !important;
+}

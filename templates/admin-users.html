@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Users{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <style>
+        .modal-dialog{
+            overflow-y: initial !important
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+{% endblock %}
+{% block content %}
+    <h2 class="main-title"> <center>Admin - Users</center> </h2>
+    <hr style="width:50%">
+
+    <br/>
+    <br/>
+
+    <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th class="th-sm"><center>Name</center></th>
+      <th class="th-sm"><center>Email</center></th>
+      <th class="th-sm"><center>School</center></th>
+      <th class="th-sm"><center>Grad Year</center></th>
+      <th class="th-sm"><center>Travel Method</center></th>
+      <th class="th-sm"><center>Travel Cost</center></th>
+    </tr>
+  </thead>
+  <tbody>
+        {% for a in all_applications %}
+            <tr
+            {% if a.accepted %}
+                class="bg-accepted"
+            {% elif a.waitlisted %}
+                class="bg-waitlisted"
+            {% else %}
+                class ="bg-declined"
+            {% endif %}
+            data-toggle="modal" data-id="{{ a.id }}" data-full-name="{{ a.full_name }}" data-email="{{ a.email }}"
+            data-school="{{ a.school }}" data-grad-year="{{ a. grad_year }}" data-gender="{{ a.gender }}"
+            data-race="{{ a.race }}" data-describe="{{ a.describe }}" data-why="{{ a.why }}" data-major="{{ a.major }}"
+            data-hackathons="{{ a.hackathons }}" data-birthday="{{ a.birthday }}" data-travel="{{ a.travel }}"
+            data-where-from="{{ a.where_from }}" data-travel-method="{{ a.travel_method }}" data-miles="{{ a.miles }}"
+            data-cost="{{ a.cost }}" data-accepted="{{ a.accepted }}" data-waitlisted="{{ a.waitlisted }}"
+            data-declined="{{ a.declined }}" data-target="#applicationModal">
+              <td><center>{{ a.full_name }}</center></td>
+              <td><center>{{ a.email }}</center></td>
+              <td><center>{{ a.school }}</center></td>
+              <td><center>{{ a.grad_year }}</center></td>
+              <td><center>{% if a.travel %}{{ a.travel_method }}{% else %}{% endif %}</center></td>
+              <td><center>{% if a.travel %}{{ a.cost }}{% else %}{% endif %}</center></td>
+            </tr>
+        {% endfor %}
+  </tbody>
+</table>
+
+<div class="modal" tabindex="-1" role="dialog" id="applicationModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">View Application</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <b>Full Name: </b> <span id="full-name"></span>
+        <br/>
+        <br/>
+        <b>Email: </b> <span id="email"></span>
+        <br/>
+        <br/>
+        <b>School: </b> <span id="school"></span>
+        <br/>
+        <br/>
+        <b>Graduation Year: </b> <span id="grad-year"></span>
+        <br/>
+        <br/>
+        <b>Hackathons Attended: </b> <span id="hackathons"></span>
+        <br/>
+        <br/>
+        <b>Gender: </b> <span id="gender"></span>
+        <br/>
+        <br/>
+        <b>Race: </b> <span id="race"></span>
+        <br/>
+        <br/>
+        <b>Describe Yourself: </b> <span id="describe"></span>
+        <br/>
+        <br/>
+        <b>Why do you want to attend: </b> <span id="why"></span>
+        <br/>
+        <br/>
+        <b>Major: </b> <span id="major"></span>
+        <br/>
+        <br/>
+        <b>Birthday: </b> <span id="birthday"></span>
+        <br/>
+        <br/>
+        <b>Travel Reimbursement Needed: </b> <span id="travel"></span>
+        <br/>
+        <br/>
+        <b>Travel Method: </b> <span id="travel-method"></span>
+        <br/>
+        <br/>
+        <b>Miles: </b> <span id="miles"></span>
+        <br/>
+        <br/>
+        <b>Cost: </b> <span id="cost"></span>
+        <br/>
+        <br/>
+        <b>Status: </b> <span id="status"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#dtBasicExample').dataTable();
+    });
+    $(function () {
+        $(".table-striped").find('tr[data-id]').on('click', function () {
+            $('#full-name').html($(this).data('full-name'));
+            $('#email').html($(this).data('email'));
+            $('#school').html($(this).data('school'));
+            $('#grad-year').html($(this).data('grad-year'));
+            $('#hackathons').html($(this).data('hackathons'));
+            $('#gender').html($(this).data('gender'));
+            $('#race').html($(this).data('race'));
+            $('#describe').html($(this).data('describe'));
+            $('#why').html($(this).data('why'));
+            $('#major').html($(this).data('major'));
+            $('#birthday').html($(this).data('birthday'));
+            $('#travel').html($(this).data('travel'));
+            $('#travel-method').html($(this).data('travel-method'));
+            $('#miles').html($(this).data('miles'));
+            $('#cost').html($(this).data('cost'));
+            $('#orderModal').modal('show');
+        });
+    });
+</script>
+
+{% endblock %}

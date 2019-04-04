@@ -48,18 +48,18 @@ except:
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from models import User, Application
+from models import Hacker, Application, Confirmation
 
-def get_user(request):
+def get_hacker(request):
     login_hash = request.cookies.get('login_hash')
-    u = User.query.filter_by(hash=login_hash)
+    u = Hacker.query.filter_by(hash=login_hash)
     if u.count() == 0:
         return False
     return u.first()
 
 def get_application(request):
     login_hash = request.cookies.get('login_hash')
-    u = User.query.filter_by(hash=login_hash)
+    u = Hacker.query.filter_by(hash=login_hash)
     if u.count() == 0:
         return False
     user = u.first()
@@ -68,6 +68,18 @@ def get_application(request):
     if u.count() == 0:
         return False
     return a.first()
+
+def get_confirmation(request):
+    login_hash = request.cookies.get('login_hash')
+    u = Hacker.query.filter_by(hash=login_hash)
+    if u.count() == 0:
+        return False
+    user = u.first()
+    email = user.email
+    c = Confirmation.query.filter_by(email=email)
+    if u.count() == 0:
+        return False
+    return c.first()
 
 @app.route('/logout', methods=["GET", "POST"])
 def logout():
@@ -78,7 +90,7 @@ def logout():
 @app.route('/', methods=["GET", "POST"])
 def login_page():
     if request.method == "GET":
-        user = get_user(request)
+        user = get_hacker(request)
         if user:
             return redirect("/dashboard")
         else:
@@ -86,22 +98,26 @@ def login_page():
     else:
         if request.form.get('button-type') == "register":
             email = request.form['email']
-            f = User.query.filter_by(email=email)
+            f = Hacker.query.filter_by(email=email)
             if not f.count() == 0:
                 return render_template("login_page.html", message="There is already an account found with this email address!")
             a = Application()
             a.email = email
+            c = Confirmation()
+            c.email = email
             db.session.add(a)
-            u = User()
+            db.session.add(c)
+            u = Hacker()
             u.email = email
             u.password = generate_password_hash(request.form['password'])
             u.is_hacker = True
             u.application_id = a.id
+            u.confirmation_id = c.id
             db.session.add(u)
             db.session.commit()
-            return render_template("login_page.html", message="User created!")
+            return render_template("login_page.html", message="Hacker account created!")
         elif request.form.get('button-type') == "login":
-            u = User.query.filter_by(email=request.form['email'])
+            u = Hacker.query.filter_by(email=request.form['email'])
             if u.count() == 0:
                 return render_template("login_page.html", message="No account found with this email address!")
             u = u.first()
@@ -117,7 +133,7 @@ def login_page():
 
 @app.route('/dashboard', methods=["GET", "POST"])
 def dashboard():
-    u = get_user(request)
+    u = get_hacker(request)
     a = get_application(request)
     if not u or not a:
         return redirect("/logout")
@@ -127,7 +143,7 @@ def dashboard():
 
 @app.route('/application', methods=["GET", "POST"])
 def application():
-    u = get_user(request)
+    u = get_hacker(request)
     a = get_application(request)
     if not u:
         return redirect("/logout")
@@ -198,10 +214,17 @@ def application():
 
 @app.route('/admin', methods=["GET", "POST"])
 def admin_main():
-    u = get_user(request)
+    u = get_hacker(request)
     if not u:
         return redirect("/logout")
-    return render_template("admin.html")
+    return render_template("admin.html", highlight="admin", user=u)
+
+@app.route('/admin/users', methods=["GET", "POST"])
+def admin_users():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    return render_template("admin-users.html", highlight="admin", all_applications=Application.query.all())
 
 @app.context_processor
 def event_name():
