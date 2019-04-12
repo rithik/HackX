@@ -4,11 +4,6 @@
 
 {% block css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
-    <style>
-        .modal-dialog{
-            overflow-y: initial !important
-        }
-    </style>
 {% endblock %}
 
 {% block js %}
@@ -38,7 +33,7 @@
                 class="bg-accepted"
             {% elif a.waitlisted %}
                 class="bg-waitlisted"
-            {% else %}
+            {% elif a.declined %}
                 class ="bg-declined"
             {% endif %}
             data-toggle="modal" data-id="{{ a.id }}" data-full-name="{{ a.full_name }}" data-email="{{ a.email }}"

@@ -60,5 +60,8 @@ class Confirmation(db.Model):
     github = db.Column(db.String(length=1000), default="")
     notes = db.Column(db.String(length=1000), default="")
 
+    confirmed = db.Column(db.Boolean, default=False)
+    declined = db.Column(db.Boolean, default=False)
+
     def __repr__(self):
         return '<Confirmation: {}>'.format(self.email)

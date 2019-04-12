@@ -283,3 +283,8 @@ a.article:hover {
     margin:auto;
     display:block;
 }
+
+.modal-body{
+    height: 70vh;
+    overflow: scroll;
+}

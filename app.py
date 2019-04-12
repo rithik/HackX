@@ -230,5 +230,37 @@ def admin_users():
 def event_name():
     return dict(event_name=settings.EVENT_NAME)
 
+@app.route('/create_users', methods=["GET", "POST"])
+def create_hackers():
+    for k in range(10, 100):
+        a = Application()
+        a.email = "email" + str(k) + "@gmail.com"
+        c = Confirmation()
+        c.email = "email" + str(k) + "@gmail.com"
+        db.session.add(a)
+        db.session.add(c)
+        u = Hacker()
+        u.email = "email" + str(k) + "@gmail.com"
+        u.password = generate_password_hash("q")
+        u.is_hacker = True
+        u.application_id = a.id
+        u.confirmation_id = c.id
+        db.session.add(u)
+        a.full_name = "User " + str(k)
+        a.birthday = "2000-04-19"
+        a.school = random.choice(settings.SCHOOLS)
+        a.grad_year = random.choice(settings.GRADUATION_YEARS)
+        a.gender = random.choice(settings.GENDERS)
+        a.race = random.choice(settings.RACES)
+        a.describe = "Hacker"
+        a.major = "Computer Science"
+        a.hackathons = random.randint(0, 10)
+        a.why = "Test Message"
+        a.mlh_rules = True
+        a.app_complete = True
+        db.session.add(a)
+    db.session.commit()
+    return redirect('/dashboard')
+
 if __name__ == '__main__':
     app.run()
