@@ -237,6 +237,28 @@ def accept_user(user_id):
     except:
         return Response("Error", status=400)
 
+@app.route('/admin/waitlistUser/<user_id>', methods=["GET", "POST"])
+def waitlist_user(user_id):
+    try:
+        a = Application.query.filter_by(id=user_id).first()
+        a.waitlisted = True
+        db.session.add(a)
+        db.session.commit()
+        return Response("Success", status=200)
+    except:
+        return Response("Error", status=400)
+
+@app.route('/admin/rejectUser/<user_id>', methods=["GET", "POST"])
+def reject_user(user_id):
+    try:
+        a = Application.query.filter_by(id=user_id).first()
+        a.rejected = True
+        db.session.add(a)
+        db.session.commit()
+        return Response("Success", status=200)
+    except:
+        return Response("Error", status=400)
+
 @app.context_processor
 def event_name():
     return dict(event_name=settings.EVENT_NAME)

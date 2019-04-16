@@ -7,10 +7,7 @@
 {% endblock %}
 
 {% block js %}
-<script
-  src="https://code.jquery.com/jquery-3.4.0.min.js"
-  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
-  crossorigin="anonymous"></script>
+
 {% endblock %}
 {% block content %}
     <h2 class="main-title"> <center>Admin - Users</center> </h2>
@@ -34,20 +31,13 @@
   <tbody>
         {% for a in all_applications %}
             <tr
-                {% if a.accepted %}
-                    class="bg-accepted"
-                {% elif a.waitlisted %}
-                    class="bg-waitlisted"
-                {% elif a.rejected %}
-                    class ="bg-declined"
-                {% endif %}
             data-toggle="modal" data-id="{{ a.id }}" data-full-name="{{ a.full_name }}" data-email="{{ a.email }}"
             data-school="{{ a.school }}" data-grad-year="{{ a. grad_year }}" data-gender="{{ a.gender }}"
             data-race="{{ a.race }}" data-describe="{{ a.describe }}" data-why="{{ a.why }}" data-major="{{ a.major }}"
             data-hackathons="{{ a.hackathons }}" data-birthday="{{ a.birthday }}" data-travel="{{ a.travel }}"
             data-where-from="{{ a.where_from }}" data-travel-method="{{ a.travel_method }}" data-miles="{{ a.miles }}"
             data-cost="{{ a.cost }}" data-accepted="{{ a.accepted }}" data-waitlisted="{{ a.waitlisted }}"
-            data-declined="{{ a.declined }}" data-target="#applicationModal">
+            data-declined="{{ a.declined }}" data-app-complete="{{ a.app_complete }}" data-target="#applicationModal">
               <td><center id="{{ a.id }}-status">
                   {% if a.accepted %}
                     <i class="fas fa-check-circle text-success"></i>
@@ -127,9 +117,11 @@
         <b>Status: </b> <span id="status"></span>
       </div>
       <div class="modal-footer">
-        <button type="button" id="accept-modal" onclick="acceptUser()" class="btn btn-success">Accept</button>
-        <button type="button" class="btn btn-warning">Waitlist</button>
-        <button type="button" class="btn btn-danger">Reject</button>
+         <div id="appOptionButtons">
+            <button type="button" class="btn btn-success" onclick="acceptUser()" >Accept</button>
+            <button type="button" class="btn btn-warning" onclick="waitlistUser()" >Waitlist</button>
+            <button type="button" class="btn btn-danger" onclick="rejectUser()" >Reject</button>
+        </div>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -137,7 +129,10 @@
 </div>
 <script>
     $(document).ready(function() {
-        $('#dtBasicExample').dataTable();
+        $('#dtBasicExample').dataTable({
+            "order": [[ 0, "desc" ]],
+            "pageLength": 100,
+        });
     });
     $(function () {
         $(".table-striped").find('tr[data-id]').on('click', function () {
@@ -157,6 +152,13 @@
             $('#travel-method').html($(this).data('travel-method'));
             $('#miles').html($(this).data('miles'));
             $('#cost').html($(this).data('cost'));
+            console.log($(this).data('app-complete'));
+            if ($(this).data('app-complete') == "True"){
+                $("#appOptionButtons")[0].style.display = "";
+            }
+            else{
+                $("#appOptionButtons")[0].style.display = "none";
+            }
             $('#orderModal').modal('show');
         });
     });
@@ -165,6 +167,28 @@
         $.get( "/admin/acceptUser/" + user_id, function( data ) {
           if (data = "Success"){
               $('#' + user_id + "-status").html('<i class="fas fa-check-circle text-success"></i>');
+          }
+          else{
+              console.log("ERROR");
+          }
+        });
+    }
+    function waitlistUser(){
+        var user_id = $('#user-id').html();
+        $.get( "/admin/waitlistUser/" + user_id, function( data ) {
+          if (data = "Success"){
+              $('#' + user_id + "-status").html('<i class="fas fa-pause-circle text-warning"></i>');
+          }
+          else{
+              console.log("ERROR");
+          }
+        });
+    }
+    function rejectUser(){
+        var user_id = $('#user-id').html();
+        $.get( "/admin/rejectUser/" + user_id, function( data ) {
+          if (data = "Success"){
+              $('#' + user_id + "-status").html('<i class="fas fa-times-circle text-danger"></i>');
           }
           else{
               console.log("ERROR");
