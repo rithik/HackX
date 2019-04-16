@@ -7,6 +7,10 @@
 {% endblock %}
 
 {% block js %}
+<script
+  src="https://code.jquery.com/jquery-3.4.0.min.js"
+  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+  crossorigin="anonymous"></script>
 {% endblock %}
 {% block content %}
     <h2 class="main-title"> <center>Admin - Users</center> </h2>
@@ -18,6 +22,7 @@
     <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
   <thead>
     <tr>
+      <th class="th-sm"><center>Accepted</center></th>
       <th class="th-sm"><center>Name</center></th>
       <th class="th-sm"><center>Email</center></th>
       <th class="th-sm"><center>School</center></th>
@@ -29,13 +34,13 @@
   <tbody>
         {% for a in all_applications %}
             <tr
-            {% if a.accepted %}
-                class="bg-accepted"
-            {% elif a.waitlisted %}
-                class="bg-waitlisted"
-            {% elif a.declined %}
-                class ="bg-declined"
-            {% endif %}
+                {% if a.accepted %}
+                    class="bg-accepted"
+                {% elif a.waitlisted %}
+                    class="bg-waitlisted"
+                {% elif a.rejected %}
+                    class ="bg-declined"
+                {% endif %}
             data-toggle="modal" data-id="{{ a.id }}" data-full-name="{{ a.full_name }}" data-email="{{ a.email }}"
             data-school="{{ a.school }}" data-grad-year="{{ a. grad_year }}" data-gender="{{ a.gender }}"
             data-race="{{ a.race }}" data-describe="{{ a.describe }}" data-why="{{ a.why }}" data-major="{{ a.major }}"
@@ -43,6 +48,15 @@
             data-where-from="{{ a.where_from }}" data-travel-method="{{ a.travel_method }}" data-miles="{{ a.miles }}"
             data-cost="{{ a.cost }}" data-accepted="{{ a.accepted }}" data-waitlisted="{{ a.waitlisted }}"
             data-declined="{{ a.declined }}" data-target="#applicationModal">
+              <td><center id="{{ a.id }}-status">
+                  {% if a.accepted %}
+                    <i class="fas fa-check-circle text-success"></i>
+                  {% elif a.waitlisted %}
+                    <i class="fas fa-pause-circle text-warning"></i>
+                  {% elif a.rejected %}
+                    <i class="fas fa-times-circle text-danger"></i>
+                  {% endif %}
+              </center></td>
               <td><center>{{ a.full_name }}</center></td>
               <td><center>{{ a.email }}</center></td>
               <td><center>{{ a.school }}</center></td>
@@ -64,6 +78,7 @@
         </button>
       </div>
       <div class="modal-body">
+        <span id="user-id" style="display:none;"></span>
         <b>Full Name: </b> <span id="full-name"></span>
         <br/>
         <br/>
@@ -112,7 +127,9 @@
         <b>Status: </b> <span id="status"></span>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" id="accept-modal" onclick="acceptUser()" class="btn btn-success">Accept</button>
+        <button type="button" class="btn btn-warning">Waitlist</button>
+        <button type="button" class="btn btn-danger">Reject</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -124,6 +141,7 @@
     });
     $(function () {
         $(".table-striped").find('tr[data-id]').on('click', function () {
+            $('#user-id').html($(this).data('id'));
             $('#full-name').html($(this).data('full-name'));
             $('#email').html($(this).data('email'));
             $('#school').html($(this).data('school'));
@@ -142,6 +160,17 @@
             $('#orderModal').modal('show');
         });
     });
+    function acceptUser(){
+        var user_id = $('#user-id').html();
+        $.get( "/admin/acceptUser/" + user_id, function( data ) {
+          if (data = "Success"){
+              $('#' + user_id + "-status").html('<i class="fas fa-check-circle text-success"></i>');
+          }
+          else{
+              console.log("ERROR");
+          }
+        });
+    }
 </script>
 
 {% endblock %}

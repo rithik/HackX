@@ -44,7 +44,7 @@ class Application(db.Model):
 
     accepted = db.Column(db.Boolean, default=False)
     waitlisted = db.Column(db.Boolean, default=False)
-    declined = db.Column(db.Boolean, default=False)
+    rejected = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<Application: {}>'.format(self.email)

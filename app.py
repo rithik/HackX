@@ -226,6 +226,17 @@ def admin_users():
         return redirect("/logout")
     return render_template("admin-users.html", highlight="admin", all_applications=Application.query.all())
 
+@app.route('/admin/acceptUser/<user_id>', methods=["GET", "POST"])
+def accept_user(user_id):
+    try:
+        a = Application.query.filter_by(id=user_id).first()
+        a.accepted = True
+        db.session.add(a)
+        db.session.commit()
+        return Response("Success", status=200)
+    except:
+        return Response("Error", status=400)
+
 @app.context_processor
 def event_name():
     return dict(event_name=settings.EVENT_NAME)
