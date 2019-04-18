@@ -21,9 +21,32 @@
       <br/>
       <br/>
       <div class="col-lg-6">
-          
+
       </div>
     </div>
+    <table>
+        <tbody>
+            <thead>
+                    <b>Stats</b>
+                </thead>
+                  <tr>
+                      <td>
+                          <i class="fas fa-user"></i> <b>Total Users</b>: {{ stats.hackers }} <br/>
+                          <i class="fas fa-user"></i> <b>Submitted Users</b>: {{ stats.submitted }} <br/>
+                          <i class="fas fa-check-circle text-success"></i> <b>Admitted Users</b>: {{ stats.admitted }} <br/>
+                          <i class="fas fa-pause-circle text-warning"></i> <b>Waitlisted Users</b>: {{ stats.waitlisted }} <br/>
+                          <i class="fas fa-times-circle text-danger"></i> <b>Rejected Users</b>: {{ stats.rejected }} <br/>
+
+                          <i class="fas fa-check-circle text-success"></i> <b>Confirmed Users</b>: {{ stats.confirmed }} <br/>
+                          <i class="fas fa-times-circle text-danger"></i> <b>Declined Users</b>: {{ stats.declined }} <br/>
+
+                          <i class="fas fa-car"></i> <b>Reimbursement Required</b>: {{ stats.reimbursement }} <br/>
+                          <i class="fas fa-tshirt"></i> <b>T-shirt Sizes</b>: {{ stats.tshirt }} <br/>
+                          <i class="fas fa-adjust"></i> <b>Dietary Restrictions</b>: {{ stats.dietary }} <br/>
+                    </td>
+                  </tr>
+        </tbody>
+    </table>
 
 
 

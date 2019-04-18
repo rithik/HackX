@@ -251,7 +251,39 @@ def admin_main():
     u = get_hacker(request)
     if not u:
         return redirect("/logout")
-    return render_template("admin.html", highlight="admin", user=u)
+    stats = get_stats()
+    print(stats)
+    return render_template("admin.html", highlight="admin", user=u, stats=stats)
+
+def get_stats():
+    return {
+        "hackers": Hacker.query.count(),
+        "submitted": Application.query.filter_by(app_complete=True).count(),
+        "admitted": Application.query.filter_by(accepted=True).count(),
+        "waitlisted": Application.query.filter_by(waitlisted=True).count(),
+        "rejected": Application.query.filter_by(rejected=True).count(),
+        "confirmed": Confirmation.query.filter_by(confirmed=True).count(),
+        "declined": Confirmation.query.filter_by(declined=True).count(),
+        "reimbursement": Application.query.filter_by(travel=True).count(),
+        "tshirt": "XS({}) S({}) M({}) L({}) XL({})".format(
+            Confirmation.query.filter_by(tshirt="XS").count(),
+            Confirmation.query.filter_by(tshirt="S").count(),
+            Confirmation.query.filter_by(tshirt="M").count(),
+            Confirmation.query.filter_by(tshirt="L").count(),
+            Confirmation.query.filter_by(tshirt="XL").count()
+        ),
+        "dietary": "Vegetarian({}) Vegan({}) Nut Allergy({}) Halal({}) None({})".format(
+            Confirmation.query.filter_by(dietary="Vegetarian").count(),
+            Confirmation.query.filter_by(dietary="Vegan").count(),
+            Confirmation.query.filter_by(dietary="Nut Allery").count(),
+            Confirmation.query.filter_by(dietary="Halal").count(),
+            Confirmation.query.filter_by(dietary="None").count()
+        ),
+        # "demographics":{
+        #         "male":
+        #     }
+
+    }
 
 @app.route('/admin/users', methods=["GET", "POST"])
 def admin_users():
