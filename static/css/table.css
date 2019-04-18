@@ -76,10 +76,6 @@ table.table-sm th {
 	background-color:#6cbf6c !important;
 }
 
-.bg-waitlisted{
-	background-color:#f1b55f !important;
-}
-
-.bg-danger{
+.bg-declined{
 	background-color:#dc6460 !important;
 }

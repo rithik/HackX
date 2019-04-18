@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
 class Hacker(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = 'hackers'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(length=1000), unique=True)
     password = db.Column(db.String(length=1000))
@@ -14,6 +14,12 @@ class Hacker(db.Model):
 
     application_id = db.Column(db.Integer, default=-1)
     confirmation_id = db.Column(db.Integer, default=-1)
+
+    application = db.relationship('Application', backref='hacker',
+        lazy=True)
+
+    # confirmation = db.relationship('Confirmation', backref='hacker',
+    #     lazy=True)
 
     def __repr__(self):
         return '<Hacker: {}>'.format(self.email)
@@ -46,6 +52,9 @@ class Application(db.Model):
     waitlisted = db.Column(db.Boolean, default=False)
     rejected = db.Column(db.Boolean, default=False)
 
+    hackerid = db.Column(db.Integer, db.ForeignKey('hackers.id'),
+        nullable=False)
+
     def __repr__(self):
         return '<Application: {}>'.format(self.email)
 
@@ -62,6 +71,9 @@ class Confirmation(db.Model):
 
     confirmed = db.Column(db.Boolean, default=False)
     declined = db.Column(db.Boolean, default=False)
+
+    # hackerid = db.Column(db.Integer, db.ForeignKey('users.id'),
+        # nullable=False)
 
     def __repr__(self):
         return '<Confirmation: {}>'.format(self.email)

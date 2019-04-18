@@ -103,16 +103,12 @@ def login_page():
                 return render_template("login_page.html", message="There is already an account found with this email address!")
             a = Application()
             a.email = email
-            c = Confirmation()
-            c.email = email
-            db.session.add(a)
-            db.session.add(c)
             u = Hacker()
             u.email = email
             u.password = generate_password_hash(request.form['password'])
             u.is_hacker = True
-            u.application_id = a.id
-            u.confirmation_id = c.id
+            u.application.append(a)
+            db.session.add(a)
             db.session.add(u)
             db.session.commit()
             return render_template("login_page.html", message="Hacker account created!")
@@ -224,7 +220,7 @@ def admin_users():
     u = get_hacker(request)
     if not u:
         return redirect("/logout")
-    return render_template("admin-users.html", highlight="admin", all_applications=Application.query.all())
+    return render_template("admin-users.html", highlight="admin", all_hackers=Hacker.query.all())
 
 @app.route('/admin/acceptUser/<user_id>', methods=["GET", "POST"])
 def accept_user(user_id):

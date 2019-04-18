@@ -29,7 +29,8 @@
     </tr>
   </thead>
   <tbody>
-        {% for a in all_applications %}
+        {% for u in all_hackers %}
+            {% set a = u.application[0] %}
             <tr
             data-toggle="modal" data-id="{{ a.id }}" data-full-name="{{ a.full_name }}" data-email="{{ a.email }}"
             data-school="{{ a.school }}" data-grad-year="{{ a. grad_year }}" data-gender="{{ a.gender }}"
