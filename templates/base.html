@@ -64,6 +64,14 @@
                         Application
                     </a>
                 </li>
+                {% if user.application[0].accepted %}
+                <li {% if highlight=="confirmation" %} class="active" {% endif %}>
+                    <a href="/confirmation">
+                        <i class="fas fa-newspaper"></i>
+                        Confirmation
+                    </a>
+                </li>
+                {% endif %}
                 <li {% if highlight=="admin" %} class="active" {% endif %}>
                     <a href="/admin">
                         <i class="fas fa-user"></i>

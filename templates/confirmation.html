@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmation{% endblock %}
+
+{% block content %}
+    <h2 class="main-title"> <center>Confirmation</center> </h2>
+    <hr style="width:50%">
+
+    <br/>
+    <br/>
+
+    <h4 class="sub-title"> <center>Confirmation Details</center> </h4>
+    <hr style="width:30%">
+    <br/>
+
+
+    <form class="form-signin" method="POST" action="/confirmation" style="width:60%; margin:auto; display:block;">
+        {% if not msg == ""  %}
+            <div class="alert alert-success" role="alert">
+                {{ msg }}
+            </div>
+        {% endif %}
+    <div class="form-group">
+      <label for="tshirt">T-Shirt Size</label>
+      <br/>
+        <select name="tshirt" required class="selectpicker" data-width="100%">
+            {% for s in tshirt_sizes %}
+              <option value="{{s}}" {% if s == c.tshirt %} selected {% endif %}>{{ s }}</option>
+            {% endfor %}
+         </select>
+     </div>
+
+     <div class="form-group">
+       <label for="dietary">Dietary Restrictions</label>
+       <br/>
+         <select name="dietary" required class="selectpicker" data-width="100%">
+             {% for s in dietary_restrictions %}
+               <option value="{{s}}" {% if s == c.dietary %} selected {% endif %}>{{ s }}</option>
+             {% endfor %}
+          </select>
+      </div>
+
+     <div class="form-group">
+       <label for="phone">Phone Number</label>
+       <br/>
+          <input type="phone" required class="form-control" id="phone" value="{{ c.phone }}" name="phone">
+      </div>
+
+      <div class="form-group">
+        <label for="github">GitHub Username</label>
+        <br/>
+           <input type="text" required class="form-control" id="github" value="{{ c.github }}" name="github">
+       </div>
+
+       <div class="form-group">
+         <label for="notes">Anything else?</label>
+         <br/>
+         <textarea class="form-control" id="notes" placeholder="Should we know about anything else?" name="notes">{{ c.notes }}</textarea>
+     </div>
+
+
+         <br/>
+
+      <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="confirm">Confirm My Spot</button>
+  </form>
+  <br/>
+<form class="form-signin" method="POST" action="/confirmation" style="width:60%; margin:auto; display:block;">
+      <button class="btn btn-lg btn-danger btn-block text-uppercase" name="button-type" value="decline">Decline My Spot</button>
+</form>
+
+
+{% endblock %}

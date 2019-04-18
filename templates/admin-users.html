@@ -31,7 +31,18 @@
   <tbody>
         {% for u in all_hackers %}
             {% set a = u.application[0] %}
+
+
             <tr
+            {% if u.confirmation|length > 0 %}
+                {% set c = u.confirmation[0] %}
+                {% if c.confirmed %}
+                    class="bg-accepted"
+                {% elif c.declined %}
+                    class="bg-declined"
+                {% endif %}
+            {% endif %}
+
             data-toggle="modal" data-id="{{ a.id }}" data-full-name="{{ a.full_name }}" data-email="{{ a.email }}"
             data-school="{{ a.school }}" data-grad-year="{{ a. grad_year }}" data-gender="{{ a.gender }}"
             data-race="{{ a.race }}" data-describe="{{ a.describe }}" data-why="{{ a.why }}" data-major="{{ a.major }}"
@@ -128,6 +139,20 @@
     </div>
   </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="statusModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+          <br/>
+          <br/>
+         <center> <span id="statusMessage"> </span> </center>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
     $(document).ready(function() {
         $('#dtBasicExample').dataTable({
@@ -165,34 +190,65 @@
     });
     function acceptUser(){
         var user_id = $('#user-id').html();
+        var name = $('#full-name').html();
         $.get( "/admin/acceptUser/" + user_id, function( data ) {
-          if (data = "Success"){
+          if (data == "Success"){
               $('#' + user_id + "-status").html('<i class="fas fa-check-circle text-success"></i>');
+              $('#statusMessage').html('<i class="fas fa-check-circle text-success fa-10x"></i> <br/> <br/> ' + name + " was accepted!");
+              $('#applicationModal').modal('hide');
+              $('#statusModal').modal('show');
+                setTimeout(function() {
+                    $('#statusModal').modal('hide');
+                }, 1500);
           }
           else{
               console.log("ERROR");
+              $('#statusMessage').html('There was an error communicating with the server!');
+              $('#applicationModal').modal('hide');
+              $('#statusModal').modal('show');
           }
         });
     }
     function waitlistUser(){
         var user_id = $('#user-id').html();
+        var name = $('#full-name').html();
         $.get( "/admin/waitlistUser/" + user_id, function( data ) {
-          if (data = "Success"){
+            console.log(data);
+          if (data == "Success"){
               $('#' + user_id + "-status").html('<i class="fas fa-pause-circle text-warning"></i>');
+              $('#statusMessage').html('<i class="fas fa-pause-circle text-warning fa-10x"></i> <br/> <br/> ' + name + " was waitlisted!");
+              $('#applicationModal').modal('hide');
+              $('#statusModal').modal('show');
+                setTimeout(function() {
+                    $('#statusModal').modal('hide');
+                }, 1500);
           }
           else{
               console.log("ERROR");
+              $('#statusMessage').html('There was an error communicating with the server!');
+              $('#applicationModal').modal('hide');
+              $('#statusModal').modal('show');
           }
         });
     }
     function rejectUser(){
         var user_id = $('#user-id').html();
+        var name = $('#full-name').html();
         $.get( "/admin/rejectUser/" + user_id, function( data ) {
-          if (data = "Success"){
+          if (data == "Success"){
               $('#' + user_id + "-status").html('<i class="fas fa-times-circle text-danger"></i>');
+              $('#statusMessage').html('<i class="fas fa-times-circle text-danger fa-10x"></i> <br/> <br/> ' + name + " was rejected!");
+              $('#applicationModal').modal('hide');
+              $('#statusModal').modal('show');
+                setTimeout(function() {
+                    $('#statusModal').modal('hide');
+                }, 1500);
           }
           else{
               console.log("ERROR");
+              $('#statusMessage').html('There was an error communicating with the server!');
+              $('#applicationModal').modal('hide');
+              $('#statusModal').modal('show');
           }
         });
     }

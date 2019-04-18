@@ -65,7 +65,7 @@ def get_application(request):
     user = u.first()
     email = user.email
     a = Application.query.filter_by(email=email)
-    if u.count() == 0:
+    if a.count() == 0:
         return False
     return a.first()
 
@@ -208,6 +208,44 @@ def application():
             highlight="application",
             msg="Your application has been submitted!")
 
+
+@app.route('/confirmation', methods=["GET", "POST"])
+def confirmation():
+    u = get_hacker(request)
+    a = get_application(request)
+    c = get_confirmation(request)
+    if not u:
+        return redirect("/logout")
+    if not request.method == "POST":
+        return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
+            tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
+            msg="")
+    if request.method == "POST":
+        button_type = request.form.get('button-type', '')
+        if button_type == "decline":
+            c.declined = True
+            db.session.add(c)
+            db.session.commit()
+            return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
+                tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
+                msg="Your confirmation application has been submitted!")
+        tshirt = request.form.get('tshirt', '')
+        dietary = request.form.get('dietary', '')
+        phone = request.form.get('phone', '')
+        github = request.form.get('github', '')
+        notes = request.form.get('notes', '')
+        c.tshirt = tshirt
+        c.dietary = dietary
+        c.phone = phone
+        c.github = github
+        c.notes = notes
+        c.confirmed = True
+        db.session.add(c)
+        db.session.commit()
+        return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
+            tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
+            msg="Your confirmation application has been submitted!")
+
 @app.route('/admin', methods=["GET", "POST"])
 def admin_main():
     u = get_hacker(request)
@@ -220,14 +258,21 @@ def admin_users():
     u = get_hacker(request)
     if not u:
         return redirect("/logout")
-    return render_template("admin-users.html", highlight="admin", all_hackers=Hacker.query.all())
+    return render_template("admin-users.html", highlight="admin",
+        all_hackers=Hacker.query.all(), user=u)
 
 @app.route('/admin/acceptUser/<user_id>', methods=["GET", "POST"])
 def accept_user(user_id):
     try:
         a = Application.query.filter_by(id=user_id).first()
         a.accepted = True
+        c = Confirmation()
+        c.email = a.email
+        u = Hacker.query.filter_by(email=a.email).first()
+        u.confirmation.append(c)
         db.session.add(a)
+        db.session.add(c)
+        db.session.add(u)
         db.session.commit()
         return Response("Success", status=200)
     except:
@@ -261,20 +306,13 @@ def event_name():
 
 @app.route('/create_users', methods=["GET", "POST"])
 def create_hackers():
-    for k in range(10, 100):
+    for k in range(1, 100):
         a = Application()
         a.email = "email" + str(k) + "@gmail.com"
-        c = Confirmation()
-        c.email = "email" + str(k) + "@gmail.com"
-        db.session.add(a)
-        db.session.add(c)
         u = Hacker()
         u.email = "email" + str(k) + "@gmail.com"
         u.password = generate_password_hash("q")
         u.is_hacker = True
-        u.application_id = a.id
-        u.confirmation_id = c.id
-        db.session.add(u)
         a.full_name = "User " + str(k)
         a.birthday = "2000-04-19"
         a.school = random.choice(settings.SCHOOLS)
@@ -287,8 +325,16 @@ def create_hackers():
         a.why = "Test Message"
         a.mlh_rules = True
         a.app_complete = True
+        if random.random() > 0.5:
+            a.travel = True
+            a.where_from = random.choice(settings.CITIES)
+            a.travel_method = random.choice(settings.TRAVEL_METHODS)
+            a.miles = random.randint(1, 1000)
+            a.cost = random.randint(1, 100)
+        u.application.append(a)
         db.session.add(a)
-    db.session.commit()
+        db.session.add(u)
+        db.session.commit()
     return redirect('/dashboard')
 
 if __name__ == '__main__':

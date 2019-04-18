@@ -18,8 +18,8 @@ class Hacker(db.Model):
     application = db.relationship('Application', backref='hacker',
         lazy=True)
 
-    # confirmation = db.relationship('Confirmation', backref='hacker',
-    #     lazy=True)
+    confirmation = db.relationship('Confirmation', backref='hacker',
+        lazy=True)
 
     def __repr__(self):
         return '<Hacker: {}>'.format(self.email)
@@ -67,13 +67,13 @@ class Confirmation(db.Model):
     dietary = db.Column(db.String(length=1000), default="")
     phone = db.Column(db.String(length=100), default="")
     github = db.Column(db.String(length=1000), default="")
-    notes = db.Column(db.String(length=1000), default="")
+    notes = db.Column(db.String(length=10000), default="")
 
     confirmed = db.Column(db.Boolean, default=False)
     declined = db.Column(db.Boolean, default=False)
 
-    # hackerid = db.Column(db.Integer, db.ForeignKey('users.id'),
-        # nullable=False)
+    hackerid = db.Column(db.Integer, db.ForeignKey('hackers.id'),
+        nullable=False)
 
     def __repr__(self):
         return '<Confirmation: {}>'.format(self.email)

@@ -20,7 +20,9 @@ RACES = ["African American", "American Indian", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
 GENDERS = ["Male", "Female", "Other", "Prefer not to say"]
 TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
-
+TSHIRT_SIZES = ["XS", "S", "M", "L", "XL"]
+DIETARY_RESTRICTIONS = ["None", "Vegetarian", "Vegan", "Nut Allergy", "Halal", "Other"]
+CITIES = ["Pittsburgh", "Washington, DC", "Richmond", "NYC"] # Test Cities
 
 f = open("schools.csv", "r")
 for school in f:
