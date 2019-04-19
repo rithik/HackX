@@ -1,0 +1,42 @@
+{% extends "admin.html" %}
+
+{% block title %}Stats{% endblock %}
+
+{% block addContent %}
+
+<div style="border: 2px solid black;">
+    <b>Stats</b>
+</div>
+
+<table style="border-top: 1px solid black;border-left: 1px solid black;border-right: 1px solid black; width:100%">
+    <tbody>
+              <tr style="border: 2px solid black;">
+                  <td>
+                      <i class="fas fa-user"></i> <b>Total Users</b>: {{ stats.hackers }} <br/>
+                      <i class="fas fa-user"></i> <b>Submitted Users</b>: {{ stats.submitted }} <br/>
+                  </td>
+                </tr>
+                <tr style="border: 2px solid black;">
+                    <td>
+                      <i class="fas fa-check-circle text-success"></i> <b>Admitted Users</b>: {{ stats.admitted }} <br/>
+                      <i class="fas fa-pause-circle text-warning"></i> <b>Waitlisted Users</b>: {{ stats.waitlisted }} <br/>
+                      <i class="fas fa-times-circle text-danger"></i> <b>Rejected Users</b>: {{ stats.rejected }} <br/>
+                    </td>
+                </tr>
+                <tr style="border: 2px solid black;">
+                    <td>
+                      <i class="fas fa-check-circle text-success"></i> <b>Confirmed Users</b>: {{ stats.confirmed }} <br/>
+                      <i class="fas fa-times-circle text-danger"></i> <b>Declined Users</b>: {{ stats.declined }} <br/>
+                    </td>
+                </tr>
+                <tr style="border: 2px solid black;">
+                    <td>
+                      <i class="fas fa-car"></i> <b>Reimbursement Required</b>: {{ stats.reimbursement }} <br/>
+                      <i class="fas fa-tshirt"></i> <b>T-shirt Sizes</b>: {{ stats.tshirt }} <br/>
+                      <i class="fas fa-adjust"></i> <b>Dietary Restrictions</b>: {{ stats.dietary }} <br/>
+                    </td>
+                </tr>
+    </tbody>
+</table>
+
+{% endblock %}

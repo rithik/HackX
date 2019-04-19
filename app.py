@@ -253,7 +253,7 @@ def admin_main():
         return redirect("/logout")
     stats = get_stats()
     print(stats)
-    return render_template("admin.html", highlight="admin", user=u, stats=stats)
+    return render_template("admin-stats.html", highlight="admin", user=u, stats=stats)
 
 def get_stats():
     return {

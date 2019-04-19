@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Admin{% endblock %}
+{% block title %}Admin - {% endblock %}
 
 {% block content %}
     <h2 class="main-title"> <center>Admin</center> </h2>
@@ -9,46 +9,21 @@
     <br/>
     <br/>
 
-    <div class="row" style="height:50%;">
-      <div class="col-lg-6">
-          <div style="width:100%;height:100%;border-radius:10px;vertical-align:middle;background-color:#002868;cursor:pointer" onclick="window.location.href = window.location.href + '/users';">
-                  <br/><br/><br/>
-                  <center><i class="fas fa-user text-white fa-10x"></i></center>
-                  <br/>
-                  <center><h3 style="color:white;vertical-align:middle;">Users</h3></center>
-          </div>
-      </div>
-      <br/>
-      <br/>
-      <div class="col-lg-6">
+    <ul class="nav nav-pills nav-fill" >
+      <li class="nav-item">
+        <a class="nav-link active" href="#" style="border:2px solid black;border-radius-left:6px;">Stats</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/users" style="border:2px solid black;">Users</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" style="border:2px solid black;border-radius-right:6px;">Settings</a>
+      </li>
+    </ul>
 
-      </div>
-    </div>
-    <table>
-        <tbody>
-            <thead>
-                    <b>Stats</b>
-                </thead>
-                  <tr>
-                      <td>
-                          <i class="fas fa-user"></i> <b>Total Users</b>: {{ stats.hackers }} <br/>
-                          <i class="fas fa-user"></i> <b>Submitted Users</b>: {{ stats.submitted }} <br/>
-                          <i class="fas fa-check-circle text-success"></i> <b>Admitted Users</b>: {{ stats.admitted }} <br/>
-                          <i class="fas fa-pause-circle text-warning"></i> <b>Waitlisted Users</b>: {{ stats.waitlisted }} <br/>
-                          <i class="fas fa-times-circle text-danger"></i> <b>Rejected Users</b>: {{ stats.rejected }} <br/>
+    {% block addContent %}
 
-                          <i class="fas fa-check-circle text-success"></i> <b>Confirmed Users</b>: {{ stats.confirmed }} <br/>
-                          <i class="fas fa-times-circle text-danger"></i> <b>Declined Users</b>: {{ stats.declined }} <br/>
-
-                          <i class="fas fa-car"></i> <b>Reimbursement Required</b>: {{ stats.reimbursement }} <br/>
-                          <i class="fas fa-tshirt"></i> <b>T-shirt Sizes</b>: {{ stats.tshirt }} <br/>
-                          <i class="fas fa-adjust"></i> <b>Dietary Restrictions</b>: {{ stats.dietary }} <br/>
-                    </td>
-                  </tr>
-        </tbody>
-    </table>
-
-
+    {% endblock %}
 
 
 {% endblock %}
