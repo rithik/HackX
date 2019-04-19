@@ -2,35 +2,42 @@
 
 {% block title %}Stats{% endblock %}
 
+{% block subtitle %}Stats{% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js" charset="utf-8"></script>
+{% endblock %}
+
 {% block addContent %}
+<br/>
 
 <div style="border: 2px solid black;">
-    <b>Stats</b>
+    <b style="font-size:24px;">Stats</b>
 </div>
 
-<table style="border-top: 1px solid black;border-left: 1px solid black;border-right: 1px solid black; width:100%">
+<table style="border-left: 2px solid black;border-right: 2px solid black; width:100%">
     <tbody>
-              <tr style="border: 2px solid black;">
-                  <td>
+              <tr style="border: 1px solid black;">
+                  <td style="padding-top:10px; padding-bottom:10px;">
                       <i class="fas fa-user"></i> <b>Total Users</b>: {{ stats.hackers }} <br/>
                       <i class="fas fa-user"></i> <b>Submitted Users</b>: {{ stats.submitted }} <br/>
                   </td>
                 </tr>
                 <tr style="border: 2px solid black;">
-                    <td>
+                    <td style="padding-top:10px; padding-bottom:10px;">
                       <i class="fas fa-check-circle text-success"></i> <b>Admitted Users</b>: {{ stats.admitted }} <br/>
                       <i class="fas fa-pause-circle text-warning"></i> <b>Waitlisted Users</b>: {{ stats.waitlisted }} <br/>
                       <i class="fas fa-times-circle text-danger"></i> <b>Rejected Users</b>: {{ stats.rejected }} <br/>
                     </td>
                 </tr>
                 <tr style="border: 2px solid black;">
-                    <td>
+                    <td style="padding-top:10px; padding-bottom:10px;">
                       <i class="fas fa-check-circle text-success"></i> <b>Confirmed Users</b>: {{ stats.confirmed }} <br/>
                       <i class="fas fa-times-circle text-danger"></i> <b>Declined Users</b>: {{ stats.declined }} <br/>
                     </td>
                 </tr>
                 <tr style="border: 2px solid black;">
-                    <td>
+                    <td style="padding-top:10px; padding-bottom:10px;">
                       <i class="fas fa-car"></i> <b>Reimbursement Required</b>: {{ stats.reimbursement }} <br/>
                       <i class="fas fa-tshirt"></i> <b>T-shirt Sizes</b>: {{ stats.tshirt }} <br/>
                       <i class="fas fa-adjust"></i> <b>Dietary Restrictions</b>: {{ stats.dietary }} <br/>
@@ -38,5 +45,136 @@
                 </tr>
     </tbody>
 </table>
+<br/>
+<center><b>*** All data below is calculated from all of the applications! ***</b></center>
+<br/>
+
+<div class="row">
+    <div class="col-lg-4">
+        <canvas id="genderChart" width="100" height="100"></canvas>
+    </div>
+    <div class="col-lg-4">
+        <canvas id="raceChart" width="100" height="100"></canvas>
+    </div>
+    <div class="col-lg-4">
+        <canvas id="hackathonChart" width="100" height="100"></canvas>
+    </div>
+</div>
+
+
+<script>
+    $(function(){
+        var ctx = document.getElementById('genderChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Female', 'Male', 'Other'],
+                datasets: [{
+                    label: '% per Gender',
+                    data: ['{{ stats.genders.female }}', '{{ stats.genders.male }}', '{{ stats.genders.other }}'],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 0.2)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                  display: true,
+                  text: 'Gender'
+              }
+            },
+        });
+
+        var ctx1 = document.getElementById('raceChart').getContext('2d');
+        var raceChart = new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: ["African American", "American Indian", "Asian",
+                    "Hispanic", "Native Hawaiian", "White", "Other"],
+                datasets: [{
+                    label: '% per Race',
+                    data: [
+                            '{{ stats.races.aa }}','{{ stats.races.ai }}',
+                            '{{ stats.races.as }}','{{ stats.races.h }}',
+                            '{{ stats.races.nh }}','{{ stats.races.w }}',
+                            '{{ stats.races.o }}',
+                            ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(139, 131, 134, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(139, 131, 134, 0.2)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                  display: true,
+                  text: 'Race'
+              }
+            },
+        });
+
+        var ctx2 = document.getElementById('hackathonChart').getContext('2d');
+        var myChart2 = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['0', '1-3', '4-6', '7-9', '10+'],
+                datasets: [{
+                    label: '# of Hackathons Attended',
+                    data: ['{{ stats.hackathons.beg }}',
+                        '{{ stats.hackathons.beg1 }}','{{ stats.hackathons.med2 }}',
+                        '{{ stats.hackathons.exp3 }}', '{{ stats.genders.expert4 }}'
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                  display: true,
+                  text: 'Hackathons Attended'
+              }
+            },
+        });
+    });
+
+</script>
 
 {% endblock %}

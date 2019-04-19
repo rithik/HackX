@@ -102,7 +102,11 @@
 
          <br/>
 
+    {% if allow %}
       <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="application">Save Appliation</button>
+    {% else %}
+          <center>Unfortunately, you can no longer submit an application!</center>
+    {% endif %}
     </form>
 
     <br/>
@@ -149,7 +153,10 @@
               <input type="number" class="form-control" id="cost" {% if app.cost %} value="{{ app.cost }}" {% endif %} placeholder="Cost" name="cost">
           </div>
          <br/>
-
+    {% if allow %}
       <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="travel">Save Travel Application</button>
+    {% else %}
+        <center>Unfortunately, you can no longer submit a travel application!</center>
+    {% endif %}
     </form>
 {% endblock %}

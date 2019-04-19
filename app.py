@@ -16,6 +16,7 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash, check_password_hash
 import qrcode
 import uuid
+from pytz import timezone
 
 app = Flask(__name__)
 
@@ -77,7 +78,7 @@ def get_confirmation(request):
     user = u.first()
     email = user.email
     c = Confirmation.query.filter_by(email=email)
-    if u.count() == 0:
+    if c.count() == 0:
         return False
     return c.first()
 
@@ -133,12 +134,25 @@ def dashboard():
     a = get_application(request)
     if not u or not a:
         return redirect("/logout")
+    c = get_confirmation(request)
+    confirmation = True
+    if c == False:
+        confirmation = False
+    if c.confirmed:
+        confirmation = "accepted"
+    if c.declined:
+        confirmation = "rejected"
     return render_template("dashboard.html", user=u, app=a,
         highlight="dashboard",
-        submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE_FMT)
+        submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE_FMT,
+        confirmation=confirmation)
 
 @app.route('/application', methods=["GET", "POST"])
 def application():
+    ALLOW = True
+    tz = timezone('US/Eastern')
+    if tz.localize(datetime.now()) >= settings.APPLICATION_SUBMISSION_DEADLINE:
+        ALLOW = False
     u = get_hacker(request)
     a = get_application(request)
     if not u:
@@ -148,7 +162,7 @@ def application():
             schools=settings.SCHOOLS, genders=settings.GENDERS,
             races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
             highlight="application",
-            travel_methods=settings.TRAVEL_METHODS, msg="")
+            travel_methods=settings.TRAVEL_METHODS, msg="", allow=ALLOW)
     if request.method == "POST":
         button_type = request.form.get('button-type', '')
         if button_type == "travel":
@@ -172,7 +186,7 @@ def application():
                 races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
                 travel_methods=settings.TRAVEL_METHODS,
                 highlight="application",
-                msg="Your travel application has been submitted!")
+                msg="Your travel application has been submitted!", allow=ALLOW)
         full_name = request.form.get('full-name', '')
         birthday = request.form.get('birthday', '')
         school = request.form.get('school', '')
@@ -206,7 +220,7 @@ def application():
             races=settings.RACES, grad_year=settings.GRADUATION_YEARS,
             travel_methods=settings.TRAVEL_METHODS,
             highlight="application",
-            msg="Your application has been submitted!")
+            msg="Your application has been submitted!", allow=ALLOW)
 
 
 @app.route('/confirmation', methods=["GET", "POST"])
@@ -252,12 +266,23 @@ def admin_main():
     if not u:
         return redirect("/logout")
     stats = get_stats()
-    print(stats)
-    return render_template("admin-stats.html", highlight="admin", user=u, stats=stats)
+    return render_template("admin-stats.html", highlight="admin", user=u,
+        stats=stats, adminHighlight="stats")
 
 def get_stats():
+    total = Hacker.query.count()
+    hack0 = Application.query.filter_by(hackathons=0).count()
+    hack1 = Application.query.filter_by(hackathons=1).count()
+    hack2 = Application.query.filter_by(hackathons=2).count()
+    hack3 = Application.query.filter_by(hackathons=3).count()
+    hack4 = Application.query.filter_by(hackathons=4).count()
+    hack5 = Application.query.filter_by(hackathons=5).count()
+    hack6 = Application.query.filter_by(hackathons=6).count()
+    hack7 = Application.query.filter_by(hackathons=7).count()
+    hack8 = Application.query.filter_by(hackathons=8).count()
+    hack9 = Application.query.filter_by(hackathons=9).count()
     return {
-        "hackers": Hacker.query.count(),
+        "hackers": total,
         "submitted": Application.query.filter_by(app_complete=True).count(),
         "admitted": Application.query.filter_by(accepted=True).count(),
         "waitlisted": Application.query.filter_by(waitlisted=True).count(),
@@ -279,10 +304,28 @@ def get_stats():
             Confirmation.query.filter_by(dietary="Halal").count(),
             Confirmation.query.filter_by(dietary="None").count()
         ),
-        # "demographics":{
-        #         "male":
-        #     }
-
+        "genders": {
+            "male": Application.query.filter_by(gender="Male").count(),
+            "female": Application.query.filter_by(gender="Female").count(),
+            "other": Application.query.filter_by(gender="Other").count()
+        },
+        "races": {
+            "aa": Application.query.filter_by(race="African American").count(),
+            "ai": Application.query.filter_by(race="American Indian").count(),
+            "as": Application.query.filter_by(race="Asian").count(),
+            "h": Application.query.filter_by(race="Hispanic").count(),
+            "nh": Application.query.filter_by(race="Native Hawaiian").count(),
+            "w": Application.query.filter_by(race="White").count(),
+            "o": Application.query.filter_by(race="Other").count(),
+        },
+        "hackathons":{
+            "beg": hack0,
+            "beg1": hack1 + hack2 + hack3,
+            "med2": hack4 + hack5 + hack6,
+            "exp3": hack7 + hack8 + hack9,
+            "expert4": total - (hack0 + hack1 + hack2 + hack3 + hack4 + hack5
+                + hack6 + hack7 + hack8 + hack9)
+        }
     }
 
 @app.route('/admin/users', methods=["GET", "POST"])
@@ -291,7 +334,7 @@ def admin_users():
     if not u:
         return redirect("/logout")
     return render_template("admin-users.html", highlight="admin",
-        all_hackers=Hacker.query.all(), user=u)
+        all_hackers=Hacker.query.all(), user=u, adminHighlight="users")
 
 @app.route('/admin/acceptUser/<user_id>', methods=["GET", "POST"])
 def accept_user(user_id):

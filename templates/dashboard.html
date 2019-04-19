@@ -11,7 +11,22 @@
       <div class="card-body">
         <h4 class="card-title"><center>Your application status is: </center></h4>
         <div style="background-color:#e3e3e3; padding:5px;">
-            <p class="card-text"><center style="font-size:20px;">{% if app.app_complete %} COMPLETE {% else %} INCOMPLETE {% endif %}</center></p>
+            <p class="card-text"><center style="font-size:20px;">
+                <script>console.log("{{ confirmation }}");</script>
+                {% if confirmation == "accepted" %}
+                    CONFIRMED
+                {% elif confirmation == "rejected" %}
+                    DECLINED
+                {% elif conirmation %}
+                    UNCONFIRMED
+                {% else %}
+                    {% if app.app_complete %}
+                        COMPLETE
+                    {% else %}
+                        INCOMPLETE
+                    {% endif %}
+                {% endif %}
+                </center></p>
         </div>
         <p class="card-text" style="color:#212529;">
             <center><b>Registration Deadline:</b> {{ submission_deadline }}</center>
@@ -19,8 +34,12 @@
                 {% if not app.app_complete %}
                     <center>You still need to complete your application!</center>
                 {% endif %}
+
+                {% if confirmation == True %}
+                    <center>You still need to complete your confirmation application!</center>
+                {% endif %}
                 <br/>
-                <center>If you do not complete your application before the Saturday,
+                <center>If you do not complete your application before
                      {{ submission_deadline }},
                     you will not be considered for the admissions lottery!</center></p>
 
