@@ -238,6 +238,7 @@ def confirmation():
         button_type = request.form.get('button-type', '')
         if button_type == "decline":
             c.declined = True
+            c.confirmed = False
             db.session.add(c)
             db.session.commit()
             return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
@@ -254,6 +255,7 @@ def confirmation():
         c.github = github
         c.notes = notes
         c.confirmed = True
+        c.declined = False
         db.session.add(c)
         db.session.commit()
         return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
@@ -281,6 +283,34 @@ def get_stats():
     hack7 = Application.query.filter_by(hackathons=7).count()
     hack8 = Application.query.filter_by(hackathons=8).count()
     hack9 = Application.query.filter_by(hackathons=9).count()
+
+    schools = {}
+    for a in Application.query.all():
+        if not a.school in schools:
+            schools[a.school] = {
+                "accepted": 0,
+                "waitlisted": 0,
+                "rejected": 0,
+                "complete": 0,
+                "confirmed": 0,
+                "declined": 0
+            }
+            if a.accepted:
+                schools[a.school]['accepted']+=1
+            if a.waitlisted:
+                schools[a.school]['waitlisted']+=1
+            if a.rejected:
+                schools[a.school]['rejected']+=1
+            if a.app_complete:
+                schools[a.school]['complete']+=1
+
+    for c in Confirmation.query.all():
+        school = c.hacker.application[0].school
+        if c.confirmed:
+            schools[school]['confirmed']+=1
+        if c.declined:
+            schools[school]['declined']+=1
+
     return {
         "hackers": total,
         "submitted": Application.query.filter_by(app_complete=True).count(),
@@ -325,7 +355,8 @@ def get_stats():
             "exp3": hack7 + hack8 + hack9,
             "expert4": total - (hack0 + hack1 + hack2 + hack3 + hack4 + hack5
                 + hack6 + hack7 + hack8 + hack9)
-        }
+        },
+        "schools": schools
     }
 
 @app.route('/admin/users', methods=["GET", "POST"])
@@ -341,6 +372,8 @@ def accept_user(user_id):
     try:
         a = Application.query.filter_by(id=user_id).first()
         a.accepted = True
+        a.watilisted = False
+        a.rejected = False
         c = Confirmation()
         c.email = a.email
         u = Hacker.query.filter_by(email=a.email).first()
@@ -357,7 +390,9 @@ def accept_user(user_id):
 def waitlist_user(user_id):
     try:
         a = Application.query.filter_by(id=user_id).first()
-        a.waitlisted = True
+        a.accepted = False
+        a.watilisted = True
+        a.rejected = False
         db.session.add(a)
         db.session.commit()
         return Response("Success", status=200)
@@ -368,6 +403,8 @@ def waitlist_user(user_id):
 def reject_user(user_id):
     try:
         a = Application.query.filter_by(id=user_id).first()
+        a.accepted = False
+        a.watilisted = False
         a.rejected = True
         db.session.add(a)
         db.session.commit()
