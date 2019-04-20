@@ -29,21 +29,32 @@
                 </center></p>
         </div>
         <p class="card-text" style="color:#212529;">
-            <center><b>Registration Deadline:</b> {{ submission_deadline }}</center>
+            <center><b>Application Deadline:</b> {{ submission_deadline }}</center>
+            <center><b>Confirmation Deadline:</b> {{ confirmation_deadline }}</center>
                 <br/>
                 {% if not app.app_complete %}
                     <center>You still need to complete your application!</center>
+                    <br/>
+                    <center>If you do not complete your application before
+                         {{ submission_deadline }},
+                        you will not be considered for the admissions lottery!</center>
+                        <br/>
                 {% endif %}
 
                 {% if confirmation == True %}
                     <center>You still need to complete your confirmation application!</center>
+                    <br/>
+                    <center>If you do not complete your confirmation before
+                         {{ confirmation_deadline }},
+                        your spot will be given up!</center>
+                        <br/>
                 {% endif %}
-                <br/>
-                <center>If you do not complete your application before
-                     {{ submission_deadline }},
-                    you will not be considered for the admissions lottery!</center></p>
-
+                </p>
+                {% if confirmation == True or confirmation == "accepted" %}
+                    <center><a href="/confirmation" class="btn btn-primary" style="background-color:#002868">Go to Confirmation</a></center>
+                {% else %}
                     <center><a href="/application" class="btn btn-primary" style="background-color:#002868">Go to Application</a></center>
+                {% endif %}
       </div>
     </div>
 {% endblock %}

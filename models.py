@@ -15,10 +15,15 @@ class Hacker(db.Model):
     application_id = db.Column(db.Integer, default=-1)
     confirmation_id = db.Column(db.Integer, default=-1)
 
+    verified = db.Column(db.Boolean, default=False)
+
     application = db.relationship('Application', backref='hacker',
         lazy=True)
 
     confirmation = db.relationship('Confirmation', backref='hacker',
+        lazy=True)
+
+    emails = db.relationship('Email', backref='hacker',
         lazy=True)
 
     def __repr__(self):
@@ -71,6 +76,26 @@ class Confirmation(db.Model):
 
     confirmed = db.Column(db.Boolean, default=False)
     declined = db.Column(db.Boolean, default=False)
+
+    hackerid = db.Column(db.Integer, db.ForeignKey('hackers.id'),
+        nullable=False)
+
+    def __repr__(self):
+        return '<Confirmation: {}>'.format(self.email)
+
+class Email(db.Model):
+    __tablename__ = 'emails'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(length=1000))
+
+    uuid = db.Column(db.String(length=1000), unique=True)
+    subject = db.Column(db.String(length=1000))
+    message = db.Column(db.String(length=20000))
+    action = db.Column(db.String(length=1000))
+    redirect_url = db.Column(db.String(length=1000))
+
+    sent = db.Column(db.DateTime)
+    viewed = db.Column(db.DateTime)
 
     hackerid = db.Column(db.Integer, db.ForeignKey('hackers.id'),
         nullable=False)

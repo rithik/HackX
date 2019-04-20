@@ -17,6 +17,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import qrcode
 import uuid
 from pytz import timezone
+import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
@@ -49,7 +52,7 @@ except:
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from models import Hacker, Application, Confirmation
+from models import Hacker, Application, Confirmation, Email
 
 def get_hacker(request):
     login_hash = request.cookies.get('login_hash')
@@ -112,13 +115,16 @@ def login_page():
             db.session.add(a)
             db.session.add(u)
             db.session.commit()
-            return render_template("login_page.html", message="Hacker account created!")
+            send_verify_email(u)
+            return render_template("login_page.html", message="Hacker account created! Please check your email to confirm your account!")
         elif request.form.get('button-type') == "login":
             u = Hacker.query.filter_by(email=request.form['email'])
             if u.count() == 0:
                 return render_template("login_page.html", message="No account found with this email address!")
             u = u.first()
             if check_password_hash(u.password, request.form['password']):
+                if not u.verified:
+                    return render_template("login_page.html", message="Your account was not verified! Please check your email (and spam folder) to confirm your account!")
                 resp = make_response(redirect("/dashboard"))
                 u.hash = uuid.uuid1()
                 db.session.add(u)
@@ -138,14 +144,16 @@ def dashboard():
     confirmation = True
     if c == False:
         confirmation = False
-    if c.confirmed:
-        confirmation = "accepted"
-    if c.declined:
-        confirmation = "rejected"
+    else:
+        if c.confirmed:
+            confirmation = "accepted"
+        if c.declined:
+            confirmation = "rejected"
     return render_template("dashboard.html", user=u, app=a,
         highlight="dashboard",
         submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE_FMT,
-        confirmation=confirmation)
+        confirmation=confirmation,
+        confirmation_deadline=settings.APPLICATION_CONFIRMATION_DEADLINE_FMT)
 
 @app.route('/application', methods=["GET", "POST"])
 def application():
@@ -228,12 +236,16 @@ def confirmation():
     u = get_hacker(request)
     a = get_application(request)
     c = get_confirmation(request)
+    tz = timezone('US/Eastern')
+    ALLOW = True
+    if tz.localize(datetime.now()) >= settings.APPLICATION_CONFIRMATION_DEADLINE:
+        ALLOW = False
     if not u:
         return redirect("/logout")
     if not request.method == "POST":
         return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
             tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
-            msg="")
+            msg="", allow=ALLOW)
     if request.method == "POST":
         button_type = request.form.get('button-type', '')
         if button_type == "decline":
@@ -243,7 +255,7 @@ def confirmation():
             db.session.commit()
             return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
                 tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
-                msg="Your confirmation application has been submitted!")
+                msg="Your confirmation application has been submitted!", allow=ALLOW)
         tshirt = request.form.get('tshirt', '')
         dietary = request.form.get('dietary', '')
         phone = request.form.get('phone', '')
@@ -260,7 +272,7 @@ def confirmation():
         db.session.commit()
         return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
             tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
-            msg="Your confirmation application has been submitted!")
+            msg="Your confirmation application has been submitted!", allow=ALLOW)
 
 @app.route('/admin', methods=["GET", "POST"])
 def admin_main():
@@ -313,6 +325,7 @@ def get_stats():
 
     return {
         "hackers": total,
+        "verified": Hacker.query.filter_by(verified=True).count(),
         "submitted": Application.query.filter_by(app_complete=True).count(),
         "admitted": Application.query.filter_by(accepted=True).count(),
         "waitlisted": Application.query.filter_by(waitlisted=True).count(),
@@ -377,6 +390,7 @@ def accept_user(user_id):
         c = Confirmation()
         c.email = a.email
         u = Hacker.query.filter_by(email=a.email).first()
+        send_accepted_email(u)
         u.confirmation.append(c)
         db.session.add(a)
         db.session.add(c)
@@ -395,6 +409,8 @@ def waitlist_user(user_id):
         a.rejected = False
         db.session.add(a)
         db.session.commit()
+        u = a.hacker
+        send_waitlisted_email(u)
         return Response("Success", status=200)
     except:
         return Response("Error", status=400)
@@ -408,9 +424,105 @@ def reject_user(user_id):
         a.rejected = True
         db.session.add(a)
         db.session.commit()
+        u = a.hacker
+        send_rejected_email(u)
         return Response("Success", status=200)
     except:
         return Response("Error", status=400)
+
+def send_verify_email(u):
+    e = Email()
+    e.email = u.email
+    e.uuid = str(uuid.uuid1())
+    e.subject = "Verify your email address"
+    e.message = settings.VERIFY_EMAIL.format(u.email, e.uuid)
+    e.action = "verify"
+    tz = timezone('US/Eastern')
+    e.sent = tz.localize(datetime.now())
+    e.redirect_url = "/dashboard"
+    u.emails.append(e)
+    db.session.add(e)
+    db.session.add(u)
+    db.session.commit()
+    send_email(e)
+
+def send_accepted_email(u):
+    e = Email()
+    e.email = u.email
+    e.uuid = str(uuid.uuid1())
+    e.subject = "HooHacks Application Status Update"
+    e.message = settings.ACCEPTED_EMAIL.format(u.application[0].full_name, settings.APPLICATION_CONFIRMATION_DEADLINE_FMT, e.uuid)
+    e.action = "accepted"
+    tz = timezone('US/Eastern')
+    e.sent = tz.localize(datetime.now())
+    e.redirect_url = "/dashboard"
+    u.emails.append(e)
+    db.session.add(e)
+    db.session.add(u)
+    db.session.commit()
+    send_email(e)
+
+def send_waitlisted_email(u):
+    e = Email()
+    e.email = u.email
+    e.uuid = str(uuid.uuid1())
+    e.subject = "HooHacks Application Status Update"
+    e.message = settings.WAITLISTED_EMAIL.format(u.application[0].full_name, e.uuid)
+    e.action = "waitlisted"
+    tz = timezone('US/Eastern')
+    e.sent = tz.localize(datetime.now())
+    e.redirect_url = "/dashboard"
+    u.emails.append(e)
+    db.session.add(e)
+    db.session.add(u)
+    db.session.commit()
+    send_email(e)
+
+def send_rejected_email(u):
+    e = Email()
+    e.email = u.email
+    e.uuid = str(uuid.uuid1())
+    e.subject = "HooHacks Application Status Update"
+    e.message = settings.REJECTED_EMAIL.format(u.application[0].full_name, e.uuid)
+    e.action = "rejected"
+    tz = timezone('US/Eastern')
+    e.sent = tz.localize(datetime.now())
+    e.redirect_url = "/dashboard"
+    u.emails.append(e)
+    db.session.add(e)
+    db.session.add(u)
+    db.session.commit()
+    send_email(e)
+
+@app.route('/emails/<email_uuid>', methods=["GET", "POST"])
+def receive_email(email_uuid):
+    e = Email.query.filter_by(uuid=email_uuid).first()
+    u = e.hacker
+    tz = timezone('US/Eastern')
+    e.viewed = tz.localize(datetime.now())
+    if e.action == "verify":
+        u.verified = True
+    db.session.add(e)
+    db.session.add(u)
+    db.session.commit()
+    return redirect(e.redirect_url)
+
+def send_email(email):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = email.subject
+    message["From"] = settings.GMAIL_USERNAME
+    message["To"] = email.email
+
+    htmlMessage = MIMEText(email.message, "html")
+    message.attach(htmlMessage)
+
+    # Create secure connection with server and send email
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(settings.GMAIL_USERNAME, settings.GMAIL_PASSWORD)
+        server.sendmail(
+            settings.GMAIL_USERNAME, email.email, message.as_string()
+        )
 
 @app.context_processor
 def event_name():
@@ -422,6 +534,7 @@ def create_hackers():
         a = Application()
         a.email = "email" + str(k) + "@gmail.com"
         u = Hacker()
+        u.verified = True
         u.email = "email" + str(k) + "@gmail.com"
         u.password = generate_password_hash("q")
         u.is_hacker = True
