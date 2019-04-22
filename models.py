@@ -15,6 +15,8 @@ class Hacker(db.Model):
     application_id = db.Column(db.Integer, default=-1)
     confirmation_id = db.Column(db.Integer, default=-1)
 
+    is_admin = db.Column(db.Boolean, default=False)
+
     verified = db.Column(db.Boolean, default=False)
 
     application = db.relationship('Application', backref='hacker',

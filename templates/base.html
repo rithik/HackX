@@ -72,12 +72,14 @@
                     </a>
                 </li>
                 {% endif %}
-                <li {% if highlight=="admin" %} class="active" {% endif %}>
-                    <a href="/admin">
-                        <i class="fas fa-user"></i>
-                        Admin
-                    </a>
-                </li>
+                {% if user.is_admin %}
+                    <li {% if highlight=="admin" %} class="active" {% endif %}>
+                        <a href="/admin">
+                            <i class="fas fa-user"></i>
+                            Admin
+                        </a>
+                    </li>
+                {% endif %}
                 <li>
                     <a href="/logout">
                         <i class="fas fa-sign-out-alt"></i>

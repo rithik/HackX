@@ -6,7 +6,6 @@ DATABASE_URL = secret.DATABASE_URL
 SECRET_KEY = secret.SECRET_KEY
 SQLALCHEMY_TRACK_MODIFICATIONS = secret.SQLALCHEMY_TRACK_MODIFICATIONS
 APP_SETTINGS = secret.APP_SETTINGS
-ADMIN_USERNAME = secret.ADMIN_USERNAME
 ADMIN_PASSWORD = secret.ADMIN_PASSWORD
 GMAIL_USERNAME = secret.GMAIL_USERNAME
 GMAIL_PASSWORD = secret.GMAIL_PASSWORD
@@ -38,7 +37,6 @@ f = open("emails/verify_email.html", "r")
 VERIFY_EMAIL = f.read()
 f.close()
 
-
 f = open("emails/accepted.html", "r")
 ACCEPTED_EMAIL = f.read()
 f.close()
@@ -49,4 +47,8 @@ f.close()
 
 f = open("emails/rejected.html", "r")
 REJECTED_EMAIL = f.read()
+f.close()
+
+f = open("emails/confirmed.html", "r")
+CONFIRMED_EMAIL = f.read()
 f.close()

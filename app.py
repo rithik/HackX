@@ -31,14 +31,12 @@ try:
             app.secret_key = settings.SECRET_KEY
             app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = settings.SQLALCHEMY_TRACK_MODIFICATIONS
             app.config['SQLALCHEMY_DATABASE_URI'] = settings.DATABASE_URL
-            app.config['BASIC_AUTH_USERNAME'] = settings.ADMIN_USERNAME
             app.config['BASIC_AUTH_PASSWORD'] = settings.ADMIN_PASSWORD
     except:
         app.config['APP_SETTINGS'] = os.environ['APP_SETTINGS']
         app.secret_key = os.environ['SECRET_KEY']
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ['SQLALCHEMY_TRACK_MODIFICATIONS']
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-        app.config['BASIC_AUTH_USERNAME'] = os.environ['ADMIN_USERNAME']
         app.config['BASIC_AUTH_PASSWORD'] = os.environ['ADMIN_PASSWORD']
 except:
     import settings
@@ -46,7 +44,6 @@ except:
     app.secret_key = settings.SECRET_KEY
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = settings.SQLALCHEMY_TRACK_MODIFICATIONS
     app.config['SQLALCHEMY_DATABASE_URI'] = settings.DATABASE_URL
-    app.config['BASIC_AUTH_USERNAME'] = settings.ADMIN_USERNAME
     app.config['BASIC_AUTH_PASSWORD'] = settings.ADMIN_PASSWORD
 
 db = SQLAlchemy(app)
@@ -270,6 +267,7 @@ def confirmation():
         c.declined = False
         db.session.add(c)
         db.session.commit()
+        send_confirmed_email(u)
         return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
             tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
             msg="Your confirmation application has been submitted!", allow=ALLOW)
@@ -279,6 +277,8 @@ def admin_main():
     u = get_hacker(request)
     if not u:
         return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
     stats = get_stats()
     return render_template("admin-stats.html", highlight="admin", user=u,
         stats=stats, adminHighlight="stats")
@@ -307,14 +307,14 @@ def get_stats():
                 "confirmed": 0,
                 "declined": 0
             }
-            if a.accepted:
-                schools[a.school]['accepted']+=1
-            if a.waitlisted:
-                schools[a.school]['waitlisted']+=1
-            if a.rejected:
-                schools[a.school]['rejected']+=1
-            if a.app_complete:
-                schools[a.school]['complete']+=1
+        if a.accepted:
+            schools[a.school]['accepted']+=1
+        if a.waitlisted:
+            schools[a.school]['waitlisted']+=1
+        if a.rejected:
+            schools[a.school]['rejected']+=1
+        if a.app_complete:
+            schools[a.school]['complete']+=1
 
     for c in Confirmation.query.all():
         school = c.hacker.application[0].school
@@ -377,11 +377,18 @@ def admin_users():
     u = get_hacker(request)
     if not u:
         return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
     return render_template("admin-users.html", highlight="admin",
         all_hackers=Hacker.query.all(), user=u, adminHighlight="users")
 
 @app.route('/admin/acceptUser/<user_id>', methods=["GET", "POST"])
 def accept_user(user_id):
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
     try:
         a = Application.query.filter_by(id=user_id).first()
         a.accepted = True
@@ -402,6 +409,11 @@ def accept_user(user_id):
 
 @app.route('/admin/waitlistUser/<user_id>', methods=["GET", "POST"])
 def waitlist_user(user_id):
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
     try:
         a = Application.query.filter_by(id=user_id).first()
         a.accepted = False
@@ -417,6 +429,11 @@ def waitlist_user(user_id):
 
 @app.route('/admin/rejectUser/<user_id>', methods=["GET", "POST"])
 def reject_user(user_id):
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
     try:
         a = Application.query.filter_by(id=user_id).first()
         a.accepted = False
@@ -426,6 +443,45 @@ def reject_user(user_id):
         db.session.commit()
         u = a.hacker
         send_rejected_email(u)
+        return Response("Success", status=200)
+    except:
+        return Response("Error", status=400)
+
+@app.route('/make_admin', methods=["GET", "POST"])
+def make_admin_manual():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if request.method == "GET":
+        return render_template("make-admin.html", highlight="", user=u,
+            msg="Please enter the admin password to make yourself an admin!")
+    if request.method == "POST":
+        password = request.form.get('password', '')
+        if password == settings.ADMIN_PASSWORD:
+            u.is_admin = True
+            db.session.add(u)
+            db.session.commit()
+            return render_template("make-admin.html", highlight="", user=u,
+                msg="You are now an admin!")
+        else:
+            return render_template("make-admin.html", highlight="", user=u,
+                msg="Incorrect Password! Try again!")
+
+
+@app.route('/admin/makeAdmin/<user_id>', methods=["GET", "POST"])
+def make_admin(user_id):
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    try:
+        a = Application.query.filter_by(id=user_id).first()
+        u = a.hacker
+        u.is_admin = True
+        db.session.add(u)
+        db.session.commit()
+        u = a.hacker
         return Response("Success", status=200)
     except:
         return Response("Error", status=400)
@@ -467,7 +523,7 @@ def send_waitlisted_email(u):
     e.email = u.email
     e.uuid = str(uuid.uuid1())
     e.subject = "HooHacks Application Status Update"
-    e.message = settings.WAITLISTED_EMAIL.format(u.application[0].full_name, e.uuid)
+    e.message = settings.WAITLISTED_EMAIL.format(u.application[0].full_name)
     e.action = "waitlisted"
     tz = timezone('US/Eastern')
     e.sent = tz.localize(datetime.now())
@@ -483,8 +539,24 @@ def send_rejected_email(u):
     e.email = u.email
     e.uuid = str(uuid.uuid1())
     e.subject = "HooHacks Application Status Update"
-    e.message = settings.REJECTED_EMAIL.format(u.application[0].full_name, e.uuid)
+    e.message = settings.REJECTED_EMAIL.format(u.application[0].full_name)
     e.action = "rejected"
+    tz = timezone('US/Eastern')
+    e.sent = tz.localize(datetime.now())
+    e.redirect_url = "/dashboard"
+    u.emails.append(e)
+    db.session.add(e)
+    db.session.add(u)
+    db.session.commit()
+    send_email(e)
+
+def send_confirmed_email(u):
+    e = Email()
+    e.email = u.email
+    e.uuid = str(uuid.uuid1())
+    e.subject = "HooHacks Spot Confirmed!"
+    e.message = settings.CONFIRMED_EMAIL.format(u.application[0].full_name)
+    e.action = "confirmed"
     tz = timezone('US/Eastern')
     e.sent = tz.localize(datetime.now())
     e.redirect_url = "/dashboard"
@@ -530,6 +602,11 @@ def event_name():
 
 @app.route('/create_users', methods=["GET", "POST"])
 def create_hackers():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
     for k in range(1, 100):
         a = Application()
         a.email = "email" + str(k) + "@gmail.com"

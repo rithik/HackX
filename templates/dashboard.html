@@ -21,7 +21,15 @@
                     UNCONFIRMED
                 {% else %}
                     {% if app.app_complete %}
-                        COMPLETE
+                        {% if app.accepted %}
+                            ACCEPTED
+                        {% elif app.waitlisted %}
+                            WAITLISTED
+                        {% elif app.rejected %}
+                            REJECTED
+                        {% else %}
+                            COMPLETE
+                        {% endif %}
                     {% else %}
                         INCOMPLETE
                     {% endif %}
