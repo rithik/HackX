@@ -131,6 +131,36 @@ def login_page():
             else:
                 return render_template("login_page.html", message="Incorrect Password!")
 
+@app.route('/forgot', methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "GET":
+        return render_template("forgot_password.html", message="Please enter your email address to reset your password!", show=True)
+    if request.method == "POST":
+        email = request.form.get('email', '')
+        u = Hacker.query.filter_by(email=email)
+        if u.count() == 0:
+            return render_template("forgot_password.html", message="There is no user associated with that email address!", show=True)
+        u = u.first()
+        send_password_reset(u)
+        return render_template("forgot_password.html", message="Check your email to reset your password!", show=False)
+
+@app.route('/reset/<email_uuid>', methods=["GET", "POST"])
+def reset_password(email_uuid):
+    if request.method == "GET":
+        return render_template("reset_password.html", message="Please enter a new password!", show=True, euuid=email_uuid)
+    if request.method == "POST":
+        try:
+            e = Email.query.filter_by(uuid=email_uuid).first()
+            email = e.email
+            u = Hacker.query.filter_by(email=email).first()
+            pwd = request.form.get('password', '')
+            u.password = generate_password_hash(pwd)
+            db.session.add(u)
+            db.session.commit()
+            return render_template("reset_password.html", message="Password changed!", show=False)
+        except:
+            return render_template("reset_password.html", message="This url is invalid!", show=False)
+
 @app.route('/dashboard', methods=["GET", "POST"])
 def dashboard():
     u = get_hacker(request)
@@ -560,6 +590,22 @@ def send_confirmed_email(u):
     tz = timezone('US/Eastern')
     e.sent = tz.localize(datetime.now())
     e.redirect_url = "/dashboard"
+    u.emails.append(e)
+    db.session.add(e)
+    db.session.add(u)
+    db.session.commit()
+    send_email(e)
+
+def send_password_reset(u):
+    e = Email()
+    e.email = u.email
+    e.uuid = str(uuid.uuid1())
+    e.subject = "HooHacks Password Reset"
+    e.message = settings.PASSWORD_RESET_EMAIL.format(u.email, e.uuid)
+    e.action = "reset"
+    tz = timezone('US/Eastern')
+    e.sent = tz.localize(datetime.now())
+    e.redirect_url = "/reset/{}".format(e.uuid)
     u.emails.append(e)
     db.session.add(e)
     db.session.add(u)

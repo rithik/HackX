@@ -37,6 +37,10 @@ f = open("emails/verify_email.html", "r")
 VERIFY_EMAIL = f.read()
 f.close()
 
+f = open("emails/password_reset.html", "r")
+PASSWORD_RESET_EMAIL = f.read()
+f.close()
+
 f = open("emails/accepted.html", "r")
 ACCEPTED_EMAIL = f.read()
 f.close()
