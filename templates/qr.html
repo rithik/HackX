@@ -1,0 +1,159 @@
+{% extends "admin.html" %}
+
+{% block title %}Admin - QR System{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/qr.css') }}">
+{% endblock %}
+
+{% block js %}
+    <script src="{{ url_for('static', filename='js/jsQR.js') }}"></script>
+{% endblock %}
+{% block subtitle %}QR System{% endblock %}
+{% block addContent %}
+    <br/>
+    <br/>
+<div class="col-lg-2">
+    </div>
+<div id="qr-main" class="col-lg-8" style="max-width:660px;margin:0 auto;position:relative;">
+  <div id="loadingMessage">🎥 Unable to access video stream (please make sure you have a webcam enabled)</div>
+  <canvas id="canvas" hidden></canvas>
+  <div id="output" hidden>
+    <div style="font-size:24px;" id="outputMessage">No QR code detected.</div>
+    <div style="font-size:24px;" hidden><b></b> <span id="outputData"></span><span id="dietary"></span></div>
+  </div>
+  <ul class="donate-now" id='rates'>
+    <li>
+        <input type="radio" id="check-in" name="typ" checked="checked"/>
+        <label for="check-in">Check In</label>
+    </li>
+    <li>
+        <input type="radio" id="sat-breakfast" name="typ" />
+        <label for="sat-breakfast">Saturday Breakfast</label>
+    </li>
+    <li>
+        <input type="radio" id="sat-lunch" name="typ" />
+        <label for="sat-lunch">Saturday Lunch</label>
+    </li>
+    <li>
+        <input type="radio" id="sat-dinner" name="typ" />
+        <label for="sat-dinner">Saturday Dinner</label>
+    </li>
+    <li>
+        <input type="radio" id="sun-breakfast" name="typ" />
+        <label for="sun-breakfast">Sunday Breakfast</label>
+    </li>
+    <li>
+        <input type="radio" id="sun-lunch" name="typ" />
+        <label for="sun-lunch">Sunday Lunch</label>
+    </li>
+</ul>
+</div>
+<div class="col-lg-2">
+</div>
+    <script type="text/javascript">
+        window.allowed = true;
+        var video = document.createElement("video");
+        var canvasElement = document.getElementById("canvas");
+        var canvas = canvasElement.getContext("2d");
+        var loadingMessage = document.getElementById("loadingMessage");
+        var outputContainer = document.getElementById("output");
+        var outputMessage = document.getElementById("outputMessage");
+        var outputData = document.getElementById("outputData");
+        var dietaryData = document.getElementById("dietary");
+        function drawLine(begin, end, color) {
+            canvas.beginPath();
+            canvas.moveTo(begin.x, begin.y);
+            canvas.lineTo(end.x, end.y);
+            canvas.lineWidth = 4;
+            canvas.strokeStyle = color;
+            canvas.stroke();
+        }
+        // Use facingMode: environment to attemt to get the back camera on phones
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+            video.srcObject = stream;
+            video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+            video.play();
+            requestAnimationFrame(tick);
+        });
+        function tick() {
+            loadingMessage.innerText = "⌛ Loading video..."
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+              loadingMessage.hidden = true;
+              canvasElement.hidden = false;
+              outputContainer.hidden = false;
+              canvasElement.height = video.videoHeight;
+              canvasElement.width = video.videoWidth;
+              canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+              var imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+              var code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: "dontInvert",
+              });
+              if (code && window.allowed) {
+                window.allowed = false;
+                drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+                drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+                drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+                drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+                outputMessage.hidden = true;
+                outputData.parentElement.hidden = false;
+
+                outputData.innerText = code.data;
+                var task = "";
+                var tname = "";
+                if (document.getElementById('check-in').checked){
+                    task = "check-in";
+                    tname = "Registration";
+                }
+                else if (document.getElementById('sat-breakfast').checked){
+                    task = "sat-breakfast";
+                    tname = "Saturday Breakfast";
+                }
+                else if (document.getElementById('sat-lunch').checked){
+                    task = "sat-lunch";
+                    tname = "Saturday Lunch";
+                }
+                else if (document.getElementById('sat-dinner').checked){
+                    task = "sat-dinner";
+                    tname = "Saturday Dinner";
+                }
+                else if (document.getElementById('sun-breakfast').checked){
+                    task = "sun-breakfast";
+                    tname = "Sunday Breakfast";
+                }
+                else if (document.getElementById('sun-lunch').checked){
+                    task = "sun-lunch";
+                    tname = "Saturday Lunch";
+                }
+                var url = window.location.href + "admin/qr/update" + task + "/" + code.data;
+                if (code.data.length == 0){
+                    window.allowed = true;
+                }
+                else{
+                    $.get(url, function( data ) {
+                        if (!data.approved){
+                            outputData.innerText = "❌ " + data.error + " ❌";
+                            return;
+                        }
+                        if (task == "check-in"){
+                            outputData.innerText = "✅ " + data.name  + " has checked in for: " + tname  + ". ✅ " + " \nDietary: " + data.dietary + " \n T-Shirt: " + data.tshirt;
+                        }
+                        else{
+                            outputData.innerText = "✅ " + data.name  + " has checked in for: " + tname  + ". ✅ " + " \nDietary: " + data.dietary;
+                        }
+                    });
+                    setTimeout(function(){
+                        window.allowed = true;
+                    }, 4000);
+                }
+            } else if (window.allowed){
+                outputMessage.hidden = false;
+                outputData.parentElement.hidden = true;
+                dietaryData.innerText = "";
+              }
+            }
+            requestAnimationFrame(tick);
+        }
+    </script>
+{% endblock %}

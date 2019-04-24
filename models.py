@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Foreig
 from sqlalchemy.orm import relationship
 from database import Base
 from werkzeug.security import generate_password_hash, check_password_hash
+import uuid
 from app import db
 
 class Hacker(db.Model):
@@ -27,6 +28,14 @@ class Hacker(db.Model):
 
     emails = db.relationship('Email', backref='hacker',
         lazy=True)
+
+    qr_hash = db.Column(db.String(length=1000), default=str(uuid.uuid1()))
+    checked_in = db.Column(db.Boolean, default=False)
+    sat_breakfast = db.Column(db.Boolean, default=False)
+    sat_lunch = db.Column(db.Boolean, default=False)
+    sat_dinner = db.Column(db.Boolean, default=False)
+    sun_breakfast = db.Column(db.Boolean, default=False)
+    sun_lunch = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<Hacker: {}>'.format(self.email)

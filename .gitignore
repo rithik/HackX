@@ -4,3 +4,5 @@ __pycache__/
 venv/
 *.json
 *.zip
+QR/
+Nametags/

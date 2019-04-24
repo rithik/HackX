@@ -412,6 +412,89 @@ def admin_users():
     return render_template("admin-users.html", highlight="admin",
         all_hackers=Hacker.query.all(), user=u, adminHighlight="users")
 
+@app.route('/admin/qr', methods=["GET", "POST"])
+def admin_qr():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    return render_template("qr.html", highlight="admin", user=u,
+        adminHighlight="qr")
+
+@app.route('/admin/qr/settings', methods=["GET", "POST"])
+def admin_qr_settings():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    return render_template("qr-settings.html", highlight="admin", user=u,
+        all_hackers=[h for h in Hacker.query.all() if len(h.confirmation) > 0],
+        adminHighlight="qr-settings")
+
+@app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])
+def qr_request(typ, num, tf):
+    if tf == "true":
+        tf = True
+    else:
+        tf = False
+    p = Hacker.query.filter_by(qr_hash=num)
+    if p.count() == 0:
+        return jsonify({
+            "approved": False,
+            "error": "ERROR - no user found"
+        })
+    else:
+        p = p.first()
+    err = ""
+    if typ == "check-in":
+        if p.checked_in:
+            err = "already checked in"
+        p.checked_in = tf
+    elif typ == "sat-breakfast":
+        if p.sat_breakfast:
+            err = "already ate Saturday breakfast"
+        p.sat_breakfast = tf
+    elif typ == "sat-lunch":
+        if p.sat_lunch:
+            err = "already ate Saturday lunch"
+        p.sat_lunch = tf
+    elif typ == "sat-dinner":
+        if p.sat_dinner:
+            err = "already ate Saturday dinner"
+        p.sat_dinner = tf
+    elif typ == "sun-breakfast":
+        if p.sun_breakfast:
+            err = "already ate Sunday breakfast"
+        p.sun_breakfast = tf
+    elif typ == "sun-lunch":
+        if p.sun_lunch:
+            err = "already ate Sunday lunch"
+        p.sun_lunch = tf
+    else:
+        return jsonify({
+            "name": p.application[0].full_name,
+            "approved": False,
+            "dietary": u.confirmation[0].dietary,
+            "error": "ERROR - request type not found"
+        })
+    print(err)
+    if not err == "" and tf == True:
+         return jsonify({
+             "approved": False,
+             "error": "ERROR - " + p.application[0].full_name + " has " + err,
+         })
+    db.session.add(p)
+    db.session.commit()
+    return jsonify({
+        "name": p.application[0].full_name,
+        "approved": True,
+        "dietary": p.confirmation[0].dietary,
+        "error": "none",
+        "tshirt": p.confirmation[0].tshirt
+    })
+
 @app.route('/admin/acceptUser/<user_id>', methods=["GET", "POST"])
 def accept_user(user_id):
     u = get_hacker(request)
