@@ -5,4 +5,5 @@ venv/
 *.json
 *.zip
 QR/
-Nametags/
+nametags/
+img.png

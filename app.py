@@ -20,6 +20,7 @@ from pytz import timezone
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import nametag
 
 app = Flask(__name__)
 
@@ -106,6 +107,7 @@ def login_page():
             a.email = email
             u = Hacker()
             u.email = email
+            u.qr_hash = str(uuid.uuid1())
             u.password = generate_password_hash(request.form['password'])
             u.is_hacker = True
             u.application.append(a)
@@ -432,6 +434,18 @@ def admin_qr_settings():
     return render_template("qr-settings.html", highlight="admin", user=u,
         all_hackers=[h for h in Hacker.query.all() if len(h.confirmation) > 0],
         adminHighlight="qr-settings")
+
+@app.route('/admin/nametags', methods=["GET", "POST"])
+def admin_make_nametags():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    for h in Hacker.query.all():
+        if len(h.confirmation) > 0:
+            nametag.make_image(h.application[0].full_name, h.qr_hash)
+    return "Done"
 
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])
 def qr_request(typ, num, tf):
