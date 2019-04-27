@@ -444,7 +444,8 @@ def admin_make_nametags():
         return redirect("/dashboard")
     for h in Hacker.query.all():
         if len(h.confirmation) > 0:
-            nametag.make_image(h.application[0].full_name, h.qr_hash)
+            if h.confirmation[0].confirmed:
+                nametag.make_image(h.application[0].full_name, h.qr_hash)
     return "Done"
 
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])

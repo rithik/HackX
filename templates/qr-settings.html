@@ -33,15 +33,17 @@
   </thead>
   <tbody>
         {% for u in all_hackers %}
-            <tr>
-              <td><center>{{ u.application[0].full_name }}</center></td>
-              <td><center><input type="checkbox" id="{{ u.qr_hash }}-check-in" onclick="updateInput('{{ u.qr_hash }}', 'check-in')" {% if u.checked_in %}checked{% endif %}></center></td>
-              <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-breakbast" onclick="updateInput('{{ u.qr_hash }}', 'sat-breakfast')" {% if u.sat_breakfast %}checked{% endif %}></center></td>
-              <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-lunch" onclick="updateInput('{{ u.qr_hash }}', 'sat-lunch')" {% if u.sat_lunch %}checked{% endif %}></center></td>
-              <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-dinner" onclick="updateInput('{{ u.qr_hash }}', 'sat-dinner')" {% if u.sat_dinner %}checked{% endif %}></center></td>
-              <td><center><input type="checkbox" id="{{ u.qr_hash }}-sun-breakfast" onclick="updateInput('{{ u.qr_hash }}', 'sun-breakfast')" {% if u.sun_breakfast %}checked{% endif %}></center></td>
-              <td><center><input type="checkbox" id="{{ u.qr_hash }}-sun-lunch" onclick="updateInput('{{ u.qr_hash }}', 'sun-lunch')" {% if u.sun_lunch %}checked{% endif %}></center></td>
-            </tr>
+            {% if u.confirmation[0].confirmed %}
+                <tr>
+                  <td><center>{{ u.application[0].full_name }}</center></td>
+                  <td><center><input type="checkbox" id="{{ u.qr_hash }}-check-in" onclick="updateInput('{{ u.qr_hash }}', 'check-in')" {% if u.checked_in %}checked{% endif %}></center></td>
+                  <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-breakbast" onclick="updateInput('{{ u.qr_hash }}', 'sat-breakfast')" {% if u.sat_breakfast %}checked{% endif %}></center></td>
+                  <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-lunch" onclick="updateInput('{{ u.qr_hash }}', 'sat-lunch')" {% if u.sat_lunch %}checked{% endif %}></center></td>
+                  <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-dinner" onclick="updateInput('{{ u.qr_hash }}', 'sat-dinner')" {% if u.sat_dinner %}checked{% endif %}></center></td>
+                  <td><center><input type="checkbox" id="{{ u.qr_hash }}-sun-breakfast" onclick="updateInput('{{ u.qr_hash }}', 'sun-breakfast')" {% if u.sun_breakfast %}checked{% endif %}></center></td>
+                  <td><center><input type="checkbox" id="{{ u.qr_hash }}-sun-lunch" onclick="updateInput('{{ u.qr_hash }}', 'sun-lunch')" {% if u.sun_lunch %}checked{% endif %}></center></td>
+                </tr>
+            {% endif %}
         {% endfor %}
   </tbody>
 </table>
