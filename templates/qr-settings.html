@@ -12,6 +12,8 @@
 {% block subtitle %}QR Settings{% endblock %}
 {% block addContent %}
     <br/>
+    <button type="button" class="btn btn-primary" id="generateNametags">Generate Nametags</button>
+    <br/>
     <br/>
 
     <div class="alert alert-success" role="alert" id="updateMsg" style="display:none;">
@@ -50,6 +52,10 @@
 
 
 <script>
+    $('#generateNametags').click(function(e) {
+        e.preventDefault();  //stop the browser from following
+        window.location.href = window.location.origin + "/admin/nametags";
+    });
     $(document).ready(function() {
         $('#dtBasicExample').dataTable({
             "order": [[ 0, "desc" ]],

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, Response, make_response
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, Response, make_response, send_file
 from flask_sqlalchemy import SQLAlchemy
 import os
 import random
@@ -21,6 +21,8 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import nametag
+from zipfile import ZipFile
+import glob
 
 app = Flask(__name__)
 
@@ -446,7 +448,10 @@ def admin_make_nametags():
         if len(h.confirmation) > 0:
             if h.confirmation[0].confirmed:
                 nametag.make_image(h.application[0].full_name, h.qr_hash)
-    return "Done"
+    with ZipFile('nametags/nametags.zip','w') as zip:
+        for file in glob.glob("nametags/*.png"):
+            zip.write(file)
+    return send_file('nametags/nametags.zip', attachment_filename='nametags.zip')
 
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])
 def qr_request(typ, num, tf):
