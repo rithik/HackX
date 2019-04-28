@@ -52,6 +52,12 @@
 </div>
 <div class="col-lg-2">
 </div>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
     <script type="text/javascript">
         window.allowed = true;
         var video = document.createElement("video");
@@ -126,7 +132,7 @@
                     task = "sun-lunch";
                     tname = "Saturday Lunch";
                 }
-                var url = window.location.href + "admin/qr/update" + task + "/" + code.data;
+                var url = window.location.origin + "/admin/qr/update/" + task + "/" + code.data + "/true";
                 if (code.data.length == 0){
                     window.allowed = true;
                 }

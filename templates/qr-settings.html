@@ -37,7 +37,7 @@
                 <tr>
                   <td><center>{{ u.application[0].full_name }}</center></td>
                   <td><center><input type="checkbox" id="{{ u.qr_hash }}-check-in" onclick="updateInput('{{ u.qr_hash }}', 'check-in')" {% if u.checked_in %}checked{% endif %}></center></td>
-                  <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-breakbast" onclick="updateInput('{{ u.qr_hash }}', 'sat-breakfast')" {% if u.sat_breakfast %}checked{% endif %}></center></td>
+                  <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-breakfast" onclick="updateInput('{{ u.qr_hash }}', 'sat-breakfast')" {% if u.sat_breakfast %}checked{% endif %}></center></td>
                   <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-lunch" onclick="updateInput('{{ u.qr_hash }}', 'sat-lunch')" {% if u.sat_lunch %}checked{% endif %}></center></td>
                   <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-dinner" onclick="updateInput('{{ u.qr_hash }}', 'sat-dinner')" {% if u.sat_dinner %}checked{% endif %}></center></td>
                   <td><center><input type="checkbox" id="{{ u.qr_hash }}-sun-breakfast" onclick="updateInput('{{ u.qr_hash }}', 'sun-breakfast')" {% if u.sun_breakfast %}checked{% endif %}></center></td>
@@ -58,13 +58,17 @@
     });
     function updateInput(qr, typ){
         var id = qr + '-' + typ;
+        console.log(id);
         if (document.getElementById(id).checked == true){
             tf = "true";
         }
         else{
             tf = "false";
         }
+        var url = "/admin/qr/update/" + typ + "/" + qr + "/" + tf;
+        console.log(url);
         $.get( "/admin/qr/update/" + typ + "/" + qr + "/" + tf, function( data, textStatus, xhr ) {
+            console.log(data);
             if (data.approved == true){
                 console.log("DONE!");
                 document.getElementById('updateMsg').style.display = "";
