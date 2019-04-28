@@ -29,6 +29,9 @@ class Hacker(db.Model):
     emails = db.relationship('Email', backref='hacker',
         lazy=True)
 
+    tickets = db.relationship('Ticket', backref='hacker',
+        lazy=True)
+
     qr_hash = db.Column(db.String(length=1000), default=str(uuid.uuid1()))
     checked_in = db.Column(db.Boolean, default=False)
     sat_breakfast = db.Column(db.Boolean, default=False)
@@ -113,3 +116,38 @@ class Email(db.Model):
 
     def __repr__(self):
         return '<Confirmation: {}>'.format(self.email)
+
+class Mentor(db.Model):
+    __tablename__ = 'mentors'
+    id = db.Column(db.Integer, primary_key=True)
+
+    email = db.Column(db.String(length=1000), unique=True)
+    password = db.Column(db.String(length=1000))
+    hash = db.Column(db.String(length=1000), default="")
+
+    company = db.Column(db.String(length=1000))
+
+    tickets = db.relationship('Ticket', backref='mentor',
+        lazy=True)
+
+    def __repr__(self):
+        return '<Mentor: {}>'.format(self.email)
+
+class Ticket(db.Model):
+    __tablename__ = 'tickets'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(length=1000))
+
+    question = db.Column(db.String(length=10000))
+    location = db.Column(db.String(length=10000))
+    contact = db.Column(db.String(length=10000))
+
+    status = db.Column(db.String(length=1000))
+
+    hackerid = db.Column(db.Integer, db.ForeignKey('hackers.id'),
+        nullable=False)
+
+    mentorid = db.Column(db.Integer, db.ForeignKey('mentors.id'))
+
+    def __repr__(self):
+        return '<Ticket: {}>'.format(self.question)
