@@ -18,6 +18,8 @@ class Hacker(db.Model):
 
     is_admin = db.Column(db.Boolean, default=False)
 
+    is_mentor = db.Column(db.Boolean, default=False)
+
     verified = db.Column(db.Boolean, default=False)
 
     application = db.relationship('Application', backref='hacker',
@@ -117,22 +119,6 @@ class Email(db.Model):
     def __repr__(self):
         return '<Confirmation: {}>'.format(self.email)
 
-class Mentor(db.Model):
-    __tablename__ = 'mentors'
-    id = db.Column(db.Integer, primary_key=True)
-
-    email = db.Column(db.String(length=1000), unique=True)
-    password = db.Column(db.String(length=1000))
-    hash = db.Column(db.String(length=1000), default="")
-
-    company = db.Column(db.String(length=1000))
-
-    tickets = db.relationship('Ticket', backref='mentor',
-        lazy=True)
-
-    def __repr__(self):
-        return '<Mentor: {}>'.format(self.email)
-
 class Ticket(db.Model):
     __tablename__ = 'tickets'
     id = db.Column(db.Integer, primary_key=True)
@@ -147,7 +133,7 @@ class Ticket(db.Model):
     hackerid = db.Column(db.Integer, db.ForeignKey('hackers.id'),
         nullable=False)
 
-    mentorid = db.Column(db.Integer, db.ForeignKey('mentors.id'))
+    mentorid = db.Column(db.Integer)
 
     def __repr__(self):
         return '<Ticket: {}>'.format(self.question)

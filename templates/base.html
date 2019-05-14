@@ -71,6 +71,12 @@
                         Confirmation
                     </a>
                 </li>
+                <li {% if highlight=="ticket" %} class="active" {% endif %}>
+                    <a href="/tickets">
+                        <i class="fas fa-user"></i>
+                        Support Ticket
+                    </a>
+                </li>
                 {% endif %}
                 {% if user.is_admin %}
                     <li {% if highlight=="admin" %} class="active" {% endif %}>

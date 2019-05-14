@@ -453,6 +453,15 @@ def admin_make_nametags():
             zip.write(file)
     return send_file('nametags/nametags.zip', attachment_filename='nametags.zip')
 
+
+@app.route('/tickets', methods=["GET", "POST"])
+def tickets_main():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    another_one = True if len(u.tickets) < settings.MAX_NUMBER_TICKETS else False
+    return render_template("tickets.html", highlight="ticket", user=u, tickets=u.tickets, can_create_more=another_one)
+
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])
 def qr_request(typ, num, tf):
     if tf == "true":
@@ -580,7 +589,7 @@ def reject_user(user_id):
     except:
         return Response("Error", status=400)
 
-@app.route('/make_admin', methods=["GET", "POST"])
+@app.route('/make/admin', methods=["GET", "POST"])
 def make_admin_manual():
     u = get_hacker(request)
     if not u:
@@ -600,6 +609,25 @@ def make_admin_manual():
             return render_template("make-admin.html", highlight="", user=u,
                 msg="Incorrect Password! Try again!")
 
+@app.route('/make/mentor', methods=["GET", "POST"])
+def make_mentor_manual():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if request.method == "GET":
+        return render_template("make-mentor.html", highlight="", user=u,
+            msg="Please enter the mentor password to make yourself a mentor!")
+    if request.method == "POST":
+        password = request.form.get('password', '')
+        if password == settings.MENTOR_PASSWORD:
+            u.is_mentor = True
+            db.session.add(u)
+            db.session.commit()
+            return render_template("make-mentor.html", highlight="", user=u,
+                msg="You are now an mentor!")
+        else:
+            return render_template("make-mentor.html", highlight="", user=u,
+                msg="Incorrect Password! Try again!")
 
 @app.route('/admin/makeAdmin/<user_id>', methods=["GET", "POST"])
 def make_admin(user_id):
