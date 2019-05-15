@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Support Tickets{% endblock %}
+
+{% block content %}
+
+    <h2 class="main-title"> <center>Support Tickets</center> </h2>
+    <hr style="width:50%">
+    <br/>
+    <div class="card" class="main-card">
+      <div class="card-body">
+        <h4 class="card-title"><center>Create New Support Ticket</center></h4>
+        <div class="form-group">
+          <label for="help">What do you need help with?</label>
+          <br/>
+             <input type="text" required class="form-control" id="help" placeholder="Specify the problem and the platform you need help with" name="help">
+         </div>
+         <div class="form-group">
+           <label for="where">Where are you located?</label>
+           <br/>
+              <input type="text" required class="form-control" id="where" placeholder="Specify building name, room number and where you're located in the room" name="where">
+          </div>
+          <div class="row">
+              <div class="col-lg-1">
+              </div>
+              <div class="col-lg-10">
+                  <button class="btn btn-lg btn-primary btn-block text-uppercase" onclick="createTicket()" name="create-ticket">Submit Ticket</button>
+              </div>
+              <div class="col-lg-1">
+              </div>
+          </div>
+      </div>
+    </div>
+    <br/>
+    <br/>
+    <h2 class="main-title"> <center>My Tickets</center> </h2>
+    <hr style="width:50%">
+    <br/>
+    {% for t in tickets %}
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title"><center>Ticket #{{ t.id }}</center></h4>
+            <b>Question: </b> {{ t.question }} <br/>
+            <b>Location: </b> {{ t.location }} <br/>
+            <b>Contact Phone Number: </b> {{ t.contact }} <br/>
+            <b>Status: </b> {{ t.status }}
+          </div>
+        </div>
+    {% endfor %}
+
+    <script>
+        var email = '{{ user.email }}';
+        function createTicket(){
+            var postData = {
+                help: document.getElementById("help").value,
+                where: document.getElementById("where").value,
+                email: email
+            }
+            $.post( "/tickets/create", postData, function(data) {
+              console.log(data);
+            });
+        }
+    </script>
+
+{% endblock %}

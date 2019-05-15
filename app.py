@@ -52,11 +52,17 @@ except:
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from models import Hacker, Application, Confirmation, Email
+from models import Hacker, Application, Confirmation, Email, Ticket
 
 def get_hacker(request):
     login_hash = request.cookies.get('login_hash')
     u = Hacker.query.filter_by(hash=login_hash)
+    if u.count() == 0:
+        return False
+    return u.first()
+
+def get_hacker_from_email(email):
+    u = Hacker.query.filter_by(email=email)
     if u.count() == 0:
         return False
     return u.first()
@@ -459,8 +465,38 @@ def tickets_main():
     u = get_hacker(request)
     if not u:
         return redirect("/logout")
-    another_one = True if len(u.tickets) < settings.MAX_NUMBER_TICKETS else False
-    return render_template("tickets.html", highlight="ticket", user=u, tickets=u.tickets, can_create_more=another_one)
+    # another_one = True if len(u.tickets) < settings.MAX_NUMBER_TICKETS else False
+    return render_template("tickets.html", highlight="ticket", user=u, tickets=u.tickets)#, can_create_more=another_one)
+
+@app.route('/tickets/create', methods=["GET", "POST"])
+def create_ticket():
+    email = request.form.get('email', '')
+    u = get_hacker_from_email(email)
+    if not u:
+        return jsonify({
+            "message": "Invalid Email Address",
+            "code": "403"
+        })
+    t = Ticket()
+    t.email = email
+    t.location = request.form.get('where', '')
+    t.question = request.form.get('help', '')
+    t.hackerid = u.id
+    try:
+        c = u.confirmation[0]
+    except:
+        return jsonify({
+            "message": "Error finding application",
+            "code": "403"
+        })
+    t.contact = c.phone
+    t.status = "Unclaimed"
+    db.session.add(t)
+    db.session.commit()
+    return jsonify({
+        "code" : "200",
+        "message": "success"
+    })
 
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])
 def qr_request(typ, num, tf):
