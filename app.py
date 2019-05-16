@@ -267,7 +267,6 @@ def application():
             highlight="application",
             msg="Your application has been submitted!", allow=ALLOW)
 
-
 @app.route('/confirmation', methods=["GET", "POST"])
 def confirmation():
     u = get_hacker(request)
@@ -501,6 +500,32 @@ def create_ticket():
         "status": t.status,
         "question": t.question,
         "location": t.location
+    })
+
+@app.route('/tickets/delete', methods=["GET", "POST"])
+def delete_ticket():
+    email = request.form.get('email', '')
+    u = get_hacker_from_email(email)
+    if not u:
+        return jsonify({
+            "message": "Invalid Email Address",
+            "code": "403"
+        })
+    try:
+        tid = int(request.form.get('tid', ''))
+        t = Ticket.query.filter_by(id=tid).first()
+        if not t.email == u.email:
+            raise AssertionError
+    except:
+        return jsonify({
+            "message": "Error finding ticket",
+            "code": "403"
+        })
+    db.session.delete(t)
+    db.session.commit()
+    return jsonify({
+        "code" : "200",
+        "message": "success"
     })
 
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])
