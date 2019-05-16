@@ -495,7 +495,12 @@ def create_ticket():
     db.session.commit()
     return jsonify({
         "code" : "200",
-        "message": "success"
+        "message": "success",
+        "id": t.id,
+        "contact": t.contact,
+        "status": t.status,
+        "question": t.question,
+        "location": t.location
     })
 
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])

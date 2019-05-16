@@ -7,6 +7,15 @@
     <h2 class="main-title"> <center>Support Tickets</center> </h2>
     <hr style="width:50%">
     <br/>
+
+    <div class="alert alert-success" id="successMessage" style="display:none;">
+      <strong>Successfully created ticket!</strong>
+    </div>
+
+    <div class="alert alert-danger" id="dangerMessage" style="display:none;">
+      <strong>Error creating ticket! Please log out and try again.</strong>
+    </div>
+
     <div class="card" class="main-card">
       <div class="card-body">
         <h4 class="card-title"><center>Create New Support Ticket</center></h4>
@@ -36,17 +45,31 @@
     <h2 class="main-title"> <center>My Tickets</center> </h2>
     <hr style="width:50%">
     <br/>
-    {% for t in tickets %}
-        <div class="card">
+    <div id="tickets">
+    {% for t in tickets|reverse %}
+        <div class="card" id="ticket-{{ t.id }}">
           <div class="card-body">
-            <h4 class="card-title"><center>Ticket #{{ t.id }}</center></h4>
-            <b>Question: </b> {{ t.question }} <br/>
-            <b>Location: </b> {{ t.location }} <br/>
-            <b>Contact Phone Number: </b> {{ t.contact }} <br/>
-            <b>Status: </b> {{ t.status }}
+            <h4 class="card-title" id="ticket-id-{{ t.id }}" style="text-align:center;">Ticket #{{ t.id }}</h4>
+            <b>Question: </b><span id="ticket-question-{{ t.id }}">{{ t.question }}</span><br/>
+            <b>Location: </b><span id="ticket-location-{{ t.id }}">{{ t.location }}</span><br/>
+            <b>Contact Phone Number: </b><span id="ticket-contact-{{ t.id }}">{{ t.contact }}</span><br/>
+            <b>Status: </b><span id="ticket-status-{{ t.id }}">{{ t.status }}</span>
           </div>
         </div>
     {% endfor %}
+
+
+    <div style="display:none;" id="copy-ticket">
+        <div class="card" id="ticket-base">
+          <div class="card-body">
+            <h4 class="card-title" id="ticket-id" style="text-align:center;"></h4>
+            <b>Question: </b><span id="ticket-question"></span><br/>
+            <b>Location: </b><span id="ticket-location"></span><br/>
+            <b>Contact Phone Number: </b><span id="ticket-contact"></span><br/>
+            <b>Status: </b><span id="ticket-status"></span>
+          </div>
+        </div>
+    </div>
 
     <script>
         var email = '{{ user.email }}';
@@ -57,7 +80,51 @@
                 email: email
             }
             $.post( "/tickets/create", postData, function(data) {
-              console.log(data);
+                console.log(data);
+                document.getElementById("help").value = "";
+                document.getElementById("where").value = "";
+                if (data.code == "403"){
+                    var alert = document.getElementById("dangerMessage");
+                    alert.style.display = "";
+                    setTimeout(
+                        function(){
+                            alert.style.display = "none";
+                    }, 3000);
+                    return;
+                }
+                var alert = document.getElementById("successMessage");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+                var copyTicket = document.getElementById("copy-ticket").children[0];
+                var clone = copyTicket.cloneNode(true);
+                clone.id = "ticket-" + data.id;
+                var ticketBody = clone.children[0];
+                window.tb = ticketBody;
+                var ticketTitle = ticketBody.children[0];
+                ticketTitle.id = "ticket-id-" + data.id;
+                ticketTitle.textContent = "Ticket #" + data.id;
+
+                var ticketQuestion = ticketBody.children[2];
+                ticketQuestion.id = "ticket-question-" + data.id;
+                ticketQuestion.textContent = data.question;
+
+                var ticketLocation = ticketBody.children[5];
+                ticketLocation.id = "ticket-location-" + data.id;
+                ticketLocation.textContent = data.location;
+
+                var ticketContact = ticketBody.children[8];
+                ticketContact.id = "ticket-contact-" + data.id;
+                ticketContact.textContent = data.contact;
+
+                var ticketStatus = ticketBody.children[11];
+                ticketStatus.id = "ticket-status-" + data.id;
+                ticketStatus.textContent = data.status;
+
+                var tickets = document.getElementById("tickets");
+                tickets.prepend(clone);
             });
         }
     </script>
