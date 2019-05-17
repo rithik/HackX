@@ -1,0 +1,32 @@
+{% extends "admin.html" %}
+
+{% block title %}Admin - Settings{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}
+{% block subtitle %}Settings{% endblock %}
+{% block addContent %}
+    <br/>
+    <br/>
+
+<div class="col-lg-4">
+    <div class="alert alert-success" style="display:none;">
+        Company Added!
+    </div>
+    <div class="alert alert-danger" style="display:none;">
+        There was an error adding this company!
+    </div>
+    <h4 style="text-align:center">Mentor Companies</h4>
+    <ul>
+        {% for c in companies %}
+            <li>{{ c.name }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

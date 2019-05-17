@@ -528,6 +528,22 @@ def delete_ticket():
         "message": "success"
     })
 
+@app.route('/add/company', methods=["GET", "POST"])
+def add_company():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    if request.method == "POST":
+        company_name = request.form.get('company', '')
+        c = Company()
+        c.name = company_name
+        db.session.add(c)
+        db.session.commit()
+        return render_template("settings.html", highlight="admin", user=u,
+            adminHighlight="settings", msg="Company Added!")
+
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])
 def qr_request(typ, num, tf):
     if tf == "true":

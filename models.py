@@ -19,6 +19,7 @@ class Hacker(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     is_mentor = db.Column(db.Boolean, default=False)
+    company_name = db.Column(db.String(length=1000), default="")
 
     verified = db.Column(db.Boolean, default=False)
 
@@ -32,6 +33,9 @@ class Hacker(db.Model):
         lazy=True)
 
     tickets = db.relationship('Ticket', backref='hacker',
+        lazy=True)
+
+    company = db.relationship('Company', backref='hacker',
         lazy=True)
 
     qr_hash = db.Column(db.String(length=1000), default=str(uuid.uuid1()))
@@ -134,6 +138,17 @@ class Ticket(db.Model):
         nullable=False)
 
     mentorid = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Ticket: {}>'.format(self.question)
+
+class Company(db.Model):
+    __tablename__ = 'companies'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(length=1000), default="")
+
+    mentors = db.Column(db.Integer, db.ForeignKey('hackers.id'),
+        nullable=False)
 
     def __repr__(self):
         return '<Ticket: {}>'.format(self.question)
