@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Support Tickets{% endblock %}
+
+{% block content %}
+
+    <h2 class="main-title"> <center>All Unclaimed Tickets</center> </h2>
+    <hr style="width:50%">
+    <br/>
+
+    <div class="alert alert-success" id="successMessage" style="display:none;">
+        <strong>Successfully created ticket!</strong>
+      </div>
+  
+      <div class="alert alert-danger" id="dangerMessage" style="display:none;">
+        <strong>Error creating ticket! Please log out and try again.</strong>
+      </div>
+  
+      <div class="alert alert-success" id="successMessageDelete" style="display:none;">
+        <strong>Successfully deleted ticket!</strong>
+      </div>
+
+      <div class="alert alert-success" id="successMessageClaim" style="display:none;">
+        <strong>Successfully claimed ticket!</strong>
+      </div>
+
+        <div class="alert alert-success" id="successMessageUnclaim" style="display:none;">
+            <strong>Successfully unclaimed ticket!</strong>
+        </div>
+  
+      <div class="alert alert-danger" id="dangerMessageDelete" style="display:none;">
+        <strong>Error claiming ticket! Please log out and try again.</strong>
+      </div>
+
+      <br/>
+      
+    <div id="tickets">
+    {% for t in tickets|reverse %}
+        <div class="card" id="ticket-{{ t.id }}">
+          <div class="card-body">
+            <div class="row">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-8">
+                    <h4 class="card-title" id="ticket-id-{{ t.id }}" style="text-align:center;">Ticket #{{ t.id }}</h4>
+                </div>
+                <div class="col-sm-2">
+                </div>
+            </div>
+            <b>Question: </b><span id="ticket-question-{{ t.id }}">{{ t.question }}</span><br/>
+            <b>Location: </b><span id="ticket-location-{{ t.id }}">{{ t.location }}</span><br/>
+            <b>Ticket Submitted Name: </b><span id="ticket-user-name-{{ t.id }}">{{ t.full_name }}</span><br/>
+            <b>Contact Phone Number: </b><span id="ticket-contact-{{ t.id }}">{{ t.contact }}</span><br/>
+            <b>Status: </b><span id="ticket-status-{{ t.id }}">{{ t.status }}</span>
+            <br/>
+
+            <div class="row">
+                <div class="col-sm-3">
+                </div>
+                <div class="col-sm-6">
+                    {% if not t.claimedByMe %}
+                        <button type="button" id="ticket-claim-button-{{ t.id }}" class="btn btn-primary" data-id="{{ t.id }}" onclick="claimTicket('{{ t.id }}', '{{ user.email }}')" style="align:right;"><i class="fa fa-check" aria-hidden="true"></i> Claim Ticket</button>
+                    {% else %}
+                    <button type="button" id="ticket-claim-button-{{ t.id }}" class="btn btn-warning" data-id="{{ t.id }}" onclick="unClaimTicket('{{ t.id }}', '{{ user.email }}')" style="align:right;"><i class="fa fa-times" aria-hidden="true"></i> Unclaim Ticket</button>
+                    {% endif %}
+                        <button type="button" class="btn btn-danger" data-id="{{ t.id }}" onclick="deleteTicket('{{ t.id }}', '{{ t.email }}')" style="align:right;"><i class="fa fa-trash" aria-hidden="true"></i> Delete Ticket</button>
+                </div>
+                <div class="col-sm-3">
+                </div>
+            </div>
+
+          </div>
+        </div>
+    {% endfor %}
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
+
+    <script>
+        var socket = io();
+        socket.on('connect', function() {
+            socket.emit('my event', {data: 'I\'m connected!'});
+        });
+        function createTicket(){
+            var postData = {
+                help: document.getElementById("help").value,
+                where: document.getElementById("where").value,
+                email: email
+            }
+            $.post( "/tickets/create", postData, function(data) {
+                console.log(data);
+                document.getElementById("help").value = "";
+                document.getElementById("where").value = "";
+                if (data.code == "403"){
+                    var alert = document.getElementById("dangerMessage");
+                    alert.style.display = "";
+                    setTimeout(
+                        function(){
+                            alert.style.display = "none";
+                    }, 3000);
+                    return;
+                }
+                var alert = document.getElementById("successMessage");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+                var copyTicket = document.getElementById("copy-ticket").children[0];
+                var clone = copyTicket.cloneNode(true);
+                clone.id = "ticket-" + data.id;
+                var ticketBody = clone.children[0];
+                window.tb = ticketBody;
+                var ticketTitle = ticketBody.children[0].children[1].children[0];
+                ticketTitle.id = "ticket-id-" + data.id;
+                ticketTitle.textContent = "Ticket #" + data.id;
+
+                var ticketDelete = ticketBody.children[0].children[2].children[0];
+                ticketDelete.setAttribute("data-id", data.id);
+                ticketDelete.onclick = function(){
+                    deleteTicket(data.id);
+                }
+
+                var ticketQuestion = ticketBody.children[2];
+                ticketQuestion.id = "ticket-question-" + data.id;
+                ticketQuestion.textContent = data.question;
+
+                var ticketLocation = ticketBody.children[5];
+                ticketLocation.id = "ticket-location-" + data.id;
+                ticketLocation.textContent = data.location;
+
+                var ticketContact = ticketBody.children[8];
+                ticketContact.id = "ticket-contact-" + data.id;
+                ticketContact.textContent = data.contact;
+
+                var ticketStatus = ticketBody.children[11];
+                ticketStatus.id = "ticket-status-" + data.id;
+                ticketStatus.textContent = data.status;
+
+                var tickets = document.getElementById("tickets");
+                tickets.prepend(clone);
+            });
+        }
+        function deleteTicket(id, email){
+            console.log(id);
+            var postData = {
+                tid: id,
+                email: email
+            }
+            $.post( "/tickets/delete", postData, function(data) {
+                if (data.code == "403"){
+                    var alert = document.getElementById("dangerMessageDelete");
+                    alert.style.display = "";
+                    setTimeout(
+                        function(){
+                            alert.style.display = "none";
+                    }, 3000);
+                    return;
+                }
+                var alert = document.getElementById("successMessageDelete");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+                var ticketID = "ticket-" + id;
+                var ticket = document.getElementById(ticketID);
+                ticket.remove();
+            });
+        }
+
+        function claimTicket(id, email){
+            var postData = {
+                tid: id,
+                email: email
+            }
+            $.post( "/mentor/tickets/claim", postData, function(data) {
+                if (data.code == "403"){
+                    var alert = document.getElementById("dangerMessageDelete");
+                    alert.style.display = "";
+                    setTimeout(
+                        function(){
+                            alert.style.display = "none";
+                    }, 3000);
+                    return;
+                }
+                var alert = document.getElementById("successMessageClaim");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+                var ticketStatusElement = "ticket-status-" + id;
+                document.getElementById(ticketStatusElement).innerHTML = data.status;
+                var claimTicketButton = "ticket-claim-button-" + id;
+                document.getElementById(claimTicketButton).className = "btn btn-warning";
+                document.getElementById(claimTicketButton).innerHTML = '<i class="fa fa-times" aria-hidden="true"></i> Unclaim Ticket'; 
+                document.getElementById(claimTicketButton).onclick = function(){
+                    unClaimTicket(id, email);
+                };
+            });
+        }
+
+        function unClaimTicket(id, email){
+            var postData = {
+                tid: id,
+                email: email
+            }
+            $.post( "/mentor/tickets/unclaim", postData, function(data) {
+                if (data.code == "403"){
+                    var alert = document.getElementById("dangerMessageDelete");
+                    alert.style.display = "";
+                    setTimeout(
+                        function(){
+                            alert.style.display = "none";
+                    }, 3000);
+                    return;
+                }
+                var alert = document.getElementById("successMessageUnclaim");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+                var ticketStatusElement = "ticket-status-" + id;
+                document.getElementById(ticketStatusElement).innerHTML = data.status;
+                var claimTicketButton = "ticket-claim-button-" + id;
+                document.getElementById(claimTicketButton).className = "btn btn-primary";
+                document.getElementById(claimTicketButton).innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> Claim Ticket'; 
+                document.getElementById(claimTicketButton).onclick = function(){
+                    claimTicket(id, email);
+                };
+            });
+        }
+    </script>
+
+{% endblock %}

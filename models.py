@@ -12,6 +12,8 @@ class Hacker(db.Model):
     email = db.Column(db.String(length=1000), unique=True)
     password = db.Column(db.String(length=1000))
     hash = db.Column(db.String(length=1000), default="")
+    
+    full_name = db.Column(db.String(length=1000), default="")
 
     application_id = db.Column(db.Integer, default=-1)
     confirmation_id = db.Column(db.Integer, default=-1)

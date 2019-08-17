@@ -23,8 +23,10 @@ from email.mime.multipart import MIMEMultipart
 import nametag
 from zipfile import ZipFile
 import glob
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 try:
     try:
@@ -258,6 +260,8 @@ def application():
         else:
             a.mlh_rules = False
         a.app_complete = True
+        u.full_name = full_name
+        db.session.add(u)
         db.session.add(a)
         db.session.commit()
         return render_template("application.html", user=u, app=a,
@@ -467,6 +471,31 @@ def tickets_main():
     # another_one = True if len(u.tickets) < settings.MAX_NUMBER_TICKETS else False
     return render_template("tickets.html", highlight="ticket", user=u, tickets=u.tickets)#, can_create_more=another_one)
 
+@app.route('/mentor/tickets', methods=["GET", "POST"])
+def mentor_tickets_main():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_mentor:
+        return redirect("/")
+    # another_one = True if len(u.tickets) < settings.MAX_NUMBER_TICKETS else False
+    all_tickets = Ticket.query.all()
+    ticket_data = []
+    for ticket in all_tickets:
+        if ticket.mentorid == u.id or ticket.mentorid == None:
+            a = Application.query.filter_by(email=ticket.hacker.email)
+            ticket_data.append({
+                "question": ticket.question,
+                "location": ticket.location,
+                "full_name": a.first().full_name, 
+                "contact": ticket.contact,
+                "status": ticket.status,
+                "id": ticket.id,
+                "email": ticket.hacker.email,
+                "claimedByMe": True
+            })
+    return render_template("mentor-tickets.html", highlight="mentor-ticket", user=u, tickets=ticket_data)#, can_create_more=another_one)
+
 @app.route('/tickets/create', methods=["GET", "POST"])
 def create_ticket():
     email = request.form.get('email', '')
@@ -528,6 +557,70 @@ def delete_ticket():
         "message": "success"
     })
 
+@app.route('/mentor/tickets/claim', methods=["GET", "POST"])
+def claim_ticket():
+    email = request.form.get('email', '')
+    u = get_hacker_from_email(email)
+    if not u:
+        return jsonify({
+            "message": "Invalid Email Address",
+            "code": "403"
+        })
+    if not u.is_mentor:
+        return jsonify({
+            "message": "Not a mentor",
+            "code": "403"
+        })
+    try:
+        tid = int(request.form.get('tid', ''))
+        t = Ticket.query.filter_by(id=tid).first()
+        t.mentorid = u.id
+        t.status = "Claimed by " + t.hacker.full_name + " - " + t.hacker.company_name
+        db.session.add(t)
+        db.session.commit()
+        return jsonify({
+            "code" : "200",
+            "message": "success",
+            "status": t.status
+        })
+    except:
+        return jsonify({
+            "message": "Error finding ticket",
+            "code": "403"
+        })
+
+@app.route('/mentor/tickets/unclaim', methods=["GET", "POST"])
+def unclaim_ticket():
+    email = request.form.get('email', '')
+    u = get_hacker_from_email(email)
+    if not u:
+        return jsonify({
+            "message": "Invalid Email Address",
+            "code": "403"
+        })
+    if not u.is_mentor:
+        return jsonify({
+            "message": "Not a mentor",
+            "code": "403"
+        })
+    try:
+        tid = int(request.form.get('tid', ''))
+        t = Ticket.query.filter_by(id=tid).first()
+        t.mentorid = None
+        t.status = "Unclaimed"
+        db.session.add(t)
+        db.session.commit()
+        return jsonify({
+            "code" : "200",
+            "message": "success",
+            "status": t.status
+        })
+    except:
+        return jsonify({
+            "message": "Error finding ticket",
+            "code": "403"
+        })
+    
 @app.route('/add/company', methods=["GET", "POST"])
 def add_company():
     u = get_hacker(request)
@@ -701,10 +794,15 @@ def make_mentor_manual():
             msg="Please enter the mentor password to make yourself a mentor!")
     if request.method == "POST":
         password = request.form.get('password', '')
+        company_name = request.form.get('company', '')
+        full_name = request.form.get('name', '')
         if password == settings.MENTOR_PASSWORD:
             u.is_mentor = True
+            u.company_name = company_name
+            u.full_name = full_name
             db.session.add(u)
             db.session.commit()
+
             return render_template("make-mentor.html", highlight="", user=u,
                 msg="You are now an mentor!")
         else:
@@ -899,4 +997,4 @@ def create_hackers():
     return redirect('/dashboard')
 
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app)

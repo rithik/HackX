@@ -74,7 +74,15 @@
                 <li {% if highlight=="ticket" %} class="active" {% endif %}>
                     <a href="/tickets">
                         <i class="fas fa-user"></i>
-                        Support Ticket
+                        Support Tickets
+                    </a>
+                </li>
+                {% endif %}
+                {% if user.is_mentor %}
+                <li {% if highlight=="mentor-ticket" %} class="active" {% endif %}>
+                    <a href="/mentor/tickets">
+                        <i class="fas fa-ticket-alt"></i>
+                        Mentor Tickets
                     </a>
                 </li>
                 {% endif %}

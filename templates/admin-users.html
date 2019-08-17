@@ -161,6 +161,7 @@
     });
     $(function () {
         $(".table-striped").find('tr[data-id]').on('click', function () {
+          console.log($(this).data('status'));
             $('#user-id').html($(this).data('id'));
             $('#full-name').html($(this).data('full-name'));
             $('#email').html($(this).data('email'));
@@ -180,9 +181,22 @@
             console.log($(this).data('app-complete'));
             if ($(this).data('app-complete') == "True"){
                 $("#appOptionButtons")[0].style.display = "";
+                if ($(this).data('accepted') == "True"){
+                  $('#status').html("Accepted");
+                }
+                else if ($(this).data('waitlisted') == "True"){
+                  $('#status').html("Waitlisted");
+                }
+                else if ($(this).data('rejected') == "True"){
+                  $('#status').html("Rejected");
+                }
+                else{
+                  $('#status').html("Unknown - unable to calculate!");
+                }
             }
             else{
                 $("#appOptionButtons")[0].style.display = "none";
+                $('#status').html("Incomplete Application");
             }
             $('#orderModal').modal('show');
         });
