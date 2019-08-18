@@ -47,7 +47,11 @@
             data-hackathons="{{ a.hackathons }}" data-birthday="{{ a.birthday }}" data-travel="{{ a.travel }}"
             data-where-from="{{ a.where_from }}" data-travel-method="{{ a.travel_method }}" data-miles="{{ a.miles }}"
             data-cost="{{ a.cost }}" data-accepted="{{ a.accepted }}" data-waitlisted="{{ a.waitlisted }}"
-            data-declined="{{ a.declined }}" data-app-complete="{{ a.app_complete }}" data-target="#applicationModal">
+            data-declined="{{ a.declined }}" data-app-complete="{{ a.app_complete }}" 
+            {% if u.confirmation|length > 0 %} data-comments="{{ c.notes }}" {% else %} data-comments=""{% endif %}
+
+
+            data-target="#applicationModal">
               <td><center id="{{ a.id }}-status">
                   {% if a.accepted %}
                     <i class="fas fa-check-circle text-success"></i>
@@ -125,6 +129,9 @@
         <br/>
         <br/>
         <b>Status: </b> <span id="status"></span>
+        <br/>
+        <br/>
+        <b>Comments: </b> <span id="comments"></span>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-info" onclick="makeUserAdmin()">Make Admin</button>
@@ -191,13 +198,15 @@
                   $('#status').html("Rejected");
                 }
                 else{
-                  $('#status').html("Unknown - unable to calculate!");
+                  $('#status').html("Application Submitted");
                 }
             }
             else{
                 $("#appOptionButtons")[0].style.display = "none";
                 $('#status').html("Incomplete Application");
             }
+            $('#comments').html($(this).data('comments'));
+            
             $('#orderModal').modal('show');
         });
         $("#dtBasicExample").DataTable().page.len( 100 ).draw();

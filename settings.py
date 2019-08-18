@@ -14,10 +14,10 @@ MAX_NUMBER_TICKETS = 2
 EVENT_NAME = "HooHacks"
 
 tz = timezone('US/Eastern')
-APPLICATION_SUBMISSION_DEADLINE = tz.localize(datetime.datetime(2019, 4, 30, 23, 59, 59, 0))
+APPLICATION_SUBMISSION_DEADLINE = tz.localize(datetime.datetime(2019, 8, 20, 23, 59, 59, 0))
 APPLICATION_SUBMISSION_DEADLINE_FMT = APPLICATION_SUBMISSION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
-APPLICATION_CONFIRMATION_DEADLINE = tz.localize(datetime.datetime(2019, 5, 10, 23, 59, 59, 0))
+APPLICATION_CONFIRMATION_DEADLINE = tz.localize(datetime.datetime(2019, 8, 21, 23, 59, 59, 0))
 APPLICATION_CONFIRMATION_DEADLINE_FMT = APPLICATION_CONFIRMATION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
 SCHOOLS = []
@@ -28,7 +28,7 @@ GENDERS = ["Male", "Female", "Other", "Prefer not to say"]
 TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
 TSHIRT_SIZES = ["XS", "S", "M", "L", "XL"]
 DIETARY_RESTRICTIONS = ["None", "Vegetarian", "Vegan", "Nut Allergy", "Halal", "Other"]
-CITIES = ["Pittsburgh", "Washington, DC", "Richmond", "NYC"] # Test Cities
+CITIES = ["Pittsburgh", "Washington, DC", "Richmond", "NYC", "Charlottesville"] # Test Cities
 
 f = open("schools.csv", "r")
 for school in f:

@@ -724,6 +724,14 @@ def qr_request(typ, num, tf):
          })
     db.session.add(p)
     db.session.commit()
+
+    req_response = {
+        "qr": num,
+        "typ": typ, 
+        "tf": tf
+    }
+
+    socketio.emit('qr-change', req_response, broadcast=True)
     return jsonify({
         "name": p.application[0].full_name,
         "approved": True,
@@ -767,7 +775,7 @@ def waitlist_user(user_id):
     try:
         a = Application.query.filter_by(id=user_id).first()
         a.accepted = False
-        a.watilisted = True
+        a.waitlisted = True
         a.rejected = False
         db.session.add(a)
         db.session.commit()

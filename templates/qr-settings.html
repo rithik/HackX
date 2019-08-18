@@ -50,8 +50,23 @@
   </tbody>
 </table>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
 
 <script>
+    var my_email = "{{ user.email }}";
+    var socket = io();
+    socket.on('connect', function() {
+        console.log("Connected via Socket!");
+    });
+
+    socket.on('qr-change', function(data) {
+        console.log(data);
+        console.log(document.getElementById(data.qr + "-" + data.typ));
+        document.getElementById(data.qr + "-" + data.typ).checked = data.tf;
+    });
+    
+
     $('#generateNametags').click(function(e) {
         e.preventDefault();  //stop the browser from following
         window.location.href = window.location.origin + "/admin/nametags";
