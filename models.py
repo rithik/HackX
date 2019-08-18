@@ -95,6 +95,7 @@ class Confirmation(db.Model):
     phone = db.Column(db.String(length=100), default="")
     github = db.Column(db.String(length=1000), default="")
     notes = db.Column(db.String(length=10000), default="")
+    resume_file_name = db.Column(db.String(length=10000), default="")
 
     confirmed = db.Column(db.Boolean, default=False)
     declined = db.Column(db.Boolean, default=False)

@@ -24,6 +24,8 @@ import nametag
 from zipfile import ZipFile
 import glob
 from flask_socketio import SocketIO, send, emit
+import dropbox 
+import io
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -53,6 +55,8 @@ except:
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 
 from models import Hacker, Application, Confirmation, Email, Ticket
 
@@ -301,6 +305,20 @@ def confirmation():
         phone = request.form.get('phone', '')
         github = request.form.get('github', '')
         notes = request.form.get('notes', '')
+        file = request.files['file']
+        if file.filename == '':
+            return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
+            tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
+            msg="", allow=ALLOW)
+        file_path = ""
+        if file:
+            file_path = '/Resumes/' + str(a.grad_year) + '/' + u.full_name + '-Resume.pdf'
+            dbx.files_upload(file.read(), file_path)
+        else:
+            return render_template("confirmation.html", user=u, app=a, c=c, highlight="confirmation",
+            tshirt_sizes=settings.TSHIRT_SIZES, dietary_restrictions=settings.DIETARY_RESTRICTIONS,
+            msg="", allow=ALLOW)
+        c.resume_file_name = file_path
         c.tshirt = tshirt
         c.dietary = dietary
         c.phone = phone
@@ -653,7 +671,50 @@ def unclaim_ticket():
             "message": "Error finding ticket",
             "code": "403"
         })
-    
+
+@app.route('/download/resumes/<gradYear>', methods=["GET", "POST"])
+def download_resumes(gradYear):
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    try:
+        if gradYear == "all":
+            metadata, zip_file = dbx.files_download_zip("/Resumes/")
+        else:
+            metadata, zip_file = dbx.files_download_zip("/Resumes/" + gradYear + "/")
+        return send_file(io.BytesIO(zip_file.content), attachment_filename='Resumes-{}.zip'.format(gradYear))
+    except:
+        return redirect(resume_book(error=True))
+
+@app.route('/download/resume/me/<uid>', methods=["GET", "POST"])
+def get_my_resume(uid):
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    h = Hacker.query.filter_by(id=uid)
+    if h.count() > 0:
+        h = h.first()
+    else:
+        return "ERROR"
+    c = h.confirmation[0]
+    metadata, r_file = dbx.files_download(c.resume_file_name)
+    file_name = h.full_name + "-Resume.pdf"
+    return send_file(io.BytesIO(r_file.content), attachment_filename=file_name)
+
+
+@app.route('/mentor/resumes', methods=["GET", "POST"])
+def resume_book(error=False):
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin and not u.is_mentor:
+        return redirect("/dashboard")
+    return render_template("resume-book.html", highlight="resume-book", user=u, grad_years=settings.GRADUATION_YEARS, error=error)
+
 @app.route('/add/company', methods=["GET", "POST"])
 def add_company():
     u = get_hacker(request)

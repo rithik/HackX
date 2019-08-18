@@ -86,6 +86,14 @@
                     </a>
                 </li>
                 {% endif %}
+                {% if user.is_mentor or user.is_admin %}
+                <li {% if highlight=="resume-book" %} class="active" {% endif %}>
+                    <a href="/mentor/resumes">
+                        <i class="fas fa-file"></i>
+                        Resume Book
+                    </a>
+                </li>
+                {% endif %}
                 {% if user.is_admin %}
                     <li {% if highlight=="admin" %} class="active" {% endif %}>
                         <a href="/admin">

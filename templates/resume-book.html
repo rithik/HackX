@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Resume Books{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/resume-books.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h2 class="main-title"> <center>Resume Books</center> </h2>
+    <hr style="width:50%">
+
+    <br/>
+    <br/>
+
+    {% if error %}
+      <div class="alert alert-danger" id="noResumes" style="display:none;">
+        <strong>There are no resumes for the year you selected!</strong>
+      </div>
+    {% endif %}
+
+    <h4><center>Click one of the buttons below to download a specific resume book</center></h4>
+
+    <br/>
+    <br/>
+
+      <div class="row">
+
+      <button class="btn btn-md btn-primary btn-block text-uppercase" name="button-type" onclick="downloadFunc('all')">Download all resumes</button>
+        
+
+      {% for year in grad_years %}
+        <button class="btn btn-md btn-primary text-uppercase resume-book-buttons" name="button-type" onclick="downloadFunc('{{ year }}')">Download all {{ year }} resumes</button>
+
+      {% endfor %}
+    </div>
+    
+    <script>
+      function downloadFunc(year){
+        window.location.href = window.location.origin + "/download/resumes/" + year;
+      }
+
+      '{% if error %}'
+      var alert = document.getElementById("noResumes");
+      alert.style.display = "";
+      setTimeout(
+          function(){
+              alert.style.display = "none";
+      }, 3000);
+      '{% endif %}'
+    </script>
+
+{% endblock %}

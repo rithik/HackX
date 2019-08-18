@@ -48,7 +48,21 @@
             data-where-from="{{ a.where_from }}" data-travel-method="{{ a.travel_method }}" data-miles="{{ a.miles }}"
             data-cost="{{ a.cost }}" data-accepted="{{ a.accepted }}" data-waitlisted="{{ a.waitlisted }}"
             data-declined="{{ a.declined }}" data-app-complete="{{ a.app_complete }}" 
-            {% if u.confirmation|length > 0 %} data-comments="{{ c.notes }}" {% else %} data-comments=""{% endif %}
+            {% if u.confirmation|length > 0 %} 
+              data-comments="{{ c.notes }}" 
+              data-github="{{ c.github }}" 
+              data-tshirt="{{ c.tshirt }}" 
+              data-dietary="{{ c.dietary }}" 
+              data-phone="{{ c.phone }}" 
+              data-resume-file-name="{{ c.resume_file_name }}"
+            {% else %} 
+              data-comments=""
+              data-github="" 
+              data-tshirt="" 
+              data-dietary="" 
+              data-phone="" 
+              data-resume-file-name=""
+            {% endif %}
 
 
             data-target="#applicationModal">
@@ -128,6 +142,21 @@
         <b>Cost: </b> <span id="cost"></span>
         <br/>
         <br/>
+        <b>T-Shirt Size: </b> <span id="tshirt"></span>
+        <br/>
+        <br/>
+        <b>Dietary Restrictions: </b> <span id="dietary"></span>
+        <br/>
+        <br/>
+        <b>Phone: </b> <span id="phone"></span>
+        <br/>
+        <br/>
+        <b>Github Username: </b> <span id="github"></span>
+        <br/>
+        <br/>
+        <b>Resume: </b> <span id="resume"></span>
+        <br/>
+        <br/>
         <b>Status: </b> <span id="status"></span>
         <br/>
         <br/>
@@ -185,7 +214,6 @@
             $('#travel-method').html($(this).data('travel-method'));
             $('#miles').html($(this).data('miles'));
             $('#cost').html($(this).data('cost'));
-            console.log($(this).data('app-complete'));
             if ($(this).data('app-complete') == "True"){
                 $("#appOptionButtons")[0].style.display = "";
                 if ($(this).data('accepted') == "True"){
@@ -204,6 +232,16 @@
             else{
                 $("#appOptionButtons")[0].style.display = "none";
                 $('#status').html("Incomplete Application");
+            }
+            $('#tshirt').html($(this).data('tshirt'));
+            $('#dietary').html($(this).data('dietary'));
+            $('#phone').html($(this).data('phone'));
+            $('#github').html($(this).data('github'));
+            if ($(this).data('resume-file-name') == ""){
+              $('#resume').html("");
+            }
+            else{
+              $('#resume').html("<a style='text-decoration: underline;color:blue' target='_blank' href='/download/resume/me/" + $(this).data('id') + "'>View Resume</a>");
             }
             $('#comments').html($(this).data('comments'));
             
