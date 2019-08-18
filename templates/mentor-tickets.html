@@ -9,7 +9,7 @@
     <br/>
 
     <div class="alert alert-success" id="successMessage" style="display:none;">
-        <strong>Successfully created ticket!</strong>
+        <strong>A new ticket was created!</strong>
       </div>
   
       <div class="alert alert-danger" id="dangerMessage" style="display:none;">
@@ -73,14 +73,123 @@
         </div>
     {% endfor %}
     
+
+    <div style="display:none;" id="copy-ticket">
+        <div class="card" id="ticket-base">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-8">
+                        <h4 class="card-title" id="ticket-id" style="text-align:center;"></h4>
+                    </div>
+                    <div class="col-sm-2">
+                    </div>
+                </div>
+            <b>Question: </b><span id="ticket-question"></span><br/>
+            <b>Location: </b><span id="ticket-location"></span><br/>
+            <b>Contact Phone Number: </b><span id="ticket-contact"></span><br/>
+            <b>Status: </b><span id="ticket-status"></span>
+            </div>
+
+            <div class="row" style="padding-bottom: 20px">
+                <div class="col-sm-3">
+                </div>
+                <div class="col-sm-6">
+                        <button type="button" id="ticket-claim-button" class="btn btn-primary" style="align:right;"><i class="fa fa-check" aria-hidden="true"></i> Claim Ticket</button>
+                    
+                        <button type="button" class="btn btn-danger" style="align:right;"><i class="fa fa-trash" aria-hidden="true"></i> Delete Ticket</button>
+                </div>
+                <div class="col-sm-3">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 
 
     <script>
         var socket = io();
         socket.on('connect', function() {
-            socket.emit('my event', {data: 'I\'m connected!'});
+            console.log("Connected via Socket!");
         });
+        socket.on("create-ticket-mentors", function(data){
+            if (data.code == "403"){
+                var alert = document.getElementById("dangerMessage");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+                return;
+            }
+            var alert = document.getElementById("successMessage");
+            alert.style.display = "";
+            setTimeout(
+                function(){
+                    alert.style.display = "none";
+            }, 3000);
+            var copyTicket = document.getElementById("copy-ticket").children[0];
+            var clone = copyTicket.cloneNode(true);
+            clone.id = "ticket-" + data.id;
+            var ticketBody = clone.children[0];
+            window.tb = ticketBody;
+            var ticketTitle = ticketBody.children[0].children[1].children[0];
+            ticketTitle.id = "ticket-id-" + data.id;
+            ticketTitle.textContent = "Ticket #" + data.id;
+
+            var ticketQuestion = ticketBody.children[2];
+            ticketQuestion.id = "ticket-question-" + data.id;
+            ticketQuestion.textContent = data.question;
+
+            var ticketLocation = ticketBody.children[5];
+            ticketLocation.id = "ticket-location-" + data.id;
+            ticketLocation.textContent = data.location;
+
+            var ticketContact = ticketBody.children[8];
+            ticketContact.id = "ticket-contact-" + data.id;
+            ticketContact.textContent = data.contact;
+
+            var ticketStatus = ticketBody.children[11];
+            ticketStatus.id = "ticket-status-" + data.id;
+            ticketStatus.textContent = data.status;
+
+            var ticketButtons = clone.children[1].children[1];
+            if (data.status == "Unclaimed"){
+                var claimTicketButton = ticketButtons.children[0];
+                claimTicketButton.id = "ticket-claim-button-" + data.id;
+                claimTicketButton.className = "btn btn-primary";
+                claimTicketButton.innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> Claim Ticket'; 
+                claimTicketButton.setAttribute("data-id", data.id);
+                claimTicketButton.onclick = function(){
+                    claimTicket(data.id, '{{ user.email }}');
+                };
+            }
+            else{
+                var claimTicketButton = ticketButtons.children[0];
+                claimTicketButton.id = "ticket-claim-button-" + data.id;
+                claimTicketButton.className = "btn btn-warning";
+                claimTicketButton.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i> Claim Ticket'; 
+                claimTicketButton.setAttribute("data-id", data.id);
+                claimTicketButton.onclick = function(){
+                    unClaimTicket(data.id, '{{ user.email }}');
+                };
+            }
+
+            var deleteTicketButton = ticketButtons.children[1];
+            deleteTicketButton.setAttribute("id", data.id);
+            deleteTicketButton.onclick = function(){
+                deleteTicket(data.id, '{{ user.email }}');
+            };
+
+            var tickets = document.getElementById("tickets");
+            tickets.prepend(clone);
+        });
+
+
+
         function createTicket(){
             var postData = {
                 help: document.getElementById("help").value,

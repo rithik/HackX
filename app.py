@@ -23,7 +23,7 @@ from email.mime.multipart import MIMEMultipart
 import nametag
 from zipfile import ZipFile
 import glob
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -521,7 +521,8 @@ def create_ticket():
     t.status = "Unclaimed"
     db.session.add(t)
     db.session.commit()
-    return jsonify({
+    
+    ret_response = {
         "code" : "200",
         "message": "success",
         "id": t.id,
@@ -529,7 +530,11 @@ def create_ticket():
         "status": t.status,
         "question": t.question,
         "location": t.location
-    })
+    }
+
+    socketio.emit('create-ticket-mentors', ret_response, broadcast=True)
+    print(ret_response)
+    return jsonify(ret_response)
 
 @app.route('/tickets/delete', methods=["GET", "POST"])
 def delete_ticket():
@@ -995,6 +1000,14 @@ def create_hackers():
         db.session.add(u)
         db.session.commit()
     return redirect('/dashboard')
+
+@socketio.on('message')
+def handle_message(message):
+    print('received unknown message: ' + message)
+
+@socketio.on('create-ticket')
+def handle_add_(data):
+    socketio.emit('create-ticket-mentors', data, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app)
