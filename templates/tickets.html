@@ -16,6 +16,10 @@
       <strong>Error creating ticket! Please log out and try again.</strong>
     </div>
 
+    <div class="alert alert-success" id="suucessMessageClaimStatus" style="display:none;">
+        <strong>A ticket status has been changed!</strong>
+    </div>
+
     <div class="alert alert-success" id="successMessageDelete" style="display:none;">
       <strong>Successfully deleted ticket!</strong>
     </div>
@@ -97,7 +101,13 @@
         </div>
     </div>
 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
     <script>
+        var socket = io();
+        socket.on('connect', function() {
+            console.log("Connected via Socket!");
+        });
         var email = '{{ user.email }}';
         function createTicket(){
             var postData = {
@@ -165,27 +175,37 @@
                 tid: id,
                 email: email
             }
-            $.post( "/tickets/delete", postData, function(data) {
-                if (data.code == "403"){
-                    var alert = document.getElementById("dangerMessageDelete");
-                    alert.style.display = "";
-                    setTimeout(
-                        function(){
-                            alert.style.display = "none";
-                    }, 3000);
-                    return;
-                }
+            $.post( "/tickets/delete", postData, function(data) {});
+        }
+
+        socket.on('ticket-deleted', function(data){
+            var ticketID = "ticket-" + data.id;
+            var ticket = document.getElementById(ticketID);
+            if (ticket != null && ticket != undefined){
+                ticket.remove();
                 var alert = document.getElementById("successMessageDelete");
                 alert.style.display = "";
                 setTimeout(
                     function(){
                         alert.style.display = "none";
                 }, 3000);
-                var ticketID = "ticket-" + id;
-                var ticket = document.getElementById(ticketID);
-                ticket.remove();
-            });
-        }
+            }
+        });
+
+        socket.on('ticket-status-change', function(data){
+            var ticketID = "ticket-status-" + data.id;
+            var ticket = document.getElementById(ticketID);
+            if (ticket != null && ticket != undefined){
+                ticket.innerHTML= data.status;
+                var alert = document.getElementById("suucessMessageClaimStatus");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+
     </script>
 
 {% endblock %}

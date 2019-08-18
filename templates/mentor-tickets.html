@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h2 class="main-title"> <center>All Unclaimed Tickets</center> </h2>
+    <h2 class="main-title"> <center>My Tickets</center> </h2>
     <hr style="width:50%">
     <br/>
 
@@ -17,7 +17,7 @@
       </div>
   
       <div class="alert alert-success" id="successMessageDelete" style="display:none;">
-        <strong>Successfully deleted ticket!</strong>
+        <strong>A ticket was deleted!</strong>
       </div>
 
       <div class="alert alert-success" id="successMessageClaim" style="display:none;">
@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="col-sm-3">
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6 text-center">
                     {% if not t.claimedByMe %}
                         <button type="button" id="ticket-claim-button-{{ t.id }}" class="btn btn-primary" data-id="{{ t.id }}" onclick="claimTicket('{{ t.id }}', '{{ user.email }}')" style="align:right;"><i class="fa fa-check" aria-hidden="true"></i> Claim Ticket</button>
                     {% else %}
@@ -95,7 +95,7 @@
             <div class="row" style="padding-bottom: 20px">
                 <div class="col-sm-3">
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6 text-center">
                         <button type="button" id="ticket-claim-button" class="btn btn-primary" style="align:right;"><i class="fa fa-check" aria-hidden="true"></i> Claim Ticket</button>
                     
                         <button type="button" class="btn btn-danger" style="align:right;"><i class="fa fa-trash" aria-hidden="true"></i> Delete Ticket</button>
@@ -111,11 +111,48 @@
 
 
     <script>
+        var my_email = "{{ user.email }}";
         var socket = io();
         socket.on('connect', function() {
             console.log("Connected via Socket!");
         });
         socket.on("create-ticket-mentors", function(data){
+            createTicketCB(data);
+        });
+
+        socket.on('ticket-deleted', function(data){
+           deleteTicketCB(data);
+        });
+
+        socket.on('ticket-status-change', function(data){
+           ticketStatusChangeCB(data);
+        });
+
+        function ticketStatusChangeCB(data){
+            console.log(data);
+            console.log(my_email);
+            if (data.status != "Unclaimed"){
+                console.log("Ticket Claimed!");
+                if (my_email == data.mentor_email){
+                    console.log("I Claimed!")
+                    claimTicketCB(data);
+                }
+                else{
+                    deleteTicketCB(data);
+                }
+            }  
+            else{
+                console.log("Ticket unclaimed!");
+                if (my_email == data.mentor_email){
+                    unClaimTicketCB(data);
+                }
+                else{
+                    createTicketCB(data);
+                }
+            }
+        }
+
+        function createTicketCB(data){
             if (data.code == "403"){
                 var alert = document.getElementById("dangerMessage");
                 alert.style.display = "";
@@ -186,96 +223,29 @@
 
             var tickets = document.getElementById("tickets");
             tickets.prepend(clone);
-        });
-
-
-
-        function createTicket(){
-            var postData = {
-                help: document.getElementById("help").value,
-                where: document.getElementById("where").value,
-                email: email
-            }
-            $.post( "/tickets/create", postData, function(data) {
-                console.log(data);
-                document.getElementById("help").value = "";
-                document.getElementById("where").value = "";
-                if (data.code == "403"){
-                    var alert = document.getElementById("dangerMessage");
-                    alert.style.display = "";
-                    setTimeout(
-                        function(){
-                            alert.style.display = "none";
-                    }, 3000);
-                    return;
-                }
-                var alert = document.getElementById("successMessage");
-                alert.style.display = "";
-                setTimeout(
-                    function(){
-                        alert.style.display = "none";
-                }, 3000);
-                var copyTicket = document.getElementById("copy-ticket").children[0];
-                var clone = copyTicket.cloneNode(true);
-                clone.id = "ticket-" + data.id;
-                var ticketBody = clone.children[0];
-                window.tb = ticketBody;
-                var ticketTitle = ticketBody.children[0].children[1].children[0];
-                ticketTitle.id = "ticket-id-" + data.id;
-                ticketTitle.textContent = "Ticket #" + data.id;
-
-                var ticketDelete = ticketBody.children[0].children[2].children[0];
-                ticketDelete.setAttribute("data-id", data.id);
-                ticketDelete.onclick = function(){
-                    deleteTicket(data.id);
-                }
-
-                var ticketQuestion = ticketBody.children[2];
-                ticketQuestion.id = "ticket-question-" + data.id;
-                ticketQuestion.textContent = data.question;
-
-                var ticketLocation = ticketBody.children[5];
-                ticketLocation.id = "ticket-location-" + data.id;
-                ticketLocation.textContent = data.location;
-
-                var ticketContact = ticketBody.children[8];
-                ticketContact.id = "ticket-contact-" + data.id;
-                ticketContact.textContent = data.contact;
-
-                var ticketStatus = ticketBody.children[11];
-                ticketStatus.id = "ticket-status-" + data.id;
-                ticketStatus.textContent = data.status;
-
-                var tickets = document.getElementById("tickets");
-                tickets.prepend(clone);
-            });
         }
+
         function deleteTicket(id, email){
             console.log(id);
             var postData = {
                 tid: id,
                 email: email
             }
-            $.post( "/tickets/delete", postData, function(data) {
-                if (data.code == "403"){
-                    var alert = document.getElementById("dangerMessageDelete");
-                    alert.style.display = "";
-                    setTimeout(
-                        function(){
-                            alert.style.display = "none";
-                    }, 3000);
-                    return;
-                }
+            $.post( "/tickets/delete", postData, function(data) {});
+        }
+
+        function deleteTicketCB(data){
+            var ticketID = "ticket-" + data.id;
+            var ticket = document.getElementById(ticketID);
+            if (ticket != null && ticket != undefined){
+                ticket.remove();
                 var alert = document.getElementById("successMessageDelete");
                 alert.style.display = "";
                 setTimeout(
                     function(){
                         alert.style.display = "none";
                 }, 3000);
-                var ticketID = "ticket-" + id;
-                var ticket = document.getElementById(ticketID);
-                ticket.remove();
-            });
+            }
         }
 
         function claimTicket(id, email){
@@ -293,21 +263,24 @@
                     }, 3000);
                     return;
                 }
-                var alert = document.getElementById("successMessageClaim");
-                alert.style.display = "";
-                setTimeout(
-                    function(){
-                        alert.style.display = "none";
-                }, 3000);
-                var ticketStatusElement = "ticket-status-" + id;
-                document.getElementById(ticketStatusElement).innerHTML = data.status;
-                var claimTicketButton = "ticket-claim-button-" + id;
-                document.getElementById(claimTicketButton).className = "btn btn-warning";
-                document.getElementById(claimTicketButton).innerHTML = '<i class="fa fa-times" aria-hidden="true"></i> Unclaim Ticket'; 
-                document.getElementById(claimTicketButton).onclick = function(){
-                    unClaimTicket(id, email);
-                };
             });
+        }
+
+        function claimTicketCB(data){
+            var alert = document.getElementById("successMessageClaim");
+            alert.style.display = "";
+            setTimeout(
+                function(){
+                    alert.style.display = "none";
+            }, 3000);
+            var ticketStatusElement = "ticket-status-" + data.id;
+            document.getElementById(ticketStatusElement).innerHTML = data.status;
+            var claimTicketButton = "ticket-claim-button-" + data.id;
+            document.getElementById(claimTicketButton).className = "btn btn-warning";
+            document.getElementById(claimTicketButton).innerHTML = '<i class="fa fa-times" aria-hidden="true"></i> Unclaim Ticket'; 
+            document.getElementById(claimTicketButton).onclick = function(){
+                unClaimTicket(data.id, my_email);
+            };
         }
 
         function unClaimTicket(id, email){
@@ -325,22 +298,27 @@
                     }, 3000);
                     return;
                 }
-                var alert = document.getElementById("successMessageUnclaim");
-                alert.style.display = "";
-                setTimeout(
-                    function(){
-                        alert.style.display = "none";
-                }, 3000);
-                var ticketStatusElement = "ticket-status-" + id;
-                document.getElementById(ticketStatusElement).innerHTML = data.status;
-                var claimTicketButton = "ticket-claim-button-" + id;
-                document.getElementById(claimTicketButton).className = "btn btn-primary";
-                document.getElementById(claimTicketButton).innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> Claim Ticket'; 
-                document.getElementById(claimTicketButton).onclick = function(){
-                    claimTicket(id, email);
-                };
             });
+            
         }
+
+        function unClaimTicketCB(data){
+            var alert = document.getElementById("successMessageUnclaim");
+            alert.style.display = "";
+            setTimeout(
+                function(){
+                    alert.style.display = "none";
+            }, 3000);
+            var ticketStatusElement = "ticket-status-" + data.id;
+            document.getElementById(ticketStatusElement).innerHTML = data.status;
+            var claimTicketButton = "ticket-claim-button-" + data.id;
+            document.getElementById(claimTicketButton).className = "btn btn-primary";
+            document.getElementById(claimTicketButton).innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> Claim Ticket'; 
+            document.getElementById(claimTicketButton).onclick = function(){
+                claimTicket(data.id, my_email);
+            };
+        }
+
     </script>
 
 {% endblock %}

@@ -492,7 +492,7 @@ def mentor_tickets_main():
                 "status": ticket.status,
                 "id": ticket.id,
                 "email": ticket.hacker.email,
-                "claimedByMe": True
+                "claimedByMe": False if ticket.status == "Unclaimed" else True
             })
     return render_template("mentor-tickets.html", highlight="mentor-ticket", user=u, tickets=ticket_data)#, can_create_more=another_one)
 
@@ -557,6 +557,14 @@ def delete_ticket():
         })
     db.session.delete(t)
     db.session.commit()
+    ret_response = {
+        "code": "200",
+        "message": "success",
+        "id": tid
+    }
+
+    socketio.emit('ticket-deleted', ret_response, broadcast=True)
+
     return jsonify({
         "code" : "200",
         "message": "success"
@@ -580,14 +588,24 @@ def claim_ticket():
         tid = int(request.form.get('tid', ''))
         t = Ticket.query.filter_by(id=tid).first()
         t.mentorid = u.id
-        t.status = "Claimed by " + t.hacker.full_name + " - " + t.hacker.company_name
+        t.status = "Claimed by " + u.full_name + " - " + u.company_name
         db.session.add(t)
         db.session.commit()
-        return jsonify({
+
+        ret_response = {
             "code" : "200",
             "message": "success",
-            "status": t.status
-        })
+            "id": t.id,
+            "contact": t.contact,
+            "status": t.status,
+            "question": t.question,
+            "location": t.location,
+            "mentor_email": u.email,
+        }
+
+        socketio.emit('ticket-status-change', ret_response, broadcast=True)
+
+        return jsonify(ret_response)
     except:
         return jsonify({
             "message": "Error finding ticket",
@@ -615,11 +633,21 @@ def unclaim_ticket():
         t.status = "Unclaimed"
         db.session.add(t)
         db.session.commit()
-        return jsonify({
+
+        ret_response = {
             "code" : "200",
             "message": "success",
-            "status": t.status
-        })
+            "id": t.id,
+            "contact": t.contact,
+            "status": t.status,
+            "question": t.question,
+            "location": t.location,
+            "mentor_email": u.email,
+        }
+
+        socketio.emit('ticket-status-change', ret_response, broadcast=True)
+
+        return jsonify(ret_response)
     except:
         return jsonify({
             "message": "Error finding ticket",
