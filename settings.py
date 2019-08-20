@@ -60,3 +60,5 @@ f.close()
 f = open("emails/confirmed.html", "r")
 CONFIRMED_EMAIL = f.read()
 f.close()
+
+JUDGING_URL = 'http://localhost:5082/'

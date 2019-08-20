@@ -104,6 +104,14 @@
                         </a>
                     </li>
                 {% endif %}
+                {% if user.is_mentor or user.is_admin %}
+                <li {% if highlight=="judging" %} class="active" {% endif %}>
+                    <a href="/judging/login">
+                        <i class="fas fa-gavel"></i>
+                        Judging <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </li>
+                {% endif %}
                 <li>
                     <a href="/logout">
                         <i class="fas fa-sign-out-alt"></i>

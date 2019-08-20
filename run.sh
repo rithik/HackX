@@ -18,6 +18,7 @@ export FLASK_APP=app
 if [[ $1 == dev ]]; then
     echo "Using Development environment"
     export FLASK_ENV=development
+	export FLASK_DEBUG=1
     flask run
 elif [[ $1 == prod ]]; then
     echo "Using production environment with nohup and gunicorn"
