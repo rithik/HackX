@@ -26,6 +26,7 @@ import glob
 from flask_socketio import SocketIO, send, emit
 import dropbox 
 import io
+import requests
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -715,22 +716,6 @@ def resume_book(error=False):
         return redirect("/dashboard")
     return render_template("resume-book.html", highlight="resume-book", user=u, grad_years=settings.GRADUATION_YEARS, error=error)
 
-@app.route('/add/company', methods=["GET", "POST"])
-def add_company():
-    u = get_hacker(request)
-    if not u:
-        return redirect("/logout")
-    if not u.is_admin:
-        return redirect("/dashboard")
-    if request.method == "POST":
-        company_name = request.form.get('company', '')
-        c = Company()
-        c.name = company_name
-        db.session.add(c)
-        db.session.commit()
-        return render_template("settings.html", highlight="admin", user=u,
-            adminHighlight="settings", msg="Company Added!")
-
 @app.route('/admin/qr/update/<typ>/<num>/<tf>', methods=["GET", "POST"])
 def qr_request(typ, num, tf):
     if tf == "true":
@@ -895,16 +880,17 @@ def make_mentor_manual():
         return render_template("make-mentor.html", highlight="", user=u,
             msg="Please enter the mentor password to make yourself a mentor!")
     if request.method == "POST":
+        mentor_password = request.form.get('mentor_password', '')
         password = request.form.get('password', '')
         company_name = request.form.get('company', '')
         full_name = request.form.get('name', '')
-        if password == settings.MENTOR_PASSWORD:
+        if mentor_password == settings.MENTOR_PASSWORD and check_password_hash(u.password, password):
             u.is_mentor = True
             u.company_name = company_name
             u.full_name = full_name
             db.session.add(u)
             db.session.commit()
-
+            create_judging_account(u, password)
             return render_template("make-mentor.html", highlight="", user=u,
                 msg="You are now an mentor!")
         else:
@@ -1054,6 +1040,61 @@ def send_email(email):
         server.sendmail(
             settings.GMAIL_USERNAME, email.email, message.as_string()
         )
+
+# -----------------------------------------------
+#                  JUDGING
+# -----------------------------------------------
+def create_judging_account(u, password):
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin and not u.is_mentor:
+        return redirect("/dashboard")
+    dictToSend = {
+                  'username': u.email, 
+                  'first_name': u.full_name.split()[0] or u.full_name, 
+                  'last_name': u.full_name.split()[1] or " ", 
+                  'password1': password,
+                  'password2': password
+    }
+    res = requests.post(url=settings.JUDGING_URL + 'register_admin', data=dictToSend)
+    print(res.json())
+    return jsonify(res.json())
+
+
+@app.route('/judging/login', methods=["GET", "POST"])
+def login_judging_account():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin and not u.is_mentor:
+        return redirect("/dashboard")
+    return render_template("judging-password.html", msg="", user=u)
+
+@app.route('/judging/login/complete', methods=["GET", "POST"])
+def login_judging_account_complete():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if not u.is_admin and not u.is_mentor:
+        return redirect("/dashboard")
+    password = request.form.get('password', '')
+    if check_password_hash(u.password, password):
+        dictToSend = {
+                    'username': u.email, 
+                    'password': password,
+        }
+        res = requests.post(url=settings.JUDGING_URL + 'get_auth_token', data=dictToSend)
+        print(res.text)
+        json_dict = res.json()
+        if json_dict["auth_token"] != "":
+            return redirect(settings.JUDGING_URL + 'login_admin/' + json_dict["auth_token"])
+    
+    return render_template("judging-password.html", msg="Incorrect Password", user=u)
+
+# -----------------------------------------------
+#                 END JUDGING
+# -----------------------------------------------
 
 @app.context_processor
 def event_name():

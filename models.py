@@ -36,10 +36,7 @@ class Hacker(db.Model):
 
     tickets = db.relationship('Ticket', backref='hacker',
         lazy=True)
-
-    company = db.relationship('Company', backref='hacker',
-        lazy=True)
-
+        
     qr_hash = db.Column(db.String(length=1000), default=str(uuid.uuid1()))
     checked_in = db.Column(db.Boolean, default=False)
     sat_breakfast = db.Column(db.Boolean, default=False)
@@ -145,13 +142,3 @@ class Ticket(db.Model):
     def __repr__(self):
         return '<Ticket: {}>'.format(self.question)
 
-class Company(db.Model):
-    __tablename__ = 'companies'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(length=1000), default="")
-
-    mentors = db.Column(db.Integer, db.ForeignKey('hackers.id'),
-        nullable=False)
-
-    def __repr__(self):
-        return '<Ticket: {}>'.format(self.question)
