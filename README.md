@@ -1,4 +1,4 @@
-# HackX System
+# HackX
 
 ### Why use this system?
 
