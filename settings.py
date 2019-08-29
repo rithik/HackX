@@ -1,6 +1,7 @@
 import secret
 import datetime
 from pytz import timezone
+import os
 
 DATABASE_URL = os.environ.get('DATABASE_URL', secret.DATABASE_URL)
 SECRET_KEY = os.environ.get('SECRET_KEY', secret.SECRET_KEY)
