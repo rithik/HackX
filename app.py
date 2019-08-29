@@ -197,7 +197,8 @@ def dashboard():
         highlight="dashboard",
         submission_deadline=settings.APPLICATION_SUBMISSION_DEADLINE_FMT,
         confirmation=confirmation,
-        confirmation_deadline=settings.APPLICATION_CONFIRMATION_DEADLINE_FMT)
+        confirmation_deadline=settings.APPLICATION_CONFIRMATION_DEADLINE_FMT, 
+        remind_url=settings.REMIND_URL)
 
 @app.route('/application', methods=["GET", "POST"])
 def application():
@@ -881,16 +882,14 @@ def make_mentor_manual():
             msg="Please enter the mentor password to make yourself a mentor!")
     if request.method == "POST":
         mentor_password = request.form.get('mentor_password', '')
-        password = request.form.get('password', '')
         company_name = request.form.get('company', '')
         full_name = request.form.get('name', '')
-        if mentor_password == settings.MENTOR_PASSWORD and check_password_hash(u.password, password):
+        if mentor_password == settings.MENTOR_PASSWORD:
             u.is_mentor = True
             u.company_name = company_name
             u.full_name = full_name
             db.session.add(u)
             db.session.commit()
-            create_judging_account(u, password)
             return render_template("make-mentor.html", highlight="", user=u,
                 msg="You are now an mentor!")
         else:
@@ -1044,6 +1043,31 @@ def send_email(email):
 # -----------------------------------------------
 #                  JUDGING
 # -----------------------------------------------
+
+@app.route('/make/judge', methods=["GET", "POST"])
+def make_judge_manual():
+    u = get_hacker(request)
+    if not u:
+        return redirect("/logout")
+    if request.method == "GET":
+        return render_template("make-judge.html", highlight="", user=u,
+            msg="Please enter the judge password to make yourself a judge!")
+    if request.method == "POST":
+        judge_password = request.form.get('judge_password', '')
+        if judge_password == settings.JUDGING_PASSWORD:
+            judging_pwd = str(uuid.uuid1())
+            u.is_judge = True
+            u.judging_password = judging_pwd
+            db.session.add(u)
+            db.session.commit()
+            create_judging_account(u, judging_pwd)
+            return render_template("make-judge.html", highlight="", user=u,
+                msg="You are now a judge!")
+        else:
+            return render_template("make-judge.html", highlight="", user=u,
+                msg="Incorrect Password! Try again!")
+
+
 def create_judging_account(u, password):
     u = get_hacker(request)
     if not u:
@@ -1078,20 +1102,18 @@ def login_judging_account_complete():
         return redirect("/logout")
     if not u.is_admin and not u.is_mentor:
         return redirect("/dashboard")
-    password = request.form.get('password', '')
-    if check_password_hash(u.password, password):
-        dictToSend = {
-                    'username': u.email, 
-                    'password': password,
-        }
-        res = requests.post(url=settings.JUDGING_URL + 'get_auth_token', data=dictToSend)
-        print(res.text)
-        json_dict = res.json()
-        if json_dict["auth_token"] != "":
-            return redirect(settings.JUDGING_URL + 'login_admin/' + json_dict["auth_token"])
+    dictToSend = {
+                'username': u.email, 
+                'password': u.judging_password,
+    }
+    res = requests.post(url=settings.JUDGING_URL + 'get_auth_token', data=dictToSend)
+    print(res.text)
+    json_dict = res.json()
+    if json_dict["auth_token"] != "":
+        return redirect(settings.JUDGING_URL + 'login_admin/' + json_dict["auth_token"])
+    else:
+        return render_template("judging-password.html", msg="Judging account not found!", user=u)
     
-    return render_template("judging-password.html", msg="Incorrect Password", user=u)
-
 # -----------------------------------------------
 #                 END JUDGING
 # -----------------------------------------------

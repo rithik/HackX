@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Make me a Judge{% endblock %}
+
+{% block content %}
+    <h2 class="main-title"> <center>Make Myself a Judge</center> </h2>
+    <hr style="width:50%">
+
+    <br/>
+    <br/>
+
+    <form class="form-signin" method="POST" action="/make/judge" style="width:60%; margin:auto; display:block;">
+        {% if not msg == ""  %}
+            <div class="alert alert-success" role="alert">
+                {{ msg }}
+            </div>
+        {% endif %}
+     <div class="form-group">
+       <label for="password">Judging Password (given by Hackathon Organizers)</label>
+       <input type="password" required class="form-control" id="judging-password" placeholder="Password" name="judge_password">
+     </div>
+
+      <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="adminPassword">Make me a judge!</button>
+
+    </form>
+
+{% endblock %}

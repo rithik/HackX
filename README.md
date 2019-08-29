@@ -33,3 +33,4 @@ To setup a user as an admin in the HackX system, navigate to `http://localhost:5
 
 To setup a user as an mentor in the HackX system, navigate to `http://localhost:5000/make/mentor`. Use the `MENTOR_PASSWORD` set in the `secret.py` file.
 
+To setup a user as a judge in the HackX system, navigate to `http://localhost:5000/make/judge`. Use the `JUDGE_PASSWORD` set in the `secret.py` file.

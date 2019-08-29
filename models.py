@@ -21,6 +21,8 @@ class Hacker(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     is_mentor = db.Column(db.Boolean, default=False)
+    is_judge = db.Column(db.Boolean, default=False)
+    judging_password = db.Column(db.String(length=1000), default="")
     company_name = db.Column(db.String(length=1000), default="")
 
     verified = db.Column(db.Boolean, default=False)
