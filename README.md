@@ -27,7 +27,7 @@ When you are using a cloud based database (such as Google Cloud or AWS), use the
 
 ### Things to know
 
-Make sure that your Gmail account is allowed to send emails from less secure apps. Follow directions here: `https://support.google.com/accounts/answer/6010255?hl=en`
+Make sure that your Gmail account is allowed to send emails from less secure apps. Follow directions here: [https://support.google.com/accounts/answer/6010255?hl=en](https://support.google.com/accounts/answer/6010255?hl=en)
 
 To setup a user as an admin in the HackX system, navigate to `http://localhost:5000/make/admin`. Use the `ADMIN_PASSWORD` set in the `secret.py` file.
 
