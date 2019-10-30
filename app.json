@@ -8,7 +8,7 @@
         },
         "GMAIL_USERNAME": {
             "description": "The Gmail account used to send emails to members using the system",
-            "generator": "example@gmail.com"
+            "value": "example@gmail.com"
         },
         "GMAIL_PASSWORD": {
             "description": "The password for for the Gmail account",
@@ -36,7 +36,7 @@
         }
     },
     "addons": [
-        "redis"
+        "heroku-redis"
     ],
     "keywords": ["hackx", "django", "redis", "postegresql", "hackathon"]
 }
