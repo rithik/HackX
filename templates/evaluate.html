@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Judging - Evaluate{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/i18n/defaults-*.min.js"></script> -->
+
+{% endblock %}
+{% block content %}
+    <br/>
+    <br/>
+    <h2 class="main-title"> <center>Judging</center> </h2>
+    <hr style="width:50%">
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="t-selection">Team</label>
+                    <select class="form-control selectpicker" id="team-selection" name='team'>
+                        {% for t in all_teams %}
+                            <option {% if t.id == demo.team.id %} selected {% endif %} value="{{ t.id }}">Table {{ t.table }} - {{ t.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                        <label for="creativity-list">Creativity of Idea</label>
+                        <br/>
+                        <div id="creativity-list" class="btn-group btn-group-toggle" data-toggle="buttons" style="widows: 100%;">
+                            <label class="btn btn-outline-primary {% if demo.creativity == 1 %} active {% endif %}" title="1" style="width: 100px;">
+                                <input type="radio" name="creativity" value="1" required {% if demo.creativity == 1 %} checked {% endif %}>1
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.creativity == 2 %} active {% endif %}" title="2" style="width: 100px;">
+                                <input type="radio" name="creativity" value="2" required {% if demo.creativity == 2 %} checked {% endif %}>2
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.creativity == 3 %} active {% endif %}" title="3" style="width: 100px;">
+                                <input type="radio" name="creativity" value="3" required {% if demo.creativity == 3 %} checked {% endif %}>3
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.creativity == 4 %} active {% endif %}" title="4" style="width: 100px;">
+                                <input type="radio" name="creativity" value="4" required {% if demo.creativity == 4 %} checked {% endif %}>4
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.creativity == 5 %} active {% endif %}" title="5" style="width: 100px;">
+                                <input type="radio" name="creativity" value="5" required {% if demo.creativity == 5 %} checked {% endif %}>5
+                            </label>
+                       </div>
+                </div>
+                
+                <div class="form-group">
+                        <label for="functionality-list">Functionality of Project</label>
+                        <br/>
+                        <div id="functionality-list" class="btn-group btn-group-toggle" data-toggle="buttons" style="widows: 100%;">
+                            <label class="btn btn-outline-primary {% if demo.functionality == 1 %} active {% endif %}" title="1" style="width: 100px;">
+                                <input type="radio" name="functionality" value="1" required {% if demo.functionality == 1 %} checked {% endif %}>1
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.functionality == 2 %} active {% endif %}" title="2" style="width: 100px;">
+                                <input type="radio" name="functionality" value="2" required {% if demo.functionality == 2 %} checked {% endif %}>2
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.functionality == 3 %} active {% endif %}" title="3" style="width: 100px;">
+                                <input type="radio" name="functionality" value="3" required {% if demo.functionality == 3 %} checked {% endif %}>3
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.functionality == 4 %} active {% endif %}" title="4" style="width: 100px;">
+                                <input type="radio" name="functionality" value="4" required {% if demo.functionality == 4 %} checked {% endif %}>4
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.functionality == 5 %} active {% endif %}" title="5" style="width: 100px;">
+                                <input type="radio" name="functionality" value="5" required {% if demo.functionality == 5 %} checked {% endif %}>5
+                            </label>
+                       </div>
+                </div>
+
+                <div class="form-group">
+                        <label for="ui-list">UI/UX (User Experience)</label>
+                        <br/>
+                        <div id="ui-list" class="btn-group btn-group-toggle" data-toggle="buttons" style="widows: 100%;">
+                            <label class="btn btn-outline-primary {% if demo.ui == 1 %} active {% endif %}" title="1" style="width: 100px;">
+                                <input type="radio" name="ui" value="1" required {% if demo.ui == 1 %} checked {% endif %}>1
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.ui == 2 %} active {% endif %}" title="2" style="width: 100px;">
+                                <input type="radio" name="ui" value="2" required {% if demo.ui == 2 %} checked {% endif %}>2
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.ui == 3 %} active {% endif %}" title="3" style="width: 100px;">
+                                <input type="radio" name="ui" value="3" required {% if demo.ui == 3 %} checked {% endif %}>3
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.ui == 4 %} active {% endif %}" title="4" style="width: 100px;">
+                                <input type="radio" name="ui" value="4" required {% if demo.ui == 4 %} checked {% endif %}>4
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.ui == 5 %} active {% endif %}" title="5" style="width: 100px;">
+                                <input type="radio" name="ui" value="5" required {% if demo.ui == 5 %} checked {% endif %}>5
+                            </label>
+                       </div>
+                </div>
+                
+                <div class="form-group">
+                        <label for="impact-list">Impact of Project</label>
+                        <br/>
+                        <div id="impact-list" class="btn-group btn-group-toggle" data-toggle="buttons" style="widows: 100%;">
+                            <label class="btn btn-outline-primary {% if demo.impact == 1 %} active {% endif %}" title="1" style="width: 100px;">
+                                <input type="radio" name="impact" value="1" required {% if demo.impact == 1 %} checked {% endif %}>1
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.impact == 2 %} active {% endif %}" title="2" style="width: 100px;">
+                                <input type="radio" name="impact" value="2" required {% if demo.impact == 2 %} checked {% endif %}>2
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.impact == 3 %} active {% endif %}" title="3" style="width: 100px;">
+                                <input type="radio" name="impact" value="3" required {% if demo.impact == 3 %} checked {% endif %}>3
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.impact == 4 %} active {% endif %}" title="4" style="width: 100px;">
+                                <input type="radio" name="impact" value="4" required {% if demo.impact == 4 %} checked {% endif %}>4
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.impact == 5 %} active {% endif %}" title="5" style="width: 100px;">
+                                <input type="radio" name="impact" value="5" required {% if demo.impact == 5 %} checked {% endif %}>5
+                            </label>
+                       </div>
+                </div>
+
+                <div class="form-group">
+                        <label for="feasibility-list">Feasibility of Project</label>
+                        <br/>
+                        <div id="feasibility-list" class="btn-group btn-group-toggle" data-toggle="buttons" style="widows: 100%;">
+                            <label class="btn btn-outline-primary {% if demo.feasibility == 1 %} active {% endif %}" title="1" style="width: 100px;">
+                                <input type="radio" name="feasibility" value="1" required {% if demo.feasibility == 1 %} checked {% endif %}>1
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.feasibility == 2 %} active {% endif %}" title="2" style="width: 100px;">
+                                <input type="radio" name="feasibility" value="2" required {% if demo.feasibility == 2 %} checked {% endif %}>2
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.feasibility == 3 %} active {% endif %}" title="3" style="width: 100px;">
+                                <input type="radio" name="feasibility" value="3" required {% if demo.feasibility == 3 %} checked {% endif %}>3
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.feasibility == 4 %} active {% endif %}" title="4" style="width: 100px;">
+                                <input type="radio" name="feasibility" value="4" required {% if demo.feasibility == 4 %} checked {% endif %}>4
+                            </label>
+                            <label class="btn btn-outline-primary {% if demo.feasibility == 5 %} active {% endif %}" title="5" style="width: 100px;">
+                                <input type="radio" name="feasibility" value="5" required {% if demo.feasibility == 5 %} checked {% endif %}>5
+                            </label>
+                       </div>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Submit</button>
+               
+
+            </form>
+            
+            
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+{% endblock %}

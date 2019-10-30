@@ -58,7 +58,7 @@
     <hr style="width:50%">
     <br/>
     <div id="tickets">
-    {% for t in tickets|reverse %}
+    {% for t in tickets.reverse %}
         <div class="card" id="ticket-{{ t.id }}">
           <div class="card-body">
             <div class="row">
@@ -104,82 +104,23 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 
     <script>
-        var socket = io();
-        socket.on('connect', function() {
-            console.log("Connected via Socket!");
-        });
-        var email = '{{ user.email }}';
-        function createTicket(){
-            var postData = {
-                help: document.getElementById("help").value,
-                where: document.getElementById("where").value,
-                email: email
-            }
-            $.post( "/tickets/create", postData, function(data) {
-                console.log(data);
-                document.getElementById("help").value = "";
-                document.getElementById("where").value = "";
-                if (data.code == "403"){
-                    var alert = document.getElementById("dangerMessage");
-                    alert.style.display = "";
-                    setTimeout(
-                        function(){
-                            alert.style.display = "none";
-                    }, 3000);
-                    return;
-                }
-                var alert = document.getElementById("successMessage");
-                alert.style.display = "";
-                setTimeout(
-                    function(){
-                        alert.style.display = "none";
-                }, 3000);
-                var copyTicket = document.getElementById("copy-ticket").children[0];
-                var clone = copyTicket.cloneNode(true);
-                clone.id = "ticket-" + data.id;
-                var ticketBody = clone.children[0];
-                window.tb = ticketBody;
-                var ticketTitle = ticketBody.children[0].children[1].children[0];
-                ticketTitle.id = "ticket-id-" + data.id;
-                ticketTitle.textContent = "Ticket #" + data.id;
-
-                var ticketDelete = ticketBody.children[0].children[2].children[0];
-                ticketDelete.setAttribute("data-id", data.id);
-                ticketDelete.onclick = function(){
-                    deleteTicket(data.id);
-                }
-
-                var ticketQuestion = ticketBody.children[2];
-                ticketQuestion.id = "ticket-question-" + data.id;
-                ticketQuestion.textContent = data.question;
-
-                var ticketLocation = ticketBody.children[5];
-                ticketLocation.id = "ticket-location-" + data.id;
-                ticketLocation.textContent = data.location;
-
-                var ticketContact = ticketBody.children[8];
-                ticketContact.id = "ticket-contact-" + data.id;
-                ticketContact.textContent = data.contact;
-
-                var ticketStatus = ticketBody.children[11];
-                ticketStatus.id = "ticket-status-" + data.id;
-                ticketStatus.textContent = data.status;
-
-                var tickets = document.getElementById("tickets");
-                tickets.prepend(clone);
-            });
+        var ws_protocol = 'ws://';
+        if (location.protocol == 'https:'){
+            ws_protocol = 'wss://';
         }
-        function deleteTicket(id){
-            console.log(id);
-            var postData = {
-                tid: id,
-                email: email
-            }
-            $.post( "/tickets/delete", postData, function(data) {});
-        }
+    window.chatSocket = new WebSocket(
+        ws_protocol + window.location.host +
+        '/ws/chat/' + 'main' + '/');
 
-        socket.on('ticket-deleted', function(data){
-            var ticketID = "ticket-" + data.id;
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        console.log(data.message);
+        data = JSON.parse(data.message);
+        console.log(data);
+        var message = data['type'];
+        if (message == 'ticket-deleted'){
+            var tId = data['id'];
+            var ticketID = "ticket-" + tId;
             var ticket = document.getElementById(ticketID);
             if (ticket != null && ticket != undefined){
                 ticket.remove();
@@ -190,10 +131,10 @@
                         alert.style.display = "none";
                 }, 3000);
             }
-        });
-
-        socket.on('ticket-status-change', function(data){
-            var ticketID = "ticket-status-" + data.id;
+        }
+        if (message == 'ticket-status-change'){
+            var tId = data['id'];
+            var ticketID = "ticket-status-" + tId;
             var ticket = document.getElementById(ticketID);
             if (ticket != null && ticket != undefined){
                 ticket.innerHTML= data.status;
@@ -204,7 +145,110 @@
                         alert.style.display = "none";
                 }, 3000);
             }
+        }
+    };
+
+
+    var email = '{{ user.email }}';
+    function createTicket(){
+        var postData = {
+            help: document.getElementById("help").value,
+            where: document.getElementById("where").value,
+            email: email,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.post( "/tickets/create", postData, function(data) {
+            console.log(data);
+            document.getElementById("help").value = "";
+            document.getElementById("where").value = "";
+            if (data.code == "403"){
+                var alert = document.getElementById("dangerMessage");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+                return;
+            }
+            var alert = document.getElementById("successMessage");
+            alert.style.display = "";
+            setTimeout(
+                function(){
+                    alert.style.display = "none";
+            }, 3000);
+            var copyTicket = document.getElementById("copy-ticket").children[0];
+            var clone = copyTicket.cloneNode(true);
+            clone.id = "ticket-" + data.id;
+            var ticketBody = clone.children[0];
+            window.tb = ticketBody;
+            var ticketTitle = ticketBody.children[0].children[1].children[0];
+            ticketTitle.id = "ticket-id-" + data.id;
+            ticketTitle.textContent = "Ticket #" + data.id;
+
+            var ticketDelete = ticketBody.children[0].children[2].children[0];
+            ticketDelete.setAttribute("data-id", data.id);
+            ticketDelete.onclick = function(){
+                deleteTicket(data.id);
+            }
+
+            var ticketQuestion = ticketBody.children[2];
+            ticketQuestion.id = "ticket-question-" + data.id;
+            ticketQuestion.textContent = data.question;
+
+            var ticketLocation = ticketBody.children[5];
+            ticketLocation.id = "ticket-location-" + data.id;
+            ticketLocation.textContent = data.location;
+
+            var ticketContact = ticketBody.children[8];
+            ticketContact.id = "ticket-contact-" + data.id;
+            ticketContact.textContent = data.contact;
+
+            var ticketStatus = ticketBody.children[11];
+            ticketStatus.id = "ticket-status-" + data.id;
+            ticketStatus.textContent = data.status;
+
+            var tickets = document.getElementById("tickets");
+            tickets.prepend(clone);
         });
+    }
+
+    function deleteTicket(id){
+        console.log(id);
+        var postData = {
+            tid: id,
+            email: email,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.post( "/tickets/delete", postData, function(data) {});
+    }
+
+        // socket.on('ticket-deleted', function(data){
+        //     var ticketID = "ticket-" + data.id;
+        //     var ticket = document.getElementById(ticketID);
+        //     if (ticket != null && ticket != undefined){
+        //         ticket.remove();
+        //         var alert = document.getElementById("successMessageDelete");
+        //         alert.style.display = "";
+        //         setTimeout(
+        //             function(){
+        //                 alert.style.display = "none";
+        //         }, 3000);
+        //     }
+        // });
+
+        // socket.on('ticket-status-change', function(data){
+        //     var ticketID = "ticket-status-" + data.id;
+        //     var ticket = document.getElementById(ticketID);
+        //     if (ticket != null && ticket != undefined){
+        //         ticket.innerHTML= data.status;
+        //         var alert = document.getElementById("suucessMessageClaimStatus");
+        //         alert.style.display = "";
+        //         setTimeout(
+        //             function(){
+        //                 alert.style.display = "none";
+        //         }, 3000);
+        //     }
+        // });
 
     </script>
 

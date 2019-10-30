@@ -1,9 +1,9 @@
 {% extends "admin.html" %}
-
+{% load static %}
 {% block title %}Admin - QR Settings{% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
 {% endblock %}
 
 {% block js %}
@@ -35,9 +35,9 @@
   </thead>
   <tbody>
         {% for u in all_hackers %}
-            {% if u.confirmation[0].confirmed %}
+            {% if u.confirmation %}
                 <tr>
-                  <td><center>{{ u.application[0].full_name }}</center></td>
+                  <td><center>{{ u.application.full_name }}</center></td>
                   <td><center><input type="checkbox" id="{{ u.qr_hash }}-check-in" onclick="updateInput('{{ u.qr_hash }}', 'check-in')" {% if u.checked_in %}checked{% endif %}></center></td>
                   <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-breakfast" onclick="updateInput('{{ u.qr_hash }}', 'sat-breakfast')" {% if u.sat_breakfast %}checked{% endif %}></center></td>
                   <td><center><input type="checkbox" id="{{ u.qr_hash }}-sat-lunch" onclick="updateInput('{{ u.qr_hash }}', 'sat-lunch')" {% if u.sat_lunch %}checked{% endif %}></center></td>
@@ -55,16 +55,34 @@
 
 <script>
     var my_email = "{{ user.email }}";
-    var socket = io();
-    socket.on('connect', function() {
-        console.log("Connected via Socket!");
-    });
+    var ws_protocol = 'ws://';
+    if (location.protocol == 'https:'){
+        ws_protocol = 'wss://';
+    }
+    window.chatSocket = new WebSocket(
+        ws_protocol + window.location.host +
+        '/ws/chat/' + 'qr' + '/');
 
-    socket.on('qr-change', function(data) {
-        console.log(data);
-        console.log(document.getElementById(data.qr + "-" + data.typ));
-        document.getElementById(data.qr + "-" + data.typ).checked = data.tf;
-    });
+        chatSocket.onmessage = function(e) {
+            console.log(e);
+            var data = JSON.parse(e.data);
+            console.log(data.message);
+            data = JSON.parse(data.message);
+            console.log(data);
+            var message = data['type'];
+            console.log(message);
+            if (message == 'qr-change'){
+                console.log(data);
+                console.log(document.getElementById(data.qr + "-" + data.typ));
+                document.getElementById(data.qr + "-" + data.typ).checked = data.tf;
+            }
+        };
+
+    // socket.on('qr-change', function(data) {
+    //     console.log(data);
+    //     console.log(document.getElementById(data.qr + "-" + data.typ));
+    //     document.getElementById(data.qr + "-" + data.typ).checked = data.tf;
+    // });
     
 
     $('#generateNametags').click(function(e) {

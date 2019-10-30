@@ -70,8 +70,7 @@
                 <b style="font-size:24px;">School Data</b>
             </td>
           </tr>
-        {% for s in stats.schools %}
-            {% set b = stats.schools[s] %}
+        {% for s,b in stats.schools.items %}
               <tr style="border: 1px solid black;">
                   <td style="padding-top:10px; padding-bottom:10px;">
                       <b>{{ s }}</b>

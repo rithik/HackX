@@ -15,10 +15,28 @@
                 {{ msg }}
             </div>
         {% endif %}
+
+            {% csrf_token %}
+
+        <div class="form-group">
+            <label for="full-name">Full Name</label>
+            <input type="text" required class="form-control" id="full-name" placeholder="Full Name" name="name">
+        </div>
+    
+
      <div class="form-group">
        <label for="password">Judging Password (given by Hackathon Organizers)</label>
        <input type="password" required class="form-control" id="judging-password" placeholder="Password" name="judge_password">
      </div>
+
+     <div class="form-group">
+        <label for="org-name">Organization Name</label>
+        <select name="organization-id" required class="selectpicker" data-width="100%" id="org-name">
+            {% for o in organizations %}
+              <option value="{{ o.id }}" {% if request.user.organization.id == o.id %} selected {% endif %} >{{ o.name }}</option>
+            {% endfor %}
+         </select>
+      </div>
 
       <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="adminPassword">Make me a judge!</button>
 

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}Resume Books{% endblock %}
 
 {% block css %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/resume-books.css') }}">
+  <link rel="stylesheet" href="{% static 'css/resume-books.css' %}">
 {% endblock %}
 
 {% block content %}

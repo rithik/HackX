@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Judging - Queue{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/i18n/defaults-*.min.js"></script> -->
+
+{% endblock %}
+{% block content %}
+
+<h2 class="main-title"> <center>Judging Queue</center> </h2>
+    <hr style="width:50%">
+    <br/>
+    <br/>
+    <h1> <center>My Assigned Demos</center> </h1>
+    <hr style="width:25%">
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <div id="main-teams">
+                {% for d in demo_queue %}
+                    <div class="card" onclick="window.location.href='/judging/evaluate?team={{d.team.id}}';" style="cursor:pointer">
+                      <div class="card-body">
+                        <div class="row" >
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <p style="text-align:center; font-size:22px; color:black">Table {{ d.team.table }} - {{ d.team.name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br/>
+                    {% empty %}
+                    <p style="text-align: center; color: black;">You've judged all of your required projects!</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+
+    <h1> <center>My Past Demos</center> </h1>
+    <hr style="width:25%">
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <div id="main-teams">
+                {% for d in past_demos %}
+                    <div class="card" onclick="window.location.href='/judging/evaluate?team={{d.team.id}}';" style="cursor:pointer; background-color: lightgray;">
+                      <div class="card-body">
+                        <div class="row" >
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <p style="text-align:center; font-size:22px; color:black">Table {{ d.team.table }} - {{ d.team.name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br/>
+                    {% empty %}
+                    <p style="text-align: center; color:black">You have not judged any projects yet!</p>
+                {% endfor %}
+            </div>
+
+            
+
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+{% endblock %}

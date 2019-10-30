@@ -2,9 +2,9 @@
 <head>
   <meta charset="utf-8">
   <title>HooHacks QR Code System</title>
-  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/png">
-  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/jsQR.js') }}"></script>
+  <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/png">
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/jsQR.js' %}"></script>
   <style>
   body{
     font-family: 'Ropa Sans', sans-serif;

@@ -1,14 +1,14 @@
 {% extends "admin.html" %}
-
+{% load static %}
 {% block title %}Admin - QR System{% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/qr.css') }}">
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+    <link rel="stylesheet" href="{% static 'css/qr.css' %}">
 {% endblock %}
 
 {% block js %}
-    <script src="{{ url_for('static', filename='js/jsQR.js') }}"></script>
+    <script src="{% static 'js/jsQR.js' %}"></script>
 {% endblock %}
 {% block subtitle %}QR System{% endblock %}
 {% block addContent %}

@@ -1,0 +1,373 @@
+{% extends "judging-admin.html" %}
+{% load static %}
+{% block title %}Judging - Categories{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/i18n/defaults-*.min.js"></script> -->
+
+{% endblock %}
+{% block subtitle %}Categories{% endblock %}
+{% block addContent %}
+    <br/>
+    <br/>
+
+    <div class="alert alert-success" id="org-added" style="display:none;">
+        Category Added!
+    </div>
+    <div class="alert alert-success" id="org-deleted" style="display:none;">
+        Category Deleted!
+    </div>
+    <div class="alert alert-success" id="org-updated" style="display:none;">
+        Category Updated!
+    </div>
+    <div class="alert alert-danger" id="org-error" style="display:none;">
+        There was an error adding this Category!
+    </div>
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="devposturl">Devpost URL</label>
+                  <input type="text" name="devpost_url" class="form-control" id="devposturl" aria-describedby="devPostHelp" placeholder="Devpost URL">
+                  <small id="devPostHelp" class="form-text text-muted">Enter the Devpost URL for your hackathon and we'll import all of the categories.</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>              
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+    <br/>
+
+    <h1> <center>Categories</center> </h1>
+    <hr style="width:25%">
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <div id="main-categories">
+                {% for c in categories %}
+                    <div id="category-{{ c.id }}">
+                    <div class="card" >
+                      <div class="card-body">
+                        <div class="form-group">
+                            <label for="c-name-{{ c.id }}">Category Name</label>
+                            <input type="text" required class="form-control" id="c-name-{{ c.id }}" placeholder="Category Name" value="{{ c.name }}" name="c-name">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="o-name-{{ c.id }}">Organization</label>
+                                    <select name="organization-c-{{ c.id }}" required class="selectpicker" data-width="100%" id="org-name-{{ c.id }}">
+                                        {% for o in organizations %}
+                                            <option value="{{ o.id }}" {% if c.organization.name == o.name %} selected {% endif %} >{{ o.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="winning-{{ c.id }}"># of Winning Teams</label>
+                                    <input type="number" required class="form-control" id="winning-{{ c.id }}" placeholder="# of Winning Teams" value="{{ c.number_winners }}" name="winning">
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="judges-{{ c.id }}">Min # of Judges</label>
+                                    <input type="number" required class="form-control" id="judges-{{ c.id }}" placeholder="Min # of Judges" value="{{ c.min_judges }}" name="min_judges">
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <br/>
+                                    <label class="btn btn-light form-control">
+                                        <input type="checkbox" id="opt-in-{{ c.id }}" name="is_opt_in" autocomplete="off" {% if c.is_opt_in %} checked {% endif %}> Opt-In
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div style="margin: 0 auto;">
+                                <button class="btn btn-outline-primary" type="button" onclick="updateCategory({{ c.id }})">Update</button>
+                                <button class="btn btn-outline-danger" type="button" onclick="deleteCategory({{ c.id }})">Delete</button>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br/>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <h1> <center>Add Category</center> </h1>
+            <hr style="width:25%">
+
+            <div id="category-copy">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-group">
+                        <label for="c-name">Category Name</label>
+                        <input type="text" required class="form-control" id="c-name" placeholder="Category Name" name="c-name">
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="o-name">Organization</label>
+                                <select name="organization-c" required class="selectpicker" data-width="100%" id="org-name">
+                                    {% for o in organizations %}
+                                        <option value="{{ o.id }}">{{ o.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="winning"># of Winning Teams</label>
+                                <input type="number" required class="form-control" id="winning" placeholder="# of Winning Teams" name="winning">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="judges">Min # of Judges</label>
+                                <input type="number" required class="form-control" id="judges" placeholder="Min # of Judges" name="min_judges">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <br/>
+                                <label class="btn btn-light form-control">
+                                    <input type="checkbox" id="opt-in" name="is_opt_in" autocomplete="off" > Opt-In
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div style="margin: 0 auto;">
+                            <button class="btn btn-outline-success" type="button" onclick="addCategory()">Add</button>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <br/>
+            </div>
+
+            <div id="category-copy-main" style="display: none;">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-group">
+                        <label for="c-name">Category Name</label>
+                        <input type="text" required class="form-control" id="c-name-copy" placeholder="Category Name" name="c-name">
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="o-name">Organization</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="winning"># of Winning Teams</label>
+                                <input type="number" required class="form-control" id="winning-copy" placeholder="# of Winning Teams" name="winning">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="judges">Min # of Judges</label>
+                                <input type="number" required class="form-control" id="judges-copy" placeholder="Min # of Judges" name="min_judges">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <br/>
+                                <label class="btn btn-light form-control">
+                                    <input type="checkbox" id="opt-in-copy" name="is_opt_in" autocomplete="off" > Opt-In
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div style="margin: 0 auto;">
+                            <button class="btn btn-outline-primary" type="button" >Update</button>
+                            <button class="btn btn-outline-danger" type="button" >Delete</button>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <br/>
+            </div>
+
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+    <div class="input-group mb-3" id="copy-org" style="display:none">
+            <input type="text" class="form-control" placeholder="Organization Name" aria-label="Organization Name" id="name">
+            <div class="input-group-append">
+                <button class="btn btn-outline-primary" type="button">Update</button>
+                <button class="btn btn-outline-danger" type="button">Delete</button>
+            </div>
+            <br/>
+        </div>
+
+<script>
+    function addCategory(){
+        var all_options = {};
+        '{% for o in organizations %}'
+            all_options['{{ o.name }}'] = '{{ o.id }}';
+        '{% endfor %}'
+        console.log(all_options);
+        var postData = {
+            name: document.getElementById('c-name').value,
+            org: document.getElementById('org-name').value,
+            winning: document.getElementById('winning').value,
+            judges: document.getElementById('judges').value,
+            opt_in: document.getElementById('opt-in').checked,
+            add: "true",
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+
+        $.post("/judging/categories/update", postData, function(data) {
+            console.log(data);
+            if (data.message == "success"){
+                document.getElementById("name-add").value = "";
+
+                var copyC = document.getElementById("category-copy-main");
+                var clone = copyC.cloneNode(true);
+                console.log(clone);
+                window.c = clone;
+                clone.id = 'category-' + data['cid'];
+
+                var name = clone.children[0].children[0].children[0].children[1];
+                name.id = "c-name-" + data['cid'];
+                name.value = postData.name;
+
+                var row = clone.children[0].children[0].children[1];
+                var rowB = clone.children[0].children[0].children[2].children[0];
+                var updateB = clone.children[0].children[0].children[2].children[0].children[0];
+                var deleteB = clone.children[0].children[0].children[2].children[0].children[1];
+                
+                var myParent = row.children[0].children[0];
+
+                //Create and append select list
+                var selectList = document.createElement("select");
+                selectList.id = "org-name-" + data['cid'];
+                selectList.className += "selectpicker";
+                $('#org-name-' + data['cid']).selectpicker();
+           
+                myParent.appendChild(selectList);
+                //Create and append the options
+
+                for (var key in all_options) {
+                    var option = document.createElement("option");
+                    option.value = all_options[key];
+                    option.text = key;
+                    if(all_options[key] == postData.org){
+                        option.selected = true;
+                    }
+                    selectList.appendChild(option);
+                }
+            
+                var winning = row.children[1].children[0].children[1];
+                winning.id = "winning-" + data['cid'];
+                winning.value = postData.winning;
+
+                var judges = row.children[2].children[0].children[1];
+                judges.id = "judges-" + data['cid'];
+                judges.value = postData.judges;
+
+                var opt_in = row.children[3].children[0].children[1].children[0];
+                opt_in.id = "opt-in-" + data['cid'];
+                opt_in.value = postData.opt_in;
+                opt_in.checked = postData.opt_in;
+
+                updateB.onclick = function (){
+                    updateCategory(data.cid);
+                };
+
+                deleteB.onclick = function (){
+                    deleteCategory(data.cid);
+                };
+
+                document.getElementById('main-categories').append(clone);
+                clone.style.display = "";
+                var alert = document.getElementById("org-added");
+                alert.style.display = "";
+                $('#org-name-' + data['cid']).selectpicker();
+
+                document.getElementById('c-name').value = "";
+                $("#org-name").val('default').selectpicker("refresh");
+
+                document.getElementById('winning').value = "";
+                document.getElementById('judges').value = "";
+                document.getElementById('opt-in').checked = false;
+
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+    function updateCategory(id){
+        var postData = {
+            cid: id,
+            name: document.getElementById('c-name-' + id).value,
+            org: document.getElementById('org-name-' + id).value,
+            winning: document.getElementById('winning-' + id).value,
+            judges: document.getElementById('judges-' + id).value,
+            opt_in: document.getElementById('opt-in-' + id).checked,
+            update: "true",
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        console.log(postData);
+        $.post("/judging/categories/update", postData, function(data) {
+            if (data.message == "success"){
+                var alert = document.getElementById("org-updated");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+    function deleteCategory(id){
+        var postData = {
+            cid: id,
+            delete: "true",
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        console.log(postData);
+        $.post("/judging/categories/update", postData, function(data) {
+            console.log(data);
+            if (data.message == "success"){
+                var element = document.getElementById('category-' + id);
+                element.parentNode.removeChild(element);
+                var alert = document.getElementById("org-deleted");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+</script>
+
+{% endblock %}

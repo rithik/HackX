@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Judging Admin - {% endblock %}
+
+{% block content %}
+    <h2 class="main-title"> <center>Judging Admin - {% block subtitle %}{% endblock %}</center> </h2>
+    <hr style="width:50%">
+
+    <br/>
+    <br/>
+
+    <ul class="nav nav-pills nav-fill" >
+      <li class="nav-item">
+        <a class="nav-link {% if jadminHighlight == 'categories' %}active{% endif %}" href="/judging/categories" style="border:2px solid black;border-radius-left:6px;width:100%;">Categories</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if jadminHighlight == 'teams' %}active{% endif %}" href="/judging/teams" style="border:2px solid black;width:100%;">Teams</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if jadminHighlight == 'assign_demos' %}active{% endif %}" onclick="return confirm('Are you sure you want to assign demos to judges? **Only run this function once or all judged scores will be deleted**')"  href="/judging/demos/assign" style="border:2px solid black;border-radius-right:6px;width:100%;">Assign Demos</a>
+      </li>
+    </ul>
+    <ul class="nav nav-pills nav-fill" >
+      <li class="nav-item">
+        <a class="nav-link {% if jadminHighlight == 'normalization' %}active{% endif %}" href="/judging/normalize" style="border:2px solid black;border-radius-left:6px;width:100%;">Normalization</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if jadminHighlight == 'team-progress' %}active{% endif %}" href="/judging/teams/progress" style="border:2px solid black;width:100%;">Team Progress </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if jadminHighlight == 'scores' %}active{% endif %}" href="/judging/scores" style="border:2px solid black;border-radius-right:6px;width:100%;">Scoreboard</a>
+      </li>
+    </ul>
+
+    {% block addContent %}
+
+    {% endblock %}
+
+
+{% endblock %}

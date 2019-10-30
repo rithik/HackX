@@ -1,0 +1,145 @@
+{% extends "admin.html" %}
+{% load static %}
+{% block title %}Admin - Organizations{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}
+{% block subtitle %}Organizations{% endblock %}
+{% block addContent %}
+    <br/>
+    <br/>
+
+    <div class="alert alert-success" id="org-added" style="display:none;">
+        Organization Added!
+    </div>
+    <div class="alert alert-success" id="org-deleted" style="display:none;">
+        Organization Deleted!
+    </div>
+    <div class="alert alert-success" id="org-updated" style="display:none;">
+            Organization Updated!
+    </div>
+    <div class="alert alert-danger" id="org-error" style="display:none;">
+        There was an error adding this organization!
+    </div>
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <div id="main-orgs">
+                {% for o in organizations %}
+                    <div class="input-group mb-3" id="total-{{ o.id }}">
+                        <input type="text" class="form-control" placeholder="Organization Name" value="{{ o.name }}" aria-label="Organization Name" id="name-{{o.id}}">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="button" onclick="updateOrganization('{{ o.id }}')">Update</button>
+                            <button class="btn btn-outline-danger" type="button" onclick="deleteOrganization('{{ o.id }}')">Delete</button>
+                        </div>
+                        <br/>
+                    </div>
+                   
+                {% endfor %}
+            </div>
+
+            <div class="input-group mb-3" id="total-add">
+                <input type="text" class="form-control" placeholder="Organization Name" aria-label="Organization Name" id="name-add">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success" type="button" onclick="addOrganization()">Add Organization</button>
+                </div>
+                </div>
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+    <div class="input-group mb-3" id="copy-org" style="display:none">
+            <input type="text" class="form-control" placeholder="Organization Name" aria-label="Organization Name" id="name">
+            <div class="input-group-append">
+                <button class="btn btn-outline-primary" type="button">Update</button>
+                <button class="btn btn-outline-danger" type="button">Delete</button>
+            </div>
+            <br/>
+        </div>
+
+<script>
+    function addOrganization(){
+        var postData = {
+            name: document.getElementById('name-add').value,
+            add: "true",
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.post("/admin/organizations", postData, function(data) {
+            console.log(data);
+            if (data.message == "success"){
+                document.getElementById("name-add").value = "";
+
+                var copyOrg = document.getElementById("copy-org");
+                var clone = copyOrg.cloneNode(true);
+                console.log(clone);
+                window.c = clone;
+                clone.id = 'total' + data['org_id'];
+                var in_name = clone.children[0];
+                in_name.id = 'name' + data['org_id'];
+                in_name.value = data['org_name'];
+                var updateBtn = clone.children[1].children[0];
+                updateBtn.onclick = function (){
+                    updateOrganization(data['org_id']);
+                }
+                var deleteBtn = clone.children[1].children[1];
+                deleteBtn.onclick = function (){
+                    deleteOrganization(data['org_id']);
+                }
+                document.getElementById('main-orgs').append(clone);
+                clone.style.display = "";
+                var alert = document.getElementById("org-added");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+    function updateOrganization(id){
+        var postData = {
+            oid: id,
+            name: document.getElementById('name-' + id).value,
+            update: "true",
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.post("/admin/organizations", postData, function(data) {
+            if (data.message == "success"){
+                var alert = document.getElementById("org-updated");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+    function deleteOrganization(id){
+        var postData = {
+            oid: id,
+            delete: "true",
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.post("/admin/organizations", postData, function(data) {
+            console.log(data);
+            if (data.message == "success"){
+                var element = document.getElementById('total-' + id);
+                element.parentNode.removeChild(element);
+                var alert = document.getElementById("org-deleted");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+</script>
+
+{% endblock %}

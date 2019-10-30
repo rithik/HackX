@@ -1,9 +1,10 @@
 {% extends "admin.html" %}
+{% load static %}
 
 {% block title %}Admin - Users{% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
 {% endblock %}
 
 {% block js %}
@@ -28,12 +29,12 @@
   </thead>
   <tbody>
         {% for u in all_hackers %}
-            {% set a = u.application[0] %}
+            {% with a=u.application %}
 
 
             <tr
-            {% if u.confirmation|length > 0 %}
-                {% set c = u.confirmation[0] %}
+            {% with c=u.confirmation %}
+            {% if u.confirmation %}
                 {% if c.confirmed %}
                     class="bg-accepted"
                 {% elif c.declined %}
@@ -41,14 +42,14 @@
                 {% endif %}
             {% endif %}
 
-            data-toggle="modal" data-id="{{ a.id }}" data-full-name="{{ a.full_name }}" data-email="{{ a.email }}"
-            data-school="{{ a.school }}" data-grad-year="{{ a. grad_year }}" data-gender="{{ a.gender }}"
+            data-toggle="modal" data-id="{{ u.id }}" data-full-name="{{ a.full_name }}" data-email="{{ u.email }}"
+            data-school="{{ a.school }}" data-grad-year="{{ a.grad_year }}" data-gender="{{ a.gender }}"
             data-race="{{ a.race }}" data-describe="{{ a.describe }}" data-why="{{ a.why }}" data-major="{{ a.major }}"
             data-hackathons="{{ a.hackathons }}" data-birthday="{{ a.birthday }}" data-travel="{{ a.travel }}"
             data-where-from="{{ a.where_from }}" data-travel-method="{{ a.travel_method }}" data-miles="{{ a.miles }}"
             data-cost="{{ a.cost }}" data-accepted="{{ a.accepted }}" data-waitlisted="{{ a.waitlisted }}"
             data-declined="{{ a.declined }}" data-app-complete="{{ a.app_complete }}" 
-            {% if u.confirmation|length > 0 %} 
+            {% if u.confirmation %} 
               data-comments="{{ c.notes }}" 
               data-github="{{ c.github }}" 
               data-tshirt="{{ c.tshirt }}" 
@@ -66,7 +67,7 @@
 
 
             data-target="#applicationModal">
-              <td><center id="{{ a.id }}-status">
+              <td><center id="{{ u.id }}-status">
                   {% if a.accepted %}
                     <i class="fas fa-check-circle text-success"></i>
                   {% elif a.waitlisted %}
@@ -76,12 +77,14 @@
                   {% endif %}
               </center></td>
               <td><center>{{ a.full_name }}</center></td>
-              <td><center>{{ a.email }}</center></td>
+              <td><center>{{ u.email }}</center></td>
               <td><center>{{ a.school }}</center></td>
               <td><center>{{ a.grad_year }}</center></td>
               <td><center>{% if a.travel %}{{ a.travel_method }}{% else %}{% endif %}</center></td>
               <td><center>{% if a.travel %}{{ a.cost }}{% else %}{% endif %}</center></td>
             </tr>
+            {% endwith %}
+            {% endwith %}
         {% endfor %}
   </tbody>
 </table>
@@ -253,7 +256,7 @@
         var user_id = $('#user-id').html();
         var name = $('#full-name').html();
         $.get( "/admin/acceptUser/" + user_id, function( data ) {
-          if (data == "Success"){
+          if (data.message == "Success"){
               $('#' + user_id + "-status").html('<i class="fas fa-check-circle text-success"></i>');
               $('#statusMessage').html('<i class="fas fa-check-circle text-success fa-10x"></i> <br/> <br/> ' + name + " was accepted!");
               $('#applicationModal').modal('hide');
@@ -271,11 +274,12 @@
         });
     }
     function waitlistUser(){
+      
         var user_id = $('#user-id').html();
         var name = $('#full-name').html();
         $.get( "/admin/waitlistUser/" + user_id, function( data ) {
             console.log(data);
-          if (data == "Success"){
+          if (data.message == "Success"){
               $('#' + user_id + "-status").html('<i class="fas fa-pause-circle text-warning"></i>');
               $('#statusMessage').html('<i class="fas fa-pause-circle text-warning fa-10x"></i> <br/> <br/> ' + name + " was waitlisted!");
               $('#applicationModal').modal('hide');
@@ -296,7 +300,7 @@
         var user_id = $('#user-id').html();
         var name = $('#full-name').html();
         $.get( "/admin/rejectUser/" + user_id, function( data ) {
-          if (data == "Success"){
+          if (data.message == "Success"){
               $('#' + user_id + "-status").html('<i class="fas fa-times-circle text-danger"></i>');
               $('#statusMessage').html('<i class="fas fa-times-circle text-danger fa-10x"></i> <br/> <br/> ' + name + " was rejected!");
               $('#applicationModal').modal('hide');
@@ -318,7 +322,7 @@
             var user_id = $('#user-id').html();
             var name = $('#full-name').html();
             $.get( "/admin/makeAdmin/" + user_id, function( data ) {
-              if (data == "Success"){
+              if (data.message == "Success"){
                   $('#' + user_id + "-status").html('<i class="fas fa-check-circle text-success"></i>');
                   $('#statusMessage').html('<i class="fas fa-check-circle text-success fa-10x"></i> <br/> <br/> ' + name + " was made an admin!");
                   $('#applicationModal').modal('hide');

@@ -10,6 +10,7 @@
     <br/>
 
     <form class="form-signin" method="POST" action="/make/mentor" style="width:60%; margin:auto; display:block;">
+      {% csrf_token %}
         {% if not msg == ""  %}
             <div class="alert alert-success" role="alert">
                 {{ msg }}
@@ -26,6 +27,17 @@
      </div>
 
      <div class="form-group">
+        <label for="org-name">Organization Name</label>
+        <select name="organization-id" required class="selectpicker" data-width="100%" id="org-name">
+            {% for o in organizations %}
+              <option value="{{ o.id }}" {% if request.user.organization.id == o.id %} selected {% endif %}>{{ o.name }}</option>
+            {% endfor %}
+         </select>
+      </div>
+ 
+
+     {% comment %}
+     <div class="form-group">
       <label for="password">Your Account Password </label>
       <input type="password" required class="form-control" id="password" placeholder="Password" name="password">
     </div>
@@ -34,6 +46,8 @@
        <label for="company">Company Name</label>
        <input type="text" required class="form-control" id="company-name" placeholder="Company Name" name="company">
      </div>
+
+     {% endcomment %}
 
       <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="adminPassword">Make me a mentor!</button>
 

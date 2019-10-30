@@ -1,19 +1,15 @@
 #!/usr/bin/env python3
 import os
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
-
-from app import app, db
-
-try:
-    app.config.from_object(os.environ['APP_SETTINGS'])
-except:
-    app.config.from_object('config.DevelopmentConfig')
-
-migrate = Migrate(app, db)
-manager = Manager(app)
-
-manager.add_command('db', MigrateCommand)
+import sys
 
 if __name__ == '__main__':
-    manager.run()
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hoohacks.settings')
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable? Did you "
+            "forget to activate a virtual environment?"
+        ) from exc
+    execute_from_command_line(sys.argv)

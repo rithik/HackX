@@ -76,8 +76,8 @@ span {
 }
 
 #sidebar.active {
-    min-width: 80px;
-    max-width: 80px;
+    min-width: 150px;
+    max-width: 150px;
     text-align: center;
 }
 
@@ -213,10 +213,10 @@ a.article:hover {
 
 @media (max-width: 768px) {
     #sidebar {
-        min-width: 80px;
-        max-width: 80px;
+        min-width: 150px;
+        max-width: 150px;
         text-align: center;
-        margin-left: -80px !important;
+        margin-left: -150px !important;
     }
     .dropdown-toggle::after {
         top: auto;
@@ -270,7 +270,7 @@ a.article:hover {
 }
 
 .filter-option{
-    background-color:white;
+    /* background-color:white; */
 }
 
 .dropdown{
@@ -287,4 +287,8 @@ a.article:hover {
 .modal-body{
     height: 70vh;
     overflow: scroll;
+}
+
+.bootstrap-select{
+    width: 100% !important;
 }

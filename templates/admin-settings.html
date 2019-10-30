@@ -1,9 +1,9 @@
 {% extends "admin.html" %}
-
+{% load static %}
 {% block title %}Admin - Settings{% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
 {% endblock %}
 
 {% block js %}
@@ -14,19 +14,56 @@
     <br/>
     <br/>
 
-<div class="col-lg-4">
-    <div class="alert alert-success" style="display:none;">
-        Company Added!
+    <div class="alert alert-success" id="settings-updated" style="display:none;">
+            Settings Updated!
     </div>
-    <div class="alert alert-danger" style="display:none;">
-        There was an error adding this company!
+    <br/>
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+            <h1> <center>Main Settings</center> </h1>
+            <hr style="width:25%">
+
+            <div class="form-group">
+                <label for="appsubmission">Application Submission Deadline</label>
+                <input type="datetime-local" class="form-control" value="{{ application_submission_date }}" id="appsubmission" aria-describedby="appsubmissionHelp" placeholder="Submission Date">
+                <small id="appsubmissionHelp" class="form-text text-muted">The date when applications can no longer be submitted</small>
+            </div>
+    
+            <div class="form-group">
+                <label for="confirmsubmission">Confirmation Submission Deadline</label>
+                <input type="datetime-local" class="form-control" value="{{ application_confirmation_date }}" id="confirmsubmission" aria-describedby="confirmsubmissionHelp" placeholder="Confirmation Date">
+                <small id="confirmsubmissionHelp" class="form-text text-muted">The date when confirmation can no longer be submitted</small>
+            </div>
+    
+            <button class="btn btn-outline-primary" onclick="updateSettings()">Update</button>
+            
     </div>
-    <h4 style="text-align:center">Mentor Companies</h4>
-    <ul>
-        {% for c in companies %}
-            <li>{{ c.name }}</li>
-        {% endfor %}
-    </ul>
+    <div class="col-lg-2"></div>
 </div>
+   
+      <script>
+          function updateSettings(){
+              var app = document.getElementById('appsubmission').value;
+              var confirm = document.getElementById('confirmsubmission').value;
+              var postData = {
+                submission_deadline: app, 
+                confirmation_deadline: confirm,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            }
+            console.log(postData);
+            $.post("/admin/settings", postData, function(data) {
+                if (data.message == "success"){
+                    var alert = document.getElementById("settings-updated");
+                    alert.style.display = "";
+                    setTimeout(
+                        function(){
+                            alert.style.display = "none";
+                    }, 3000);
+                }
+            });
+          }
+      </script>
+      
 
 {% endblock %}

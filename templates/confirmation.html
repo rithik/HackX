@@ -15,6 +15,7 @@
 
 
     <form class="form-signin" method="POST" action="/confirmation" style="width:60%; margin:auto; display:block;" enctype="multipart/form-data">
+        {% csrf_token %}
         {% if not msg == ""  %}
             <div class="alert alert-success" role="alert">
                 {{ msg }}
@@ -53,7 +54,7 @@
        </div>
 
        <div class="form-group">
-          <label for="github">Resume Upload (Must be a PDF and smaller than 1 MB) {% if c.resume_file_name != '' %}<br/><b>Already Uploaded</b> - You can re-submit your resume if you would like.{% endif %} </label>
+          <label for="github">Resume Upload (Must be a PDF and smaller than 1 MB) {% if c.resume_file_name != '' %}<br/><b>Already Uploaded</b> (<u><a style="color: blue;" href="/download/my/resume" target="_blank">View</a></u>) - You can re-submit your resume if you would like.{% endif %} </label>
           <br/>
              <input type="file" required class="form-control" id="resume" value="" name="file" accept="application/pdf">
          </div>
@@ -74,6 +75,7 @@
   </form>
   <br/>
 <form class="form-signin" method="POST" action="/confirmation" style="width:60%; margin:auto; display:block;">
+      {% csrf_token %}
       <button class="btn btn-lg btn-danger btn-block text-uppercase" name="button-type" value="decline">Decline My Spot</button>
 </form>
 

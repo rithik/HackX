@@ -35,7 +35,8 @@
       <br/>
       
     <div id="tickets">
-    {% for t in tickets|reverse %}
+    {% for t in tickets %}
+   
         <div class="card" id="ticket-{{ t.id }}">
           <div class="card-body">
             <div class="row">
@@ -49,7 +50,7 @@
             </div>
             <b>Question: </b><span id="ticket-question-{{ t.id }}">{{ t.question }}</span><br/>
             <b>Location: </b><span id="ticket-location-{{ t.id }}">{{ t.location }}</span><br/>
-            <b>Ticket Submitted Name: </b><span id="ticket-user-name-{{ t.id }}">{{ t.full_name }}</span><br/>
+            <b>Ticket Submitted by: </b><span id="ticket-user-name-{{ t.id }}">{{ t.full_name }}</span><br/>
             <b>Contact Phone Number: </b><span id="ticket-contact-{{ t.id }}">{{ t.contact }}</span><br/>
             <b>Status: </b><span id="ticket-status-{{ t.id }}">{{ t.status }}</span>
             <br/>
@@ -88,6 +89,7 @@
                 </div>
             <b>Question: </b><span id="ticket-question"></span><br/>
             <b>Location: </b><span id="ticket-location"></span><br/>
+            <b>Ticket Submitted by: </b><span id="ticket-user-name"></span><br/>
             <b>Contact Phone Number: </b><span id="ticket-contact"></span><br/>
             <b>Status: </b><span id="ticket-status"></span>
             </div>
@@ -112,21 +114,47 @@
 
     <script>
         var my_email = "{{ user.email }}";
-        var socket = io();
-        socket.on('connect', function() {
-            console.log("Connected via Socket!");
-        });
-        socket.on("create-ticket-mentors", function(data){
-            createTicketCB(data);
-        });
 
-        socket.on('ticket-deleted', function(data){
-           deleteTicketCB(data);
-        });
+        var ws_protocol = 'ws://';
+        if (location.protocol == 'https:'){
+            ws_protocol = 'wss://';
+        }
 
-        socket.on('ticket-status-change', function(data){
-           ticketStatusChangeCB(data);
-        });
+        window.chatSocket = new WebSocket(
+        ws_protocol + window.location.host +
+        '/ws/chat/' + 'main' + '/');
+
+        chatSocket.onmessage = function(e) {
+            console.log(e);
+            var data = JSON.parse(e.data);
+            console.log(data.message);
+            data = JSON.parse(data.message);
+            console.log(data);
+            var message = data['type'];
+            console.log(message);
+            if (message == 'create-ticket-mentors'){
+                createTicketCB(data);
+            }
+            if (message == 'ticket-deleted'){
+                deleteTicketCB(data);
+            }
+            if (message == 'ticket-status-change'){
+                ticketStatusChangeCB(data);
+            }
+        };
+
+        
+        // socket.on("create-ticket-mentors", function(data){
+        //     createTicketCB(data);
+        // });
+
+        // socket.on('ticket-deleted', function(data){
+        //    deleteTicketCB(data);
+        // });
+
+        // socket.on('ticket-status-change', function(data){
+        //    ticketStatusChangeCB(data);
+        // });
 
         function ticketStatusChangeCB(data){
             console.log(data);
@@ -185,11 +213,15 @@
             ticketLocation.id = "ticket-location-" + data.id;
             ticketLocation.textContent = data.location;
 
-            var ticketContact = ticketBody.children[8];
+            var ticketUserName = ticketBody.children[8];
+            ticketUserName.id = "ticket-user-name-" + data.id;
+            ticketUserName.textContent = data.name;
+            
+            var ticketContact = ticketBody.children[11];
             ticketContact.id = "ticket-contact-" + data.id;
             ticketContact.textContent = data.contact;
 
-            var ticketStatus = ticketBody.children[11];
+            var ticketStatus = ticketBody.children[14];
             ticketStatus.id = "ticket-status-" + data.id;
             ticketStatus.textContent = data.status;
 
@@ -229,7 +261,8 @@
             console.log(id);
             var postData = {
                 tid: id,
-                email: email
+                email: email,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
             }
             $.post( "/tickets/delete", postData, function(data) {});
         }
@@ -251,7 +284,8 @@
         function claimTicket(id, email){
             var postData = {
                 tid: id,
-                email: email
+                email: email,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
             }
             $.post( "/mentor/tickets/claim", postData, function(data) {
                 if (data.code == "403"){
@@ -286,7 +320,8 @@
         function unClaimTicket(id, email){
             var postData = {
                 tid: id,
-                email: email
+                email: email,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
             }
             $.post( "/mentor/tickets/unclaim", postData, function(data) {
                 if (data.code == "403"){

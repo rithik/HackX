@@ -1,4 +1,4 @@
-secret.py
+hoohacks/secret.py
 __pycache__/
 *.db
 venv/
@@ -7,3 +7,5 @@ venv/
 QR/
 nametags/
 img.png
+db.sqlite3
+dump.rdb

@@ -10,6 +10,7 @@
     <br/>
 
     <form class="form-signin" method="POST" action="/make/admin" style="width:60%; margin:auto; display:block;">
+        {% csrf_token %}
         {% if not msg == ""  %}
             <div class="alert alert-success" role="alert">
                 {{ msg }}

@@ -1,0 +1,162 @@
+{% extends "judging-admin.html" %}
+{% load static %}
+{% block title %}Judging - Team Progress{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+
+{% endblock %}
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+
+<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/i18n/defaults-*.min.js"></script> -->
+
+{% endblock %}
+{% block subtitle %}Teams{% endblock %}
+{% block addContent %}
+    <br/>
+    <br/>
+
+    <div class="alert alert-success" id="team-added" style="display:none;">
+        Team Added!
+    </div>
+    <div class="alert alert-success" id="team-deleted" style="display:none;">
+        Team Deleted!
+    </div>
+    <div class="alert alert-success" id="team-updated" style="display:none;">
+        Team Updated!
+    </div>
+    <div class="alert alert-danger" id="team-error" style="display:none;">
+        There was an error adding this team!
+    </div>
+
+    <h1> <center>Judge Progress</center> </h1>
+    <hr style="width:25%">
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <div id="main-judges">
+                {% for j in judges %}
+                    <div id="judge-{{ t.id }}">
+                    <div class="card" >
+                      <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <p style="color:black">{{ j.num_judges_completed }}/{{ j.total }}</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <p style="color:black">{{ j.name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br/>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-1"></div>
+        </div>
+            <br/>
+            <br/>
+   
+    <h1> <center>Team Progress</center> </h1>
+    <hr style="width:25%">
+
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <div id="main-teams">
+                {% for t in teams %}
+                    <div id="team-{{ t.id }}">
+                    <div class="card" >
+                      <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <p style="color:black">{{ t.num_judges_completed }}/{{ t.total }}</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <p style="color:black">{{ t.table }}</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <p style="color:black">{{ t.name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <br/>
+                    </div>
+                {% endfor %}
+            </div>
+
+            
+
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+
+
+<script>
+    function updateTeam(id){
+        var postData = {
+            tid: id,
+            table: document.getElementById('table-' + id).value,
+            name: document.getElementById('name-' + id).value,
+            update: "true",
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+
+        $.post("/judging/teams/update", postData, function(data) {
+            console.log(data);
+            window.d = data;
+            if (data.message == "success"){
+                var alert = document.getElementById("team-updated");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+    function deleteTeam(id){
+        var postData = {
+            tid: id,
+            delete: "true",
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        console.log(postData);
+        $.post("/judging/teams/update", postData, function(data) {
+            if (data.message == "success"){
+                var element = document.getElementById('team-' + id);
+                element.parentNode.removeChild(element);
+                var alert = document.getElementById("team-deleted");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+</script>
+
+{% endblock %}
