@@ -4,6 +4,12 @@
 
 There are so many different systems that provide the ability to register people for events, but there is no one system that covers all of the things required for running a hackathon. This is where HackX comes in. HackX is the first system that involves hacker registration, mentor registration, judge registration, mentor-ticket queueing, administration views with data analysis, a resume book and judging. We know that's a lot for one system to do. Here's some instructions for setup. 
 
+### Deploy to Heroku
+
+Click the button below to Deploy to Heroku. You'll need to setup the config variables with the appropriate values.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/rithik/HackX)
+
 ### Localhost setup
 
 1. Clone this repository: `git clone https://github.com/rithik/HackX`

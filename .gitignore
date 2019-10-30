@@ -3,7 +3,7 @@ hoohacks/secret_heroku.sh
 __pycache__/
 *.db
 venv/
-*.json
+# *.json
 *.zip
 QR/
 administration/nametags/
