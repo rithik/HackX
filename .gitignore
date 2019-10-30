@@ -1,4 +1,5 @@
 hoohacks/secret.py
+hoohacks/secret_heroku.sh
 __pycache__/
 *.db
 venv/
