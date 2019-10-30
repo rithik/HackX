@@ -85,7 +85,7 @@ MEDIA_ROOT = BASE_DIR + '/media/'
 
 WSGI_APPLICATION = 'hoohacks.wsgi.application'
 STATIC_URL = '/static/'
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = 'static'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
@@ -226,5 +226,6 @@ except ImportError:
 
 ALLOWED_HOSTS = [
     PROD_URL,
-    "hoohacks-d.herokuapp.com"
+    "hoohacks-d.herokuapp.com",
+    '*'
 ]
