@@ -31,8 +31,6 @@ SECRET_KEY = '=)ek5=w3u09$!%g2mbn$ppbpjot1jq2o^f577gxpq&w^yh9txm'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 ON_HEROKU = 'ON_HEROKU' in os.environ
 
 # Application definition
@@ -225,3 +223,7 @@ try:
     django_heroku.settings(locals())
 except ImportError:
     found = False
+
+ALLOWED_HOSTS = [
+    PROD_URL
+]
