@@ -12,7 +12,7 @@ constantly==15.1.0
 cryptography==2.8
 daphne==2.3.0
 DateJS==0.5
-Django==2.2.6
+Django==2.1.13
 dropbox==9.4.0
 hyperlink==19.0.0
 idna==2.8
