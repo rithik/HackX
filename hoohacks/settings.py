@@ -226,5 +226,5 @@ except ImportError:
 
 ALLOWED_HOSTS = [
     PROD_URL,
-    "hoohacks-dev.herokuapp.com"
+    "hoohacks-d.herokuapp.com"
 ]
