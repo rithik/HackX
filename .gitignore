@@ -5,7 +5,7 @@ venv/
 *.json
 *.zip
 QR/
-nametags/
+administration/nametags/
 img.png
 db.sqlite3
 dump.rdb
