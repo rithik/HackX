@@ -112,7 +112,7 @@ def application(request):
             "grad_year": settings.GRADUATION_YEARS,
             "highlight": "application",
             "travel_methods": settings.TRAVEL_METHODS, 
-            "msg": "Your travel application has been submitted!", 
+            "msg": "Your application has been submitted!", 
             "allow": ALLOW
         })
 

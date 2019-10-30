@@ -706,8 +706,9 @@ def scores(request):
                 'team': k[2].name,
                 'ranking': count,
             })
-        norm_score, raw_score, winner = rankings[0]
-        # winning_scores = []
+        
+        # norm_score, raw_score, winner = rankings[0]
+        # # winning_scores = []
         # for demo in Demo.objects.filter(team=winner):
         #     score = demo.raw_score
         #     winning_scores.append([score.value for score in scores])
