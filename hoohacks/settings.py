@@ -217,13 +217,11 @@ CHANNEL_LAYERS = {
     },
 }
 
-PROD_URL = 'http://localhost:8000/'
+PROD_URL = os.environ.get('PROD_URL', 'http://localhost:8000/')
 
 try:
     # Configure Django App for Heroku.
     import django_heroku
     django_heroku.settings(locals())
-    if ON_HEROKU:
-        PROD_URL = 'https://hoohacks-dev.herokuapp.com/'
 except ImportError:
     found = False
