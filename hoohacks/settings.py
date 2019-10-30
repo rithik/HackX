@@ -225,5 +225,6 @@ except ImportError:
     found = False
 
 ALLOWED_HOSTS = [
-    PROD_URL
+    PROD_URL,
+    "hoohacks-dev.herokuapp.com"
 ]
