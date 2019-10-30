@@ -292,3 +292,9 @@ a.article:hover {
 .bootstrap-select{
     width: 100% !important;
 }
+
+.nav-fill .nav-item{
+    display:table !important;
+    width: 33%;
+    table-layout: fixed;
+}
