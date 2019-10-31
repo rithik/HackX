@@ -3,6 +3,11 @@ from PIL import ImageFont
 from PIL import ImageDraw
 import qrcode
 import random
+import dropbox
+from django.conf import settings
+import io
+
+dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 
 WIDTH = 640
 HEIGHT = 480
@@ -44,7 +49,8 @@ def make_image(name, qr_hash):
         draw.text((340, 320),"Food Wave:\t\t A",(0,0,0),font=foodFont)
     else:
         draw.text((340, 320),"Food Wave:\t\t B",(0,0,0),font=foodFont)
-    filename = 'administration/nametags/' + name  + '.png'
-    image.save(filename)
-
-# make_image("Rithik Yelisetty", "b3765038ebd011e9b588dca904763121")
+    file_path = '/Nametags/' + name + '.png'
+    imgByteArr = io.BytesIO()
+    image.save(imgByteArr, format='PNG')
+    imgByteArr = imgByteArr.getvalue()
+    dbx.files_upload(imgByteArr, file_path)

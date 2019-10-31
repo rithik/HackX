@@ -13,6 +13,7 @@ from .models import Application, Confirmation
 from users.models import User, EmailView
 import dropbox 
 from administration.models import Settings
+from administration import nametag
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 
@@ -205,6 +206,13 @@ def confirmation(request):
         c.confirmed = True
         c.declined = False
         c.save()
+
+        try:
+            nametag.make_image(u.full_name, u.qr_hash)
+        except:
+            file_path = '/Nametags/' + u.full_name + '.png'
+            dbx.files_delete_v2(file_path)
+            nametag.make_image(u.full_name, u.qr_hash)
 
         email_uuid = uuid.uuid1()
 

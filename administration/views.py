@@ -25,7 +25,9 @@ import json
 import random
 from itertools import product
 from .models import Settings
+import dropbox
 
+dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 
 @login_required
 def create_judges(request):
@@ -272,20 +274,11 @@ def admin_make_nametags(request):
         return redirect("/logout")
     if not u.is_admin:
         return redirect("/dashboard")
-    for h in User.objects.all():
-        if hasattr(h, 'confirmation'):
-            if h.confirmation.confirmed:
-                nametag.make_image(h.application.full_name, h.qr_hash)
-    with ZipFile('administration/nametags/nametags.zip','w') as zip:
-        for file in glob.glob("administration/nametags/*.png"):
-            zip.write(file)
-    with open('administration/nametags/nametags.zip', 'rb') as fh:
-        response = HttpResponse(fh.read(), content_type="application/zip")
-        response['Content-Disposition'] = 'inline; filename=' + os.path.basename('nametags/nametags.zip')
-        return response
-    return JsonResponse({
-        "error": "Error downloading file"
-    })
+    metadata, zip_file = dbx.files_download_zip("/Nametags/")
+    response = HttpResponse(zip_file.content, content_type="application/zip")
+    response['Content-Disposition'] = 'inline; filename=' + 'nametags.zip'
+    return response
+
 
 @login_required
 def qr_request(request, typ, num, tf):
