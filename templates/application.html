@@ -34,8 +34,9 @@
 
      <div class="form-group">
        <label for="school">School</label>
+       <!--  -->
        <br/>
-       <select name="school" id="school" required class="selectpicker" data-live-search="true" data-width="100%">
+       <select name="school" id="school" required class="selectpicker" data-live-search="true" data-width="100%" >
           {% for s in schools %}
             <option value="{{s}}" {% if s == app.school %} selected {% endif %}>{{ s }}</option>
           {% endfor %}

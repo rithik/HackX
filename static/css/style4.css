@@ -258,6 +258,10 @@ a.article:hover {
     #sidebarCollapse span {
         display: none;
     }
+
+    #sidebarCollapse:focus{
+        box-shadow:  0 0 0.2rem rgba(0,123,255,.25);
+    }
 }
 
 .main-title{
@@ -295,6 +299,10 @@ a.article:hover {
 
 .nav-fill .nav-item{
     display:table !important;
-    width: 33%;
+    width: 33.3%;
     table-layout: fixed;
+}
+
+div.dropdown {
+    max-width: 800px !important;
 }
