@@ -90,7 +90,6 @@ def mentor_tickets_main(request):
                 "email": ticket.user.email,
                 "claimedByMe": False if ticket.status == "Unclaimed" else True
             })
-    print(ticket_data)
     return render(request,"mentor-tickets.html", {
         "highlight": "mentor-ticket", 
         "user": u, 
@@ -123,13 +122,11 @@ def create_ticket(request):
     }
 
     layer = get_channel_layer()
-    print(layer)
     async_to_sync(layer.group_send)('chat_main', {
         'type': 'chat_message',
         'message': json.dumps(ret_response)
     })
 
-    print(ret_response)
     return JsonResponse(ret_response)
 
 @login_required
@@ -144,7 +141,6 @@ def delete_ticket(request):
     try:
         tid = int(request.POST.get('tid', -1))
         t = Ticket.objects.filter(id=tid).first()
-        print(u)
         if not t.user == u and not u.is_admin and not u.is_mentor:
             raise AssertionError
         t.delete()
@@ -160,9 +156,7 @@ def delete_ticket(request):
         "id": tid,
         "type": 'ticket-deleted'
     }
-    print(ret_response)
     layer = get_channel_layer()
-    print(layer)
     async_to_sync(layer.group_send)('chat_main', {
         'type': 'chat_message',
         'message': json.dumps(ret_response)
@@ -212,7 +206,6 @@ def claim_ticket(request):
         }
 
         layer = get_channel_layer()
-        print(layer)
         async_to_sync(layer.group_send)('chat_main', {
             'type': 'chat_message',
             'message': json.dumps(ret_response)
@@ -259,7 +252,6 @@ def unclaim_ticket(request):
         }
 
         layer = get_channel_layer()
-        print(layer)
         async_to_sync(layer.group_send)('chat_main', {
             'type': 'chat_message',
             'message': json.dumps(ret_response)

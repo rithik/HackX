@@ -326,7 +326,6 @@ def qr_request(request, typ, num, tf):
             "dietary": p.confirmation.dietary,
             "error": "ERROR - request type not found"
         })
-    print(err)
     if not err == "" and tf == True:
          return JsonResponse({
              "approved": False,
@@ -342,7 +341,6 @@ def qr_request(request, typ, num, tf):
     }
 
     layer = get_channel_layer()
-    print(layer)
     async_to_sync(layer.group_send)('chat_qr', {
         'type': 'chat_message',
         'message': json.dumps(req_response)
@@ -535,14 +533,10 @@ def admin_settings(request):
     if request.method == "POST":
         submission_deadline = request.POST.get('submission_deadline', None)
         confirmation_deadline = request.POST.get('confirmation_deadline', None)
-        print(submission_deadline)
-        print(confirmation_deadline)
         s = Settings.objects.all()[0]
         s.application_submission_deadline = settings.TZ.localize(datetime.strptime(submission_deadline, "%Y-%m-%dT%H:%M"))
         s.application_confirmation_deadline = settings.TZ.localize(datetime.strptime(confirmation_deadline, "%Y-%m-%dT%H:%M"))
         s.save()
-        print(s.application_submission_deadline)
-        print(s.application_confirmation_deadline)
         return JsonResponse({
             'message': 'success'
         })

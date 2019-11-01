@@ -306,3 +306,11 @@ a.article:hover {
 div.dropdown {
     max-width: 800px !important;
 }
+
+.btn-primary{
+    background-color:#002868;
+    border-color:#002868;
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color:#002868;
+}

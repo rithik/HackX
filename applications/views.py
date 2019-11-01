@@ -166,7 +166,6 @@ def confirmation(request):
         github = request.POST.get('github', '')
         notes = request.POST.get('notes', '')
         file = request.FILES['file']
-        print(file)
         if file == '':
             return render(request, "confirmation.html", {
                 "user": u, 

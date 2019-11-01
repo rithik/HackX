@@ -180,7 +180,6 @@ def edit_categories(request):
             judges = request.POST.get('judges', 1)
             opt_in = request.POST.get('opt_in', False)
 
-            print(opt_in)
             if opt_in == "true":
                 opt_in = True
             else:
@@ -225,7 +224,6 @@ def edit_categories(request):
 
         if delete:
             cid = request.POST.get('cid', '')
-            print(request.POST)
             c = Category.objects.get(id=cid)
             c.delete()
             return JsonResponse({
@@ -259,7 +257,6 @@ def import_teams_from_devpost(request):
         context = {}
         # source: https://www.pythoncircle.com/post/30/how-to-upload-and-process-the-csv-file-in-django/
         csv_file = request.FILES.get('devpost_csv', None)
-        print(request.POST)
         # check is a csv file
         if not csv_file.name.endswith('.csv'):
             return JsonResponse({
@@ -289,8 +286,6 @@ def import_teams_from_devpost(request):
                 team = Team.objects.create(name=project_name, link=project_url)
             else:
                 team = teams[0]
-
-            print(team)
 
             if prize != '':
                 # get or create category
@@ -807,10 +802,8 @@ def normalize_teams(request):
         context['highlight'] = "judging-admin"
         return render(request, 'normalize_teams.html', context)
     if request.method == "POST":
-        print(request.POST)
         add = request.POST.get('add', False)
         if add == "true":
-            print("HERE")
             team = Team.objects.create(name='Normalization Session {}'.format(str(uuid.uuid1())), link='', is_anchor=True)
             return redirect('normalize_teams')
         delete = request.POST.get('delete', False)

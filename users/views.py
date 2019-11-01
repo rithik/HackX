@@ -19,7 +19,6 @@ def redirect_dashboard(request):
 def setup(request):
     if len(Settings.objects.all()) == 0:
         tz = settings.TZ
-        print(tz)
         Settings.objects.create(
             application_submission_deadline=datetime.now(),
             application_confirmation_deadline=datetime.now()
@@ -106,7 +105,6 @@ def login_page(request):
                 if not u.verified:
                     return render(request, "login_page.html", {"message":"Your account was not verified! Please check your email (and spam folder) to confirm your account!"})
                 login(request, user)
-                print(request.user)
                 return redirect('/dashboard')
             return render(request, "login_page.html", {"message":"Incorrect Password!"})
 
