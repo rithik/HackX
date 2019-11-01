@@ -24,15 +24,26 @@
     <br/>
     <br/>
 
-      <div class="row">
-
-      <button class="btn btn-md btn-primary btn-block text-uppercase" name="button-type" onclick="downloadFunc('all')">Download all resumes</button>
-        
+    <div class="row">
+      <div class="card" style="width: 18rem; margin: 15px;">
+        <div class="card-body">
+          <h5 class="card-title">All Resumes</h5>
+          <p class="card-text">Download the resumes of every single Hackathon participant as a Zip File</p>
+          <br/>
+          <a href="#" class="btn btn-md btn-primary btn-block text-uppercase" onclick="downloadFunc('all')">Download all resumes</a>
+        </div>
+      </div>
 
       {% for year in grad_years %}
-        <button class="btn btn-md btn-primary text-uppercase resume-book-buttons" name="button-type" onclick="downloadFunc('{{ year }}')">Download all {{ year }} resumes</button>
-
+        <div class="card" style="width: 18rem; margin: 15px;">
+          <div class="card-body">
+            <h5 class="card-title">Class of {{ year }} Resumes</h5>
+            <p class="card-text">Download the resumes of every single Hackathon participant that is Class of {{ year }} as a Zip File</p>
+            <a href="#" class="btn btn-md btn-primary btn-block text-uppercase" onclick="downloadFunc('{{ year }}')">Download resumes</a>
+          </div>
+        </div>
       {% endfor %}
+
     </div>
     
     <script>
