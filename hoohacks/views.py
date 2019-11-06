@@ -10,8 +10,7 @@ from datetime import datetime
 def receive_email(request, email_uuid):
     e = EmailView.objects.filter(uuid_confirmation=email_uuid).first()
     u = e.user
-    tz = timezone('US/Eastern')
-    e.viewed = tz.localize(datetime.now())
+    e.viewed = datetime.now()
     if e.action == "verify":
         u.verified = True
     e.save()

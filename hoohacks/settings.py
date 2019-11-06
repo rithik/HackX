@@ -160,7 +160,7 @@ APPLICATION_CONFIRMATION_DEADLINE = TZ.localize(datetime.datetime(2019, 11, 21, 
 APPLICATION_CONFIRMATION_DEADLINE_FMT = APPLICATION_CONFIRMATION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
 SCHOOLS = []
-GRADUATION_YEARS = [2019, 2020, 2021, 2022, 2023, 2024]
+GRADUATION_YEARS = [2020, 2021, 2022, 2023, 2024, 2025]
 RACES = ["African American", "American Indian", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
 GENDERS = ["Male", "Female", "Other", "Prefer not to say"]

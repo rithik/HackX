@@ -43,8 +43,8 @@ class EmailView(models.Model):
     action = models.CharField(max_length=1000, default="") 
     redirect_url = models.CharField(max_length=1000, default="")
 
-    sent = models.DateTimeField(auto_now_add=True)
-    viewed = models.DateTimeField(auto_now_add=True)
+    sent = models.DateTimeField(auto_now_add=True, verbose_name="Sent Date (in UTC)")
+    viewed = models.DateTimeField(auto_now_add=True, verbose_name="Viewed Date (in UTC)")
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
