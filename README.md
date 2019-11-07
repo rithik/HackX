@@ -2,7 +2,29 @@
 
 ### Why use this system?
 
-There are so many different systems that provide the ability to register people for events, but there is no one system that covers all of the things required for running a hackathon. This is where HackX comes in. HackX is the first system that involves hacker registration, mentor registration, judge registration, mentor-ticket queueing, administration views with data analysis, a resume book and judging. We know that's a lot for one system to do. Here's some instructions for setup. 
+There are so many different systems that provide the ability to register people for events, but there is no one system that covers all of the things required for running a hackathon. This is where HackX comes in. HackX is the first system that involves hacker registration, mentor registration, judge registration, mentor-ticket queueing, administration views with data analysis, a resume book and judging. We know that's a lot for one system to do. Here's some instructions for setup.
+
+### How does HackX look?
+
+Here's a few pictures of the application.
+
+#### Login Page
+![Login](./docs/LoginPage.png)
+
+#### Dashboard
+![Dashboard](./docs/Dashboard.png)
+
+#### Application
+![Application](./docs/Application.png)
+
+#### Support Tickets Page
+![SupportTickets](./docs/SupportTickets.png)
+
+#### Admin Page
+![Admin](./docs/Admin.png)
+
+#### Judging Queue Page
+![JudgingQueue](./docs/JudgingQueue.png)
 
 ### Deploy to Heroku
 
@@ -27,3 +49,13 @@ To setup a user as an admin in the HackX system, navigate to `http://localhost:8
 To setup a user as an mentor in the HackX system, navigate to `http://localhost:8000/make/mentor`. Use the `MENTOR_PASSWORD` set in the `secret.py` file.
 
 To setup a user as a judge in the HackX system, navigate to `http://localhost:8000/make/judge`. Use the `JUDGING_PASSWORD` set in the `secret.py` file.
+
+### Contributors
+
+This system was primarily built by the following people: 
+
+- Rithik Yelisetty (Vice President of Technology of HooHacks)
+- Nikash Sethi (Vice President of Technology of HooHacks)
+- David Zhao (Former President of HooHacks)
+
+Thank you to the entire HooHacks organization for helping us build out and test this system in addition to the HackMIT team for inspiring us to innovate on their Quill system!
