@@ -6,6 +6,10 @@
             "description": "Password to make users admins",
             "value": "ADMIN_PASSWORD"
         },
+        "EVENT_NAME": {
+            "description": "Name of the Hackathon",
+            "value": "HooHacks"
+        },
         "GMAIL_USERNAME": {
             "description": "The Gmail account used to send emails to members using the system",
             "value": "example@gmail.com"
@@ -23,7 +27,7 @@
             "value": "MENTOR_PASSWORD"
         },
         "DROPBOX_ACCESS_TOKEN": {
-            "description": "Dropbox Access Token - This will be used to upload resumes",
+            "description": "Dropbox Access Token - This will be used to upload resumes and nametags",
             "value": "DROPBOX_ACCESS_TOKEN"
         },
         "REMIND_URL": {

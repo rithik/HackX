@@ -150,7 +150,7 @@ DROPBOX_ACCESS_TOKEN = os.environ.get('DROPBOX_ACCESS_TOKEN', secret.DROPBOX_ACC
 REMIND_URL = os.environ.get('REMIND_URL', secret.REMIND_URL)
 
 MAX_NUMBER_TICKETS = 2
-EVENT_NAME = "HooHacks"
+EVENT_NAME = os.environ.get('EVENT_NAME', 'HooHacks')
 
 TZ = timezone('US/Eastern')
 APPLICATION_SUBMISSION_DEADLINE = TZ.localize(datetime.datetime(2019, 11, 20, 23, 59, 59, 0))
