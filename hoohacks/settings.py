@@ -230,3 +230,5 @@ ALLOWED_HOSTS = [
     "hoohacks-d.herokuapp.com",
     '*'
 ]
+
+del DATABASES['default']['OPTIONS']['sslmode']
