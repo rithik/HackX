@@ -12,6 +12,7 @@ import uuid
 from .models import User, EmailView
 from applications.models import Application, Confirmation
 from administration.models import Settings
+from judging.models import Organization
 
 def redirect_dashboard(request):
     return redirect('/dashboard')
@@ -23,6 +24,8 @@ def setup(request):
             application_submission_deadline=datetime.now(),
             application_confirmation_deadline=datetime.now()
         )
+        o = Organization.objects.create(name="Organizers")
+        o = Organization.objects.create(name="Other")
     return redirect('/')
 
 @login_required
@@ -105,7 +108,8 @@ def login_page(request):
                 if not u.verified:
                     return render(request, "login_page.html", {"message":"Your account was not verified! Please check your email (and spam folder) to confirm your account!"})
                 login(request, user)
-                return redirect('/dashboard')
+                next_url = request.GET.get('next', '/dashboard')
+                return redirect(next_url)
             return render(request, "login_page.html", {"message":"Incorrect Password!"})
 
 def forgot_password(request):

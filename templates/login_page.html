@@ -27,7 +27,7 @@
                     <center><strong> {{ message }} </strong></center>
                 </div>
                 {% endif %}
-            <form class="form-signin" method="POST" action="/users/login/">
+            <form class="form-signin" method="POST">
               {% csrf_token %}
               <div class="form-label-group">
                 <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email address" required autofocus>

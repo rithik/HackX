@@ -163,7 +163,7 @@ SCHOOLS = []
 GRADUATION_YEARS = [2020, 2021, 2022, 2023, 2024, 2025]
 RACES = ["African American", "American Indian", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
-GENDERS = ["Male", "Female", "Other", "Prefer not to say"]
+GENDERS = ["Female", "Male", "Other", "Prefer not to say"]
 TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
 TSHIRT_SIZES = ["XS", "S", "M", "L", "XL"]
 DIETARY_RESTRICTIONS = ["None", "Vegetarian", "Vegan", "Nut Allergy", "Halal", "Other"]
@@ -222,6 +222,8 @@ try:
     # Configure Django App for Heroku.
     import django_heroku
     django_heroku.settings(locals())
+    if ON_HEROKU:
+        del DATABASES['default']['OPTIONS']['sslmode']
 except ImportError:
     found = False
 
@@ -230,5 +232,3 @@ ALLOWED_HOSTS = [
     "hoohacks-d.herokuapp.com",
     '*'
 ]
-
-del DATABASES['default']['OPTIONS']['sslmode']
