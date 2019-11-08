@@ -29,6 +29,10 @@ import dropbox
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 
+def test_sentry(request):
+    division_by_zero = 1 / 0
+    return JsonResponse("error")
+
 @login_required
 def create_judges(request):
     u = request.user
