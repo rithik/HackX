@@ -44,7 +44,8 @@
         }
     },
     "addons": [
-        "heroku-redis"
+        "heroku-redis",
+        "sentry"
     ],
     "buildpacks": [
         {

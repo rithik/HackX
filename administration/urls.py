@@ -32,5 +32,4 @@ urlpatterns = [
    path('organizations', views.view_organizations),
    path('create_judges', views.create_judges),
    path('settings', views.admin_settings, name='admin_settings'),
-   path('test_sentry', views.test_sentry)
 ]
