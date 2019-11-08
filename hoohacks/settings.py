@@ -224,6 +224,13 @@ try:
     django_heroku.settings(locals())
     if ON_HEROKU:
         del DATABASES['default']['OPTIONS']['sslmode']
+        import sentry_sdk
+        from sentry_sdk.integrations.django import DjangoIntegration
+
+        sentry_sdk.init(
+            dsn=os.environ['SENTRY_DSN'],
+            integrations=[DjangoIntegration()]
+        )
 except ImportError:
     found = False
 
