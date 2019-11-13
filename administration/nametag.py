@@ -49,7 +49,7 @@ def make_image(name, qr_hash):
         draw.text((340, 320),"Food Wave:\t\t A",(0,0,0),font=foodFont)
     else:
         draw.text((340, 320),"Food Wave:\t\t B",(0,0,0),font=foodFont)
-    file_path = '/Nametags/' + name + "-" + qr_hash + '.png'
+    file_path = '/Nametags/' + name + "-" + str(qr_hash) + '.png'
     imgByteArr = io.BytesIO()
     image.save(imgByteArr, format='PNG')
     imgByteArr = imgByteArr.getvalue()
