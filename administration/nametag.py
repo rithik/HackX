@@ -53,4 +53,9 @@ def make_image(name, qr_hash):
     imgByteArr = io.BytesIO()
     image.save(imgByteArr, format='PNG')
     imgByteArr = imgByteArr.getvalue()
-    dbx.files_upload(imgByteArr, file_path)
+    try:
+        dbx.files_upload(imgByteArr, file_path)
+    except:
+        dbx.files_delete_v2(file_path)
+        dbx.files_upload(imgByteArr, file_path)
+        
