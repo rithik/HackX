@@ -28,6 +28,10 @@
       <strong>Error deleting ticket! Please log out and try again.</strong>
     </div>
 
+    <div class="alert alert-danger" id="dangerMessageTicketNotFilled" style="display:none;">
+        <strong>Please fill out all fields to submit a ticket!</strong>
+      </div>
+
     <div class="card" class="main-card">
       <div class="card-body">
         <h4 class="card-title"><center>Create New Support Ticket</center></h4>
@@ -156,6 +160,15 @@
             where: document.getElementById("where").value,
             email: email,
             csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        if (postData.help == "" || postData.where == ""){
+            var alert = document.getElementById("dangerMessageTicketNotFilled");
+            alert.style.display = "";
+            setTimeout(
+                function(){
+                    alert.style.display = "none";
+            }, 3000);
+            return;
         }
         $.post( "/tickets/create", postData, function(data) {
             console.log(data);
