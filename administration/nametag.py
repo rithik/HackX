@@ -49,7 +49,7 @@ def make_image(name, qr_hash):
         draw.text((340, 320),"Food Wave:\t\t A",(0,0,0),font=foodFont)
     else:
         draw.text((340, 320),"Food Wave:\t\t B",(0,0,0),font=foodFont)
-    file_path = '/Nametags/' + name + '.png'
+    file_path = '/Nametags/' + name + "-" + qr_hash + '.png'
     imgByteArr = io.BytesIO()
     image.save(imgByteArr, format='PNG')
     imgByteArr = imgByteArr.getvalue()
@@ -58,4 +58,3 @@ def make_image(name, qr_hash):
     except:
         dbx.files_delete_v2(file_path)
         dbx.files_upload(imgByteArr, file_path)
-        
