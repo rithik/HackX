@@ -188,7 +188,7 @@ def confirmation(request):
                     print("can't delete")
             try:
                 dbx.files_upload(file.file.read(), file_path)
-            else:
+            except:
                 dbx.files_delete_v2(file_path)
                 dbx.files_upload(file.file.read(), file_path)
 
