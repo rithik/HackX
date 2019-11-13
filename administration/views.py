@@ -435,33 +435,33 @@ def reject_user(request, user_id):
         return redirect("/logout")
     if not u.is_admin:
         return redirect("/dashboard")
-    try:
-        h = User.objects.filter(id=user_id).first()
-        a = h.application
-        a.accepted = False
-        a.waitlisted = False
-        a.rejected = True
+    # try:
+    h = User.objects.filter(id=user_id).first()
+    a = h.application
+    a.accepted = False
+    a.waitlisted = False
+    a.rejected = True
 
-        if h.confirmation:
-            c = u.confirmation
-            c.delete()
+    if h.confirmation:
+        c = u.confirmation
+        c.delete()
 
-        email_uuid = uuid.uuid1()
-        e = EmailView.objects.create(
-            uuid_confirmation=email_uuid, 
-            subject="HooHacks Status Update", 
-            message=settings.REJECTED_EMAIL.format(h.application.full_name),
-            action="rejected",
-            redirect_url="/dashboard",
-            user=h
-        )
-        e.send_email()
-        print(e.uuid_confirmation)
-        
-        a.save()
-        return JsonResponse({"status": 200, "message": "Success"})
-    except:
-        return JsonResponse({"status": 404, "message": "Error"})
+    email_uuid = uuid.uuid1()
+    e = EmailView.objects.create(
+        uuid_confirmation=email_uuid, 
+        subject="HooHacks Status Update", 
+        message=settings.REJECTED_EMAIL.format(h.application.full_name),
+        action="rejected",
+        redirect_url="/dashboard",
+        user=h
+    )
+    e.send_email()
+    print(e.uuid_confirmation)
+    
+    a.save()
+    return JsonResponse({"status": 200, "message": "Success"})
+    # except:
+    #     return JsonResponse({"status": 404, "message": "Error"})
 
 @login_required
 def view_organizations(request):
