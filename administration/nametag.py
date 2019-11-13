@@ -41,7 +41,7 @@ def make_image(name, qr_hash):
 
     draw = ImageDraw.Draw(image)
     nameFont = ImageFont.truetype("administration/nametag/Helvetica.ttf", 72)
-    for k in range(0, max(len(name_arr, 3))):
+    for k in range(0, max(len(name_arr), 3)):
         draw.text((340, 70 * (k+2)), name_arr[k], (0,0,0), font=nameFont)
     #draw.text((340, 210), name_arr[1], (0,0,0), font=nameFont)
 
