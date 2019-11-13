@@ -180,13 +180,18 @@ def confirmation(request):
 
         file_path = ""
         if file:
-            file_path = '/Resumes/' + str(a.grad_year) + '/' + u.full_name + '-Resume.pdf'
+            file_path = '/Resumes/' + str(a.grad_year) + '/' + u.full_name + "-" + str(u.qr_hash) + '-Resume.pdf'
             if not c.resume_file_name == "":
                 try:
                     dbx.files_delete_v2(file_path)
                 except:
                     print("can't delete")
-            dbx.files_upload(file.file.read(), file_path)
+            try:
+                dbx.files_upload(file.file.read(), file_path)
+            else:
+                dbx.files_delete_v2(file_path)
+                dbx.files_upload(file.file.read(), file_path)
+
         else:
             return render(request, "confirmation.html", {
                 "user": u, 
