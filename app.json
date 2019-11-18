@@ -22,9 +22,13 @@
             "description": "Password to make users mentors",
             "value": "MENTOR_PASSWORD"
         },
+        "VOLUNTEER_PASSWORD": {
+            "description": "Password to make users volunteers",
+            "value": "VOLUNTEER_PASSWORD"
+        },
         "JUDGING_PASSWORD": {
             "description": "Password to make users judges",
-            "value": "MENTOR_PASSWORD"
+            "value": "JUDGING_PASSWORD"
         },
         "DROPBOX_ACCESS_TOKEN": {
             "description": "Dropbox Access Token - This will be used to upload resumes and nametags",
