@@ -44,6 +44,7 @@ urlpatterns = [
     path('make/mentor', mentors.views.make_mentor_manual),
     path('make/judge', judging.views.make_judge_manual),
     path('make/admin', administration.views.make_admin_manual),
+    path('make/volunteer', administration.views.make_volunteer_manual),
     path('download/resumes/<str:gradYear>', mentors.views.download_resumes),
     path('download/resume/me/<str:uid>', mentors.views.get_resume_by_id),
     path('download/my/resume', mentors.views.get_my_resume),

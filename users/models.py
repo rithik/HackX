@@ -13,6 +13,7 @@ class User(AbstractUser):
     is_hacker = models.BooleanField(default=False)
     is_mentor = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    is_volunteer = models.BooleanField(default=False)
 
     is_judge = models.BooleanField(default=False)
 

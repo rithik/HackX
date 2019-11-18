@@ -9,29 +9,39 @@
     <br/>
     <br/>
 
-    <ul class="nav nav-pills nav-fill" >
-      <li class="nav-item">
-        <a class="nav-link {% if adminHighlight == 'stats' %}active{% endif %}" href="/admin" style="border:2px solid black;border-radius-left:6px;width:100%;">Stats</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if adminHighlight == 'users' %}active{% endif %}" href="/admin/users" style="border:2px solid black;width:100%;">Applications</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if adminHighlight == 'organizations' %}active{% endif %}" href="/admin/organizations" style="border:2px solid black;border-radius-right:6px;width:100%;">Organizations</a>
-      </li>
-    </ul>
-    <ul class="nav nav-pills nav-fill" >
-      <li class="nav-item">
-        <a class="nav-link {% if adminHighlight == 'qr' %}active{% endif %}" href="/admin/qr" style="border:2px solid black;border-radius-left:6px;width:100%;">QR</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if adminHighlight == 'qr-settings' %}active{% endif %}" href="/admin/qr/settings" style="border:2px solid black;width:100%;">Hackers - QR </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if adminHighlight == 'settings' %}active{% endif %}" href="/admin/settings" style="border:2px solid black;border-radius-right:6px;width:100%;">Settings</a>
-      </li>
-    </ul>
-
+    {%  if request.user.is_admin %}
+      <ul class="nav nav-pills nav-fill" >
+        <li class="nav-item">
+          <a class="nav-link {% if adminHighlight == 'stats' %}active{% endif %}" href="/admin" style="border:2px solid black;border-radius-left:6px;width:100%;">Stats</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if adminHighlight == 'users' %}active{% endif %}" href="/admin/users" style="border:2px solid black;width:100%;">Applications</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if adminHighlight == 'organizations' %}active{% endif %}" href="/admin/organizations" style="border:2px solid black;border-radius-right:6px;width:100%;">Organizations</a>
+        </li>
+      </ul>
+      <ul class="nav nav-pills nav-fill" >
+        <li class="nav-item">
+          <a class="nav-link {% if adminHighlight == 'qr' %}active{% endif %}" href="/admin/qr" style="border:2px solid black;border-radius-left:6px;width:100%;">QR</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if adminHighlight == 'qr-settings' %}active{% endif %}" href="/admin/qr/settings" style="border:2px solid black;width:100%;">Hackers - QR </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if adminHighlight == 'settings' %}active{% endif %}" href="/admin/settings" style="border:2px solid black;border-radius-right:6px;width:100%;">Settings</a>
+        </li>
+      </ul>
+    {% elif request.user.is_volunteer %}
+      <ul class="nav nav-pills nav-fill" >
+        <li class="nav-item">
+          <a class="nav-link {% if adminHighlight == 'qr' %}active{% endif %}" href="/admin/qr" style="border:2px solid black;border-radius-left:6px;width:100%;">QR</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if adminHighlight == 'qr-settings' %}active{% endif %}" href="/admin/qr/settings" style="border:2px solid black;width:100%;">Hackers - QR </a>
+        </li>
+      </ul>
+    {% endif %}
     {% block addContent %}
 
     {% endblock %}

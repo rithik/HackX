@@ -123,12 +123,44 @@ def make_admin_manual(request):
             })
 
 @login_required
+def make_volunteer_manual(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+
+    if request.method == "GET":
+        return render(request, "make-volunteer.html", {
+            "highlight": "", 
+            "user": u,
+            "msg": "Please enter the volunteer password to make yourself a volunteer!"
+        })
+
+    if request.method == "POST":
+        password = request.POST.get('password', '')
+        if password == settings.VOLUNTEER_PASSWORD:
+            u.is_volunteer = True
+            u.save()
+            return render(request, "make-volunteer.html", {
+                "highlight": "", 
+                "user": u,
+                "msg": "You are now a volunteer!"
+            })
+        else:
+            return render(request, "make-volunteer.html", {
+                "highlight": "", 
+                "user": u,
+                "msg": "Incorrect Password! Try again!"
+            })
+
+@login_required
 def admin_main(request):
     u = request.user
     if not u.is_authenticated:
         return redirect("/logout")
-    if not u.is_admin:
+    if not u.is_admin and not u.is_volunteer:
         return redirect("/dashboard")
+    if u.is_volunteer:
+        return redirect('/admin/qr')
     stats = get_stats()
     return render(request, "admin-stats.html", {
         "highlight": "admin", 
@@ -245,10 +277,11 @@ def admin_qr(request):
     u = request.user
     if not u.is_authenticated:
         return redirect("/logout")
-    if not u.is_admin:
+    if not u.is_admin and not u.is_volunteer:
         return redirect("/dashboard")
+    highlight = "admin" if u.is_admin else "volunteer"
     return render(request, "qr.html", {
-        "highlight": "admin", 
+        "highlight": highlight, 
         "user": u,
         "adminHighlight": "qr"
     ,})
@@ -258,10 +291,11 @@ def admin_qr_settings(request):
     u = request.user
     if not u.is_authenticated:
         return redirect("/logout")
-    if not u.is_admin:
+    if not u.is_admin and not u.is_volunteer:
         return redirect("/dashboard")
+    highlight = "admin" if u.is_admin else "volunteer"
     return render(request, "qr-settings.html", {
-        "highlight": "admin", 
+        "highlight": highlight, 
         "user": u,
         "all_hackers": [u for u in User.objects.all() if hasattr(u, 'confirmation') and u.confirmation.confirmed],
         "adminHighlight": "qr-settings"

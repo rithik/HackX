@@ -12,9 +12,11 @@
 {% block subtitle %}QR Settings{% endblock %}
 {% block addContent %}
     <br/>
+    {% if user.is_admin %}
     <button type="button" class="btn btn-primary" id="generateNametags">Generate Nametags</button>
     <br/>
     <br/>
+    {% endif %}
 
     <div class="alert alert-success" role="alert" id="updateMsg" style="display:none;">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -84,11 +86,12 @@
     //     document.getElementById(data.qr + "-" + data.typ).checked = data.tf;
     // });
     
-
-    $('#generateNametags').click(function(e) {
-        e.preventDefault();  //stop the browser from following
-        window.location.href = window.location.origin + "/admin/nametags";
-    });
+    '{% if user.is_admin %}'
+        $('#generateNametags').click(function(e) {
+            e.preventDefault();  //stop the browser from following
+            window.location.href = window.location.origin + "/admin/nametags";
+        });
+    '{% endif %}'
     $(document).ready(function() {
         $('#dtBasicExample').dataTable({
             "order": [[ 0, "desc" ]],
