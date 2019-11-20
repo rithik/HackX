@@ -308,8 +308,6 @@ def get_my_resume(request):
     u = request.user
     if not u:
         return redirect("/logout")
-    if not u.is_admin and not u.is_mentor:
-        return redirect("/dashboard")
     c = u.confirmation
     if c.resume_file_name == "":
         return HttpResponse("You have not uploaded a resume!")
