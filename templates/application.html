@@ -124,41 +124,57 @@
     <b>Do you need travel reimbursement?</b>
 
     <div class="form-check">
-       <input type="checkbox" class="form-check-input" name="travel" {% if app.travel %} checked {% endif %} id="exampleCheck2">
-       <label class="form-check-label" for="exampleCheck2">Yes, I need travel reimbursement.</label>
+       <input type="checkbox" class="form-check-input" name="travel" {% if app.travel %} checked {% endif %} id="need-travel">
+       <label class="form-check-label" for="need-travel">Yes, I need travel reimbursement.</label>
      </div>
      <br/>
-     <div class="form-group">
-       <label for="where-from">If you need travel reimbursement, where are you travelling from?</label>
-       <input type="name" class="form-control" id="where-from" {% if app.where_from %} value="{{ app.where_from }}" {% endif %} placeholder="Where are you travelling from?" name="where-from">
-     </div>
 
-     <div class="form-group">
-       <label for="travel-method">If you need travel reimbursement, how will you be travelling?</label>
-       <br/>
-       <select name="travel-method" id="travel-method" required class="selectpicker" data-live-search="true" data-width="100%">
-          {% for s in travel_methods %}
-            <option value="{{s}}" {% if s == app.travel_method %} selected {% endif %}>{{ s }}</option>
-          {% endfor %}
-        </select>
-     </div>
-
-        <div class="form-group">
-          <label for="miles">If you need travel reimbursement, how many miles are you travelling?</label>
-          <br/>
-             <input type="text" class="form-control" id="miles" {% if app.miles %} value="{{ app.miles }}" {% endif %} placeholder="Number of miles" name="miles">
-         </div>
-
+     <div id="travel-app-main" {% if app.travel %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+      <div class="form-group">
+        <label for="where-from">If you need travel reimbursement, where are you travelling from?</label>
+        <input type="name" class="form-control" id="where-from" {% if app.where_from %} value="{{ app.where_from }}" {% endif %} placeholder="Where are you travelling from?" name="where-from">
+      </div>
+ 
+      <div class="form-group">
+        <label for="travel-method">If you need travel reimbursement, how will you be travelling?</label>
+        <br/>
+        <select name="travel-method" id="travel-method" required class="selectpicker" data-live-search="true" data-width="100%">
+           {% for s in travel_methods %}
+             <option value="{{s}}" {% if s == app.travel_method %} selected {% endif %}>{{ s }}</option>
+           {% endfor %}
+         </select>
+      </div>
+ 
          <div class="form-group">
-           <label for="cost">If you need travel reimbursement, how much reimbursement will you need?</label>
+           <label for="miles">If you need travel reimbursement, how many miles are you travelling?</label>
            <br/>
-              <input type="number" class="form-control" id="cost" {% if app.cost %} value="{{ app.cost }}" {% endif %} placeholder="Cost" name="cost">
+              <input type="text" class="form-control" id="miles" {% if app.miles %} value="{{ app.miles }}" {% endif %} placeholder="Number of miles" name="miles">
           </div>
-         <br/>
+ 
+          <div class="form-group">
+            <label for="cost">If you need travel reimbursement, how much reimbursement will you need?</label>
+            <br/>
+               <input type="number" class="form-control" id="cost" {% if app.cost %} value="{{ app.cost }}" {% endif %} placeholder="Cost" name="cost">
+           </div>
+         
+     </div>
+
+     <br/>
     {% if allow %}
       <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="travel">Submit Travel Application</button>
     {% else %}
         <center>Unfortunately, you can no longer submit a travel application!</center>
     {% endif %}
     </form>
+
+    <script>
+    $("#need-travel").change(function(){
+      if (document.getElementById('need-travel').checked){
+        document.getElementById('travel-app-main').style.display = "block";
+      }
+      else{
+        document.getElementById('travel-app-main').style.display = "none";
+      }
+    })
+    </script>
 {% endblock %}

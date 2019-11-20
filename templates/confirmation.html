@@ -17,9 +17,15 @@
     <form class="form-signin" method="POST" action="/confirmation" style="width:60%; margin:auto; display:block;" enctype="multipart/form-data">
         {% csrf_token %}
         {% if not msg == ""  %}
+          {% if declined %}
+            <div class="alert alert-primary" role="alert">
+                {{ msg }}
+            </div>
+          {% else %}
             <div class="alert alert-success" role="alert">
                 {{ msg }}
             </div>
+          {% endif %}
         {% endif %}
     <div class="form-group">
       <label for="tshirt">T-Shirt Size</label>

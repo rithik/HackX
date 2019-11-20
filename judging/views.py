@@ -695,11 +695,14 @@ def scores(request):
         count = 0
         for k in rankings:
             count += 1
+            categories = [category.name for category in k[2].categories.all()]
             ranks.append({
                 'norm_score': math.floor(k[0] * 1000) / 1000,
                 'raw_score': math.floor(k[1] * 1000) / 1000,
                 'team': k[2].name,
                 'ranking': count,
+                'id': k[2].id,
+                'categories': categories
             })
         
         # norm_score, raw_score, winner = rankings[0]
@@ -765,7 +768,7 @@ def normalize_scores(request):
             demo.norm_score = demo.raw_score - demo.judge.sd_offset
             demo.save()
         response['success'] = True
-        return JsonResponse(response)
+        return redirect('scores')
     return JsonResponse(response)
 
 @login_required

@@ -149,6 +149,7 @@ def confirmation(request):
             c.declined = True
             c.confirmed = False
             c.save()
+            conf_deadline = Settings.objects.all()[0].application_confirmation_deadline_fmt()
             return render(request, "confirmation.html", {
                 "user": u, 
                 "app": a, 
@@ -156,7 +157,8 @@ def confirmation(request):
                 "highlight": "confirmation",
                 "tshirt_sizes": settings.TSHIRT_SIZES, 
                 "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
-                "msg": "Your confirmation application has been submitted!", 
+                "declined": True,
+                "msg": "We're sorry that you can't make it to {}. You can still confirm your spot until the confirmation deadline ({}).".format(settings.EVENT_NAME, conf_deadline), 
                 "allow": ALLOW
             })
             
@@ -174,6 +176,7 @@ def confirmation(request):
                 "highlight": "confirmation",
                 "tshirt_sizes": settings.TSHIRT_SIZES, 
                 "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
+                "declined": False,
                 "msg": "", 
                 "allow": ALLOW
             })
@@ -200,6 +203,7 @@ def confirmation(request):
                 "highlight": "confirmation",
                 "tshirt_sizes": settings.TSHIRT_SIZES, 
                 "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
+                "declined": False,
                 "msg": "", 
                 "allow": ALLOW
             })
@@ -243,6 +247,7 @@ def confirmation(request):
                 "tshirt_sizes": settings.TSHIRT_SIZES, 
                 "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
                 "msg": "Your confirmation application has been submitted!", 
+                "declined": False,
                 "allow": ALLOW
             })
             
