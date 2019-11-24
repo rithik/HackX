@@ -24,6 +24,9 @@ import mentors
 import judging
 from . import views 
 
+handler404 = views.handler404
+handler500 = views.handler500
+
 urlpatterns = [
     path('administration/', admin.site.urls),
     url(r'^users/', include('users.urls')),

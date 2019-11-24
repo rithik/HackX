@@ -17,3 +17,8 @@ def receive_email(request, email_uuid):
     u.save()
     return redirect(e.redirect_url)
     
+def handler404(request, exception):
+    return render(request, '404.html', status=404)
+
+def handler500(request):
+    return render(request, '500.html', status=500)
