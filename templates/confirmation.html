@@ -30,7 +30,7 @@
     <div class="form-group">
       <label for="tshirt">T-Shirt Size</label>
       <br/>
-        <select name="tshirt" required class="selectpicker" data-width="100%">
+        <select name="tshirt" required title="Select your T-Shirt size" class="selectpicker" data-width="100%">
             {% for s in tshirt_sizes %}
               <option value="{{s}}" {% if s == c.tshirt %} selected {% endif %}>{{ s }}</option>
             {% endfor %}
@@ -40,7 +40,7 @@
      <div class="form-group">
        <label for="dietary">Dietary Restrictions</label>
        <br/>
-         <select name="dietary" required class="selectpicker" data-width="100%">
+         <select name="dietary" required title="Select your dietary restrictions" class="selectpicker" data-width="100%">
              {% for s in dietary_restrictions %}
                <option value="{{s}}" {% if s == c.dietary %} selected {% endif %}>{{ s }}</option>
              {% endfor %}

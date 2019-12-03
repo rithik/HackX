@@ -35,7 +35,7 @@
      <div class="form-group">
        <label for="school">School</label>
        <br/>
-       <select name="school" id="school" required class="selectpicker" data-live-search="true" data-width="100%" >
+       <select name="school" id="school" required class="selectpicker" title="Select your School" data-live-search="true" data-width="100%" >
           {% for s in schools %}
             <option value="{{s}}" {% if s == app.school %} selected {% endif %}>{{ s }}</option>
           {% endfor %}
@@ -45,7 +45,7 @@
      <div class="form-group">
        <label for="grad-year"><b>College</b> Graduation Year</label>
        <br/>
-         <select name="grad-year" required class="selectpicker" data-width="100%">
+         <select name="grad-year" required title="Select your COLLEGE Graduation Year" class="selectpicker" data-width="100%">
              {% for s in grad_year %}
                <option value="{{s}}" {% if s == app.grad_year %} selected {% endif %}>{{ s }}</option>
              {% endfor %}
@@ -55,7 +55,7 @@
       <div class="form-group">
         <label for="gender">Gender</label>
         <br/>
-          <select name="gender" required class="selectpicker" data-width="100%">
+          <select name="gender" required title="Select your Gender" class="selectpicker" data-width="100%">
               {% for s in genders %}
                 <option value="{{s}}" {% if s == app.gender %} selected {% endif %}>{{ s }}</option>
               {% endfor %}
@@ -65,7 +65,7 @@
        <div class="form-group">
          <label for="race">Race</label>
          <br/>
-           <select name="race" required class="selectpicker" data-width="100%">
+           <select name="race" required title="Select your Race" class="selectpicker" data-width="100%">
                {% for s in races %}
                  <option value="{{s}}" {% if s == app.race %} selected {% endif %}>{{ s }}</option>
                {% endfor %}
@@ -137,7 +137,7 @@
       <div class="form-group">
         <label for="travel-method">If you need travel reimbursement, how will you be travelling?</label>
         <br/>
-        <select name="travel-method" id="travel-method" required class="selectpicker" data-live-search="true" data-width="100%">
+        <select name="travel-method" id="travel-method" required title="Select your travel method" class="selectpicker" data-live-search="true" data-width="100%">
            {% for s in travel_methods %}
              <option value="{{s}}" {% if s == app.travel_method %} selected {% endif %}>{{ s }}</option>
            {% endfor %}
