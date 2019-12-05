@@ -4,6 +4,10 @@
 
 {% block content %}
 
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v5.0&appId=1995587900553873&autoLogAppEvents=1"></script>
+
+
     <h2 class="main-title"> <center>Dashboard</center> </h2>
     <hr style="width:50%">
     <br/>
@@ -68,5 +72,25 @@
     <br/>
     <br/>
     <br/>
-    <script src="{{ remind_url }}"></script>
+    <div class="row">
+        <div class="col-lg-4" id="facebook-feed">
+            
+        </div>
+        <div class="col-lg-8">
+            <a class="twitter-timeline" data-height="420" data-width="1000" data-theme="light" href="https://twitter.com/hoohacks?ref_src=twsrc%5Etfw">Tweets by hoohacks</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>        </div>
+    </div>
+
+    <script>
+        function setupFBFeed(){
+            var fbFeed = document.getElementById('facebook-feed');
+            var fbFeedWidth = fbFeed.clientWidth - 20;
+            console.log(fbFeedWidth);
+            fbFeed.innerHTML = '<div class="fb-group" data-href="https://www.facebook.com/groups/hoohacks2019/" data-width="' + fbFeedWidth.toString() + '" data-show-social-context="true" data-show-metadata="true"></div>'; 
+        }
+        $(document).ready(function (){
+            setupFBFeed();
+        });
+
+    </script>
+
 {% endblock %}
