@@ -318,3 +318,7 @@ div.dropdown {
     content:" *";
     color:red;
 }
+
+.email-link {
+    color: #007bff
+}

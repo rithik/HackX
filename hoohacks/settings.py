@@ -80,6 +80,7 @@ TEMPLATES = [
 ]
 
 TEMPLATES[0]['OPTIONS']['context_processors'].append("administration.context_processors.event_name")
+TEMPLATES[0]['OPTIONS']['context_processors'].append("administration.context_processors.contact_email")
 
 
 MEDIA_ROOT = BASE_DIR + '/media/'
@@ -181,6 +182,8 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('GMAIL_USERNAME', secret.GMAIL_USERNAME)
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD', secret.GMAIL_PASSWORD)
+
+CONTACT_EMAIL = "travel@hoohacks.io"
 
 f = open(BASE_DIR + "/hoohacks/emails/verify_email.html", "r")
 VERIFY_EMAIL = f.read()
