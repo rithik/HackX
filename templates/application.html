@@ -22,18 +22,18 @@
             </div>
         {% endif %}
      <div class="form-group">
-       <label for="full-name">Full Name</label>
+       <label for="full-name" class="required-field">Full Name</label>
        <input type="name" required class="form-control" id="full-name" {% if app.app_complete %} value="{{ app.full_name }}" {% endif %} placeholder="Full Name" name="full-name">
      </div>
 
      <div class="form-group">
-       <label for="date">Birthday</label>
+       <label for="date" class="required-field">Birthday</label>
        <br/>
           <input type="date" required class="form-control" id="date" {% if app.app_complete %} value="{{ app.birthday }}" {% endif %} name="birthday">
       </div>
 
      <div class="form-group">
-       <label for="school">School</label>
+       <label for="school" class="required-field">School</label>
        <br/>
        <select name="school" id="school" required class="selectpicker" title="Select your School" data-live-search="true" data-width="100%" >
           {% for s in schools %}
@@ -43,7 +43,7 @@
      </div>
 
      <div class="form-group">
-       <label for="grad-year"><b>College</b> Graduation Year</label>
+       <label for="grad-year" class="required-field"><b>College</b> Graduation Year</label>
        <br/>
          <select name="grad-year" required title="Select your COLLEGE Graduation Year" class="selectpicker" data-width="100%">
              {% for s in grad_year %}
@@ -53,7 +53,7 @@
       </div>
 
       <div class="form-group">
-        <label for="gender">Gender</label>
+        <label for="gender" class="required-field">Gender</label>
         <br/>
           <select name="gender" required title="Select your Gender" class="selectpicker" data-width="100%">
               {% for s in genders %}
@@ -63,7 +63,7 @@
        </div>
 
        <div class="form-group">
-         <label for="race">Race</label>
+         <label for="race" class="required-field">Race</label>
          <br/>
            <select name="race" required title="Select your Race" class="selectpicker" data-width="100%">
                {% for s in races %}
@@ -73,32 +73,32 @@
         </div>
 
         <div class="form-group">
-          <label for="describe">I would describe myself as a...</label>
+          <label for="describe" class="required-field">I would describe myself as a...</label>
           <br/>
              <input type="text" required class="form-control" id="describe" {% if app.app_complete %} value="{{ app.describe }}" {% endif %} placeholder="Web Developer, Mobile expert, Backend Engineer, Business Developer" name="describe">
          </div>
 
          <div class="form-group">
-           <label for="major">Major</label>
+           <label for="major" class="required-field">Major</label>
            <br/>
               <input type="text" required class="form-control" id="major" {% if app.app_complete %} value="{{ app.major }}" {% endif %} placeholder="Your current major" name="major">
           </div>
 
           <div class="form-group">
-            <label for="hackathons">How many hackathons have you attended?</label>
+            <label for="hackathons" class="required-field">How many hackathons have you attended?</label>
             <br/>
                <input type="number" min="0" required class="form-control" id="hackathons" {% if app.app_complete %} value="{{ app.hackathons }}" {% endif %} placeholder="Number of hackathons attended" name="hackathons">
            </div>
 
            <div class="form-group">
-             <label for="why">What do you hope to get out of HooHacks?</label>
+             <label for="why" class="required-field">What do you hope to get out of HooHacks?</label>
              <br/>
                 <textarea required class="form-control" id="why" placeholder="Tell us why you want to attend HooHacks" name="why">{% if app.app_complete %}{{ app.why }}{% endif %}</textarea>
             </div>
 
         <div class="form-check">
            <input required type="checkbox" class="form-check-input" name="mlh" {% if app.mlh_rules %} checked {% endif %} id="exampleCheck1">
-           <label class="form-check-label" for="exampleCheck1">I agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>.</label>
+           <label class="form-check-label required-field" for="exampleCheck1">I agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>.</label>
          </div>
 
          <br/>
@@ -130,12 +130,12 @@
 
      <div id="travel-app-main" {% if app.travel %} style="display: block;" {% else %} style="display: none;" {% endif %}>
       <div class="form-group">
-        <label for="where-from">Where are you travelling from?</label>
+        <label for="where-from" class="required-field">Where are you travelling from?</label>
         <input type="name" class="form-control" id="where-from" {% if app.where_from %} value="{{ app.where_from }}" {% endif %} placeholder="Please be specific - City, State" name="where-from">
       </div>
  
       <div class="form-group">
-        <label for="travel-method">How will you be travelling?</label>
+        <label for="travel-method" class="required-field">How will you be travelling?</label>
         <br/>
         <select name="travel-method" id="travel-method" title="Select your travel method" class="selectpicker" data-live-search="true" data-width="100%">
            {% for s in travel_methods %}
@@ -145,13 +145,13 @@
       </div>
  
          <div class="form-group">
-           <label for="miles">How many miles are you travelling?</label>
+           <label for="miles" class="required-field">How many miles are you travelling?</label>
            <br/>
               <input type="number" class="form-control" min="0" id="miles" {% if app.miles %} value="{{ app.miles }}" {% endif %} placeholder="Number of miles" name="miles">
           </div>
  
           <div class="form-group">
-            <label for="cost">How much reimbursement will you need?</label>
+            <label for="cost" class="required-field">How much reimbursement will you need?</label>
             <br/>
                <input type="number" class="form-control" min="0" id="cost" step="0.01" {% if app.cost %} value="{{ app.cost }}" {% endif %} placeholder="Cost" name="cost">
            </div>

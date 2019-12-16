@@ -313,3 +313,8 @@ div.dropdown {
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     background-color:#002868;
 }
+
+.required-field::after {
+    content:" *";
+    color:red;
+}
