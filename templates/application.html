@@ -75,7 +75,7 @@
         <div class="form-group">
           <label for="describe">I would describe myself as a...</label>
           <br/>
-             <input type="text" required class="form-control" id="describe" {% if app.app_complete %} value="{{ app.describe }}" {% endif %} placeholder="Web Developer, Mobile expert, Backend Engineer" name="describe">
+             <input type="text" required class="form-control" id="describe" {% if app.app_complete %} value="{{ app.describe }}" {% endif %} placeholder="Web Developer, Mobile expert, Backend Engineer, Business Developer" name="describe">
          </div>
 
          <div class="form-group">
@@ -103,23 +103,23 @@
 
          <br/>
 
-    {% if allow %}
+    <!-- {% if allow %}
       <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="application" id="submit-app-button">Submit Application</button>
     {% else %}
           <center>Unfortunately, you can no longer submit an application!</center>
-    {% endif %}
-    </form>
+    {% endif %} -->
+    <!-- </form> -->
 
-    <br/>
-    <br/>
+    <!-- <br/>
+    <br/> -->
 
     <h4 class="sub-title"> <center>Travel</center> </h4>
     <hr style="width:30%">
     <br/>
 
 
-    <form class="form-signin" method="POST" action="/application" style="width:60%; margin:auto; display:block;">
-      {% csrf_token %}
+    <!-- <form class="form-signin" method="POST" action="/application" style="width:60%; margin:auto; display:block;"> -->
+      <!-- {% csrf_token %} -->
     <b>Do you need travel reimbursement?</b>
 
     <div class="form-check">
@@ -130,14 +130,14 @@
 
      <div id="travel-app-main" {% if app.travel %} style="display: block;" {% else %} style="display: none;" {% endif %}>
       <div class="form-group">
-        <label for="where-from">If you need travel reimbursement, where are you travelling from?</label>
-        <input type="name" class="form-control" id="where-from" {% if app.where_from %} value="{{ app.where_from }}" {% endif %} placeholder="Where are you travelling from?" name="where-from">
+        <label for="where-from">Where are you travelling from?</label>
+        <input type="name" class="form-control" id="where-from" {% if app.where_from %} value="{{ app.where_from }}" {% endif %} placeholder="Please be specific - City, State" name="where-from">
       </div>
  
       <div class="form-group">
-        <label for="travel-method">If you need travel reimbursement, how will you be travelling?</label>
+        <label for="travel-method">How will you be travelling?</label>
         <br/>
-        <select name="travel-method" id="travel-method" required title="Select your travel method" class="selectpicker" data-live-search="true" data-width="100%">
+        <select name="travel-method" id="travel-method" title="Select your travel method" class="selectpicker" data-live-search="true" data-width="100%">
            {% for s in travel_methods %}
              <option value="{{s}}" {% if s == app.travel_method %} selected {% endif %}>{{ s }}</option>
            {% endfor %}
@@ -145,24 +145,25 @@
       </div>
  
          <div class="form-group">
-           <label for="miles">If you need travel reimbursement, how many miles are you travelling?</label>
+           <label for="miles">How many miles are you travelling?</label>
            <br/>
               <input type="number" class="form-control" min="0" id="miles" {% if app.miles %} value="{{ app.miles }}" {% endif %} placeholder="Number of miles" name="miles">
           </div>
  
           <div class="form-group">
-            <label for="cost">If you need travel reimbursement, how much reimbursement will you need?</label>
+            <label for="cost">How much reimbursement will you need?</label>
             <br/>
-               <input type="number" class="form-control" min="0" id="cost" {% if app.cost %} value="{{ app.cost }}" {% endif %} placeholder="Cost" name="cost">
+               <input type="number" class="form-control" min="0" id="cost" step="0.01" {% if app.cost %} value="{{ app.cost }}" {% endif %} placeholder="Cost" name="cost">
            </div>
          
      </div>
 
      <br/>
     {% if allow %}
-      <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="travel" id="travel-app-button">Submit Travel Application</button>
+      <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="application" id="submit-app-button">Submit Application</button>
+      <!-- <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="travel" id="travel-app-button">Submit Travel Application</button> -->
     {% else %}
-        <center>Unfortunately, you can no longer submit a travel application!</center>
+      <center>Unfortunately, you can no longer submit an application!</center>
     {% endif %}
     </form>
 

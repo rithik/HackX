@@ -42,33 +42,21 @@ def application(request):
         })
     if request.method == "POST":
         button_type = request.POST.get('button-type', '')
-        if button_type == "travel":
-            travel = request.POST.get('travel', '')
-            where_from = request.POST.get('where-from', '')
-            travel_method = request.POST.get('travel-method', '')
-            miles = request.POST.get('miles', '')
-            cost = request.POST.get('cost', '')
-            if travel == "on":
-                a.travel = True
-                a.where_from = where_from
-                a.travel_method = travel_method
-                a.miles = miles
-                a.cost = cost
-            else:
-                a.travel = False
-            a.save()
-            return render(request, "application.html", {
-                "user": u, 
-                "app": a,
-                "schools": settings.SCHOOLS, 
-                "genders": settings.GENDERS,
-                "races": settings.RACES, 
-                "grad_year": settings.GRADUATION_YEARS,
-                "highlight": "application",
-                "travel_methods": settings.TRAVEL_METHODS, 
-                "msg": "Your travel application has been submitted!", 
-                "allow": ALLOW
-            })
+
+        travel = request.POST.get('travel', '')
+        where_from = request.POST.get('where-from', '')
+        travel_method = request.POST.get('travel-method', '')
+        miles = request.POST.get('miles', '')
+        cost = request.POST.get('cost', '')
+        if travel == "on":
+            a.travel = True
+            a.where_from = where_from
+            a.travel_method = travel_method
+            a.miles = miles
+            a.cost = cost
+        else:
+            a.travel = False
+        a.save()
 
         full_name = request.POST.get('full-name', '')
         birthday = request.POST.get('birthday', '')

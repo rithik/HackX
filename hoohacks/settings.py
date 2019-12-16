@@ -164,7 +164,7 @@ SCHOOLS = []
 GRADUATION_YEARS = [2020, 2021, 2022, 2023, 2024, 2025]
 RACES = ["African American", "American Indian", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
-GENDERS = ["Female", "Male", "Other", "Prefer not to say"]
+GENDERS = ["Female", "Male", "Non-binary", "Transgender", "Other", "Prefer not to say"]
 TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
 TSHIRT_SIZES = ["XS", "S", "M", "L", "XL"]
 DIETARY_RESTRICTIONS = ["None", "Vegetarian", "Vegan", "Nut Allergy", "Halal", "Other"]
