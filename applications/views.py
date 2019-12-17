@@ -18,7 +18,7 @@ from administration import nametag
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 
 @login_required
-def application(request):
+def application(request, msg=''):
     ALLOW = True
     tz = timezone('US/Eastern')
     if tz.localize(datetime.now()) >= Settings.objects.all()[0].application_submission_deadline:
@@ -28,6 +28,10 @@ def application(request):
     if not request.user.is_authenticated:
         return redirect("/logout")
     if not request.method == "POST":
+        if msg == 'saved':
+            msg = 'Your application has been submitted!'
+        else:
+            msg = ''
         return render(request, "application.html", {
             "user": u, 
             "app": a,
@@ -37,7 +41,7 @@ def application(request):
             "grad_year": settings.GRADUATION_YEARS,
             "highlight": "application",
             "travel_methods": settings.TRAVEL_METHODS, 
-            "msg": "", 
+            "msg": msg, 
             "allow": ALLOW
         })
     if request.method == "POST":
@@ -58,7 +62,8 @@ def application(request):
             a.travel = False
         a.save()
 
-        full_name = request.POST.get('full-name', '')
+        first_name = request.POST.get('first-name', '')
+        last_name = request.POST.get('last-name', '')
         birthday = request.POST.get('birthday', '')
         school = request.POST.get('school', '')
         grad_year = request.POST.get('grad-year', '')
@@ -70,7 +75,8 @@ def application(request):
         why = request.POST.get('why', '')
         mlh = request.POST.get('mlh', '')
 
-        a.full_name = full_name
+        a.first_name = first_name
+        a.last_name = last_name
         a.birthday = birthday
         a.school = school
         a.grad_year = grad_year
@@ -87,23 +93,25 @@ def application(request):
             a.mlh_rules = False
 
         a.app_complete = True
-        u.full_name = full_name
+        u.first_name = first_name
+        u.last_name = last_name
         
         u.save()
         a.save()
         
-        return render(request, "application.html", {
-            "user": u, 
-            "app": a,
-            "schools": settings.SCHOOLS, 
-            "genders": settings.GENDERS,
-            "races": settings.RACES, 
-            "grad_year": settings.GRADUATION_YEARS,
-            "highlight": "application",
-            "travel_methods": settings.TRAVEL_METHODS, 
-            "msg": "Your application has been submitted!", 
-            "allow": ALLOW
-        })
+        return redirect(application, msg='saved')
+        # render(request, "application.html", {
+        #     "user": u, 
+        #     "app": a,
+        #     "schools": settings.SCHOOLS, 
+        #     "genders": settings.GENDERS,
+        #     "races": settings.RACES, 
+        #     "grad_year": settings.GRADUATION_YEARS,
+        #     "highlight": "application",
+        #     "travel_methods": settings.TRAVEL_METHODS, 
+        #     "msg": "Your application has been submitted!", 
+        #     "allow": ALLOW
+        # })
 
 @login_required
 def confirmation(request):

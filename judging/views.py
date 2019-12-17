@@ -42,11 +42,13 @@ def make_judge_manual(request):
 
     if request.method == "POST":
         judge_password = request.POST.get('judge_password', '')
-        full_name = request.POST.get('name', '')
+        first_name = request.POST.get('first-name', '')
+        last_name = request.POST.get('last-name', '')
         org_id = request.POST.get('organization-id', 0)
         if judge_password == settings.JUDGING_PASSWORD:
             u.is_judge = True
-            u.full_name = full_name
+            u.first_name = first_name
+            u.last_name = first_name
             o = Organization.objects.get(id=org_id)
             u.organization = o
             u.save()

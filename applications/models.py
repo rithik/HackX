@@ -8,7 +8,9 @@ class Application(models.Model):
         primary_key=True,
     )
 
-    full_name = models.CharField(max_length=1000, default="")
+    first_name = models.CharField(max_length=1000, default="")
+    last_name = models.CharField(max_length=1000, default="")
+    
     school = models.CharField(max_length=1000, default="")
     grad_year = models.IntegerField(default=0)
     gender = models.CharField(max_length=100, default="")
@@ -33,6 +35,9 @@ class Application(models.Model):
     accepted = models.BooleanField(default=False)
     waitlisted = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
+
+    def full_name(self):
+        return self.first_name + " " + self.last_name
 
     def __str__(self):
         return  "Application - {}".format(self.user)

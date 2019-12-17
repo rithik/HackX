@@ -34,11 +34,13 @@ def make_mentor_manual(request):
 
     if request.method == "POST":
         mentor_password = request.POST.get('mentor_password', '')
-        full_name = request.POST.get('name', '')
+        first_name = request.POST.get('first-name', '')
+        last_name = request.POST.get('last-name', '')
         org_id = request.POST.get('organization-id', 0)
         if mentor_password == settings.MENTOR_PASSWORD:
             u.is_mentor = True
-            u.full_name = full_name
+            u.first_name = first_name
+            u.last_name = last_name
             o = Organization.objects.get(id=org_id)
             u.organization = o
             u.save()

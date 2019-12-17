@@ -62,7 +62,7 @@ def create_judges(request):
         for fn, ln in product(first_names, last_names):
             org_id = judge_needs[j_cnt]
             username = fn[0].lower() + ln.lower()
-            u = User.objects.create(full_name=str(fn + ln), username=username, email="{}-{}-{}@gmail.com".format(fn, ln, j_cnt),
+            u = User.objects.create(first_name=fn, last_name=ln, username=username, email="{}-{}-{}@gmail.com".format(fn, ln, j_cnt),
                          organization=Organization.objects.get(id=org_id), is_judge=True)
             u.set_password('Qaz1235$')
             u.save()

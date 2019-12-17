@@ -40,6 +40,7 @@ urlpatterns = [
     path('logout', users.views.logout_view),
     path('dashboard', users.views.dashboard),
     path('application', applications.views.application),
+    path('application/<str:msg>', applications.views.application),
     path('confirmation', applications.views.confirmation),
     path('tickets', mentors.views.tickets_main),
     path('tickets/create', mentors.views.create_ticket),

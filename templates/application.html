@@ -22,9 +22,14 @@
             </div>
         {% endif %}
      <div class="form-group">
-       <label for="full-name" class="required-field">Full Name</label>
-       <input type="name" required class="form-control" id="full-name" {% if app.app_complete %} value="{{ app.full_name }}" {% endif %} placeholder="Full Name" name="full-name">
+       <label for="first-name" class="required-field">First Name</label>
+       <input type="text" required class="form-control" id="first-name" {% if app.app_complete %} value="{{ app.first_name }}" {% endif %} placeholder="First Name" name="first-name">
      </div>
+
+     <div class="form-group">
+      <label for="first-name" class="required-field">Last Name</label>
+      <input type="text" required class="form-control" id="last-name" {% if app.app_complete %} value="{{ app.last_name }}" {% endif %} placeholder="Last Name" name="last-name">
+    </div>
 
      <div class="form-group">
        <label for="date" class="required-field">Birthday</label>
@@ -47,6 +52,12 @@
        <br/>
          <select name="grad-year" required title="Select your COLLEGE Graduation Year" class="selectpicker" data-width="100%">
              {% for s in grad_year %}
+              <script> 
+              console.log('{{ app.grad_year }}');
+              console.log('{{ s }}');
+              console.log('{{ s }}' == '{{ app.grad_year }}');
+              
+               </script>
                <option value="{{s}}" {% if s == app.grad_year %} selected {% endif %}>{{ s }}</option>
              {% endfor %}
           </select>

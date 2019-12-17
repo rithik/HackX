@@ -21,7 +21,8 @@ class User(AbstractUser):
         on_delete=models.CASCADE, null=True, blank=True)
     sd_offset = models.DecimalField(max_digits=9, decimal_places=5, default=0)
 
-    full_name = models.CharField(max_length=1000, default="")
+    first_name = models.CharField(max_length=1000, default="")
+    last_name = models.CharField(max_length=1000, default="")
     login_hash = models.CharField(max_length=1000, default="")
 
     verified = models.BooleanField(default=False)
@@ -33,6 +34,9 @@ class User(AbstractUser):
     sat_dinner = models.BooleanField(default=False)
     sun_breakfast = models.BooleanField(default=False)
     sun_lunch = models.BooleanField(default=False)
+
+    def full_name(self):
+        return self.first_name + " " + self.last_name
 
     def __str__(self):
         return self.email
