@@ -36,6 +36,7 @@ class Application(models.Model):
     waitlisted = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
 
+    @property
     def full_name(self):
         return self.first_name + " " + self.last_name
 

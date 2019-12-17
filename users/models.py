@@ -35,6 +35,7 @@ class User(AbstractUser):
     sun_breakfast = models.BooleanField(default=False)
     sun_lunch = models.BooleanField(default=False)
 
+    @property
     def full_name(self):
         return self.first_name + " " + self.last_name
 

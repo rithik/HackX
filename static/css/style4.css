@@ -322,3 +322,7 @@ div.dropdown {
 .email-link {
     color: #007bff
 }
+
+#accountSettingsButton:focus {
+    color: white;
+}
