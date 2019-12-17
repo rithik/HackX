@@ -215,11 +215,11 @@ def confirmation(request):
         c.save()
 
         try:
-            nametag.make_image(u.full_name, u.qr_hash)
+            nametag.make_image(u.first_name, u.last_name, u.qr_hash)
         except:
-            file_path = '/Nametags/' + u.full_name + '.png'
+            file_path = '/Nametags/' + u.first_name + " " + u.last_name + "-" + str(u.qr_hash) + '.png'
             dbx.files_delete_v2(file_path)
-            nametag.make_image(u.full_name, u.qr_hash)
+            nametag.make_image(u.first_name, u.last_name, u.qr_hash)
 
         email_uuid = uuid.uuid1()
 
