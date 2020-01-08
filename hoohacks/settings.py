@@ -227,7 +227,10 @@ try:
     import django_heroku
     django_heroku.settings(locals())
     if ON_HEROKU:
-        del DATABASES['default']['OPTIONS']['sslmode']
+        try:
+            del DATABASES['default']['OPTIONS']['sslmode']
+        except:
+            pass
         import sentry_sdk
         from sentry_sdk.integrations.django import DjangoIntegration
 
