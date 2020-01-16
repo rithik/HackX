@@ -16,8 +16,13 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
 import dropbox 
+import os
+import slack
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
+slack_client = None
+if settings.SLACK_ENABLED:
+    slack_client = slack.WebClient(token=settings.SLACK_API_TOKEN)
 
 @login_required
 def make_mentor_manual(request):
@@ -110,7 +115,18 @@ def create_ticket(request):
         contact=request.user.confirmation.phone,
         status="Unclaimed"
     )
-    
+
+    if settings.SLACK_ENABLED:
+        msg = ":new: :ticket: A new ticket has been created! \n \n Question: {} \n Location: {} \n User: {} \n Phone Number: {} \n Status: {} \n \n View Ticket at {}mentor/tickets#ticket-{}".format(
+            t.question, t.location, request.user.full_name, t.contact, t.status, settings.PROD_URL, t.id
+        )
+        response = slack_client.chat_postMessage(
+            channel=settings.SLACK_MENTOR_TICKET_CHANNEL,
+            text=msg)
+        slack_ts = response['ts']
+        t.slack_ts = slack_ts
+        t.save()
+
     ret_response = {
         "code" : "200",
         "message": "success",
@@ -194,6 +210,14 @@ def claim_ticket(request):
             org_name = request.user.organization.name
         t.status = "Claimed by Mentor " + u.full_name + " - " + org_name
         t.save()
+        if settings.SLACK_ENABLED:
+            msg = ":new: :ticket: A new ticket has been created! \n \n Question: {} \n Location: {} \n User: {} \n Phone Number: {} \n Status: {} \n \n View Ticket at {}mentor/tickets#ticket-{}".format(
+                t.question, t.location, request.user.full_name, t.contact, t.status, settings.PROD_URL, t.id
+            )
+            response = slack_client.chat_update(
+                channel=settings.SLACK_MENTOR_TICKET_CHANNEL,
+                text=msg,
+                ts=t.slack_ts)
 
         ret_response = {
             "code" : "200",
@@ -240,6 +264,15 @@ def unclaim_ticket(request):
         t.mentor = None
         t.status = "Unclaimed"
         t.save()
+
+        if settings.SLACK_ENABLED:
+            msg = ":new: :ticket: A new ticket has been created! \n \n Question: {} \n Location: {} \n User: {} \n Phone Number: {} \n Status: {} \n \n View Ticket at {}mentor/tickets#ticket-{}".format(
+                t.question, t.location, request.user.full_name, t.contact, t.status, settings.PROD_URL, t.id
+            )
+            response = slack_client.chat_update(
+                channel=settings.SLACK_MENTOR_TICKET_CHANNEL,
+                text=msg,
+                ts=t.slack_ts)
 
         ret_response = {
             "code" : "200",

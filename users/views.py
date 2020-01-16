@@ -51,7 +51,6 @@ def dashboard(request):
             "submission_deadline": Settings.objects.all()[0].application_submission_deadline_fmt(),
             "confirmation": confirmation,
             "confirmation_deadline": Settings.objects.all()[0].application_confirmation_deadline_fmt(), 
-            "remind_url": settings.REMIND_URL
         }
     except IndexError:
         return redirect('setup')

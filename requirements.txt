@@ -91,6 +91,7 @@ requests==2.22.0
 sentry-sdk==0.13.1
 Send2Trash==1.5.0
 six==1.12.0
+slackclient==2.5.0
 soupsieve==1.9.4
 SQLAlchemy==1.3.0
 sqlparse==0.3.0

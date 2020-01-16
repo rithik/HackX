@@ -34,10 +34,6 @@
             "description": "Dropbox Access Token - This will be used to upload resumes and nametags",
             "value": "DROPBOX_ACCESS_TOKEN"
         },
-        "REMIND_URL": {
-            "description": "Remind.com URL so that members will get notifications about events happening",
-            "value": "REMIND_URL"
-        },
         "ON_HEROKU": {
             "description": "Are we running on Heroku?",
             "value": "1"
@@ -45,6 +41,14 @@
         "PROD_URL": {
             "description": "The URL where this will be hosted (https://APP_NAME.herokuapp.com/) - do not forget the ending /",
             "value": "https://APP_NAME.herokuapp.com/"
+        },
+        "SLACK_ENABLED": {
+            "description": "Are you going to be using slack? (True or False)",
+            "value": "False"
+        },
+        "SLACK_TOKEN": {
+            "description": "Slack API Token",
+            "value": "SLACK_API_TOKEN"
         }
     },
     "addons": [

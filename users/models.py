@@ -73,5 +73,7 @@ class Ticket(models.Model):
 
     mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="mentor_tickets", blank=True, null=True)
 
+    slack_ts = models.CharField(max_length=40, default="")
+
     def __str__(self):
         return '{}'.format(self.question)
