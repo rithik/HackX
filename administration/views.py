@@ -26,8 +26,13 @@ import random
 from itertools import product
 from .models import Settings
 import dropbox
+import os
+import slack
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
+slack_client = None
+if settings.SLACK_ENABLED:
+    slack_client = slack.WebClient(token=settings.SLACK_API_TOKEN)
 
 @login_required
 def create_judges(request):
@@ -574,3 +579,23 @@ def admin_settings(request):
         return JsonResponse({
             'message': 'success'
         })
+
+@login_required
+def send_notification(request):
+    if not request.user.is_admin:
+        return JsonResponse({"status": 403, "message": "User is not an admin!"})
+    if request.POST.get('notification_msg', '') == '':
+        return JsonResponse({"status": 403, "message": "There is no notification message!"})
+
+    success_msg = ""
+
+    if settings.SLACK_ENABLED:
+        msg = request.POST.get('notification_msg', '')
+        response = slack_client.chat_postMessage(
+            channel=settings.SLACK_NOTIFICATIONS_CHANNEL,
+            text=msg)
+        print(response)
+        success_msg += "Notification published to Slack!"
+
+    return JsonResponse({"status": 200, "message": success_msg})
+    

@@ -63,9 +63,9 @@
                 {% endif %}
                 </p>
                 {% if confirmation == True or confirmation == "accepted" %}
-                    <center><a href="/confirmation" class="btn btn-primary" style="background-color:#002868; border-color:#002868; color: white;">Go to Confirmation</a> <a href="" data-toggle="modal" data-target="#accountSettings" class="btn btn-primary" style="background-color:#002868; border-color:#002868; " id="accountSettingsButton">Account Settings</a></center>
+                    <center><a href="/confirmation" class="btn btn-primary" style="background-color:#002868; border-color:#002868; color: white;">Go to Confirmation</a> <a href="" data-toggle="modal" data-target="#accountSettings" class="btn btn-primary" style="background-color:#002868; border-color:#002868; " id="accountSettingsButton">Account Settings</a>{% if request.user.is_admin %} <a href="" data-toggle="modal" data-target="#sendnotif" class="btn btn-primary" style="background-color:#002868; border-color:#002868; " id="sendnotifButton">Send Notification</a>{% endif %}</center>
                 {% else %}
-                    <center><a href="/application" class="btn btn-primary" style="background-color:#002868; border-color:#002868; color: white;">Go to Application</a>   <a href="" data-toggle="modal" data-target="#accountSettings" class="btn btn-primary" style="background-color:#002868; border-color:#002868; " id="accountSettingsButton">Account Settings</a></center>
+                    <center><a href="/application" class="btn btn-primary" style="background-color:#002868; border-color:#002868; color: white;">Go to Application</a>   <a href="" data-toggle="modal" data-target="#accountSettings" class="btn btn-primary" style="background-color:#002868; border-color:#002868; " id="accountSettingsButton">Account Settings</a>{% if request.user.is_admin %} <a href="" data-toggle="modal" data-target="#sendnotif" class="btn btn-primary" style="background-color:#002868; border-color:#002868; " id="sendnotifButton">Send Notification</a>{% endif %}</center>
                 {% endif %}
       </div>
     </div>
@@ -104,7 +104,37 @@
           </div>
         </div>
       </div>
-      
+
+      {% if request.user.is_admin %}
+        <div class="modal" tabindex="-1" role="dialog" id="sendnotif">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Send Notification</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5 style="text-align: center;">Post Notification to Facebook, Twitter and Slack</h5>
+                    <br/>
+                    
+                    <div class="form-group">
+                        <label for="message">Notification Message</label>
+                        <textarea class="form-control" id="notification_message" name="notification_message" rows="3" maxlength="140" ></textarea>
+                    </div>
+                    <center><button class="btn btn-primary" id="send_notification" onclick="send_notification()">Send notification</button></center>
+                    <br/>
+                    <br/>
+                    <p id="notif_resp"></p>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            </div>
+        </div>
+      {% endif %}
 
     <script>
         function setupFBFeed(){
@@ -116,6 +146,21 @@
         $(document).ready(function (){
             setupFBFeed();
         });
+
+        '{% if request.user.is_admin %}'
+            function send_notification(){
+                console.log("HERE")
+                var postData = {
+                    notification_msg: document.getElementById('notification_message').value,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                };
+                console.log(postData);
+                $.post( "/send/notification", postData, function(data) {
+                    console.log(data);
+                    document.getElementById('notif_resp').innerHTML = data.message;
+                });
+            }
+        '{% endif %}'
 
     </script>
 
