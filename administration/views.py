@@ -594,7 +594,7 @@ def send_notification(request):
         response = slack_client.chat_postMessage(
             channel=settings.SLACK_NOTIFICATIONS_CHANNEL,
             text=msg)
-        success_msg += "Notification published to Slack!"
+        success_msg += "Notification published to Slack! "
     
     if settings.TEXTING_ENABLED:
         all_confirmations = Confirmation.objects.all()
@@ -609,7 +609,7 @@ def send_notification(request):
             if confirmation.carrier != 'Other':
                 email_addr = confirmation.phone + settings.CARRIER_EMAIL_LOOKUP[confirmation.carrier]
                 send_mail(subject, msg, settings.TEXTING_FROM_EMAIL, [email_addr], connection=connection)
-        success_msg += "Notification sent via text!"
+        success_msg += "Notification sent via text! "
 
         connection.close()
 

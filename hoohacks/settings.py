@@ -238,7 +238,7 @@ SENDGRID_HOST_PASSWORD = os.environ.get('SENDGRID_HOST_PASSWORD', secret.SENDGRI
 
 TEXTING_ENABLED = True
 
-TEXTING_FROM_EMAIL = 'hoohacksdev@gmail.com'
+TEXTING_FROM_EMAIL = os.environ.get('TEXTING_FROM_EMAIL', secret.TEXTING_FROM_EMAIL)
 
 ASGI_APPLICATION = 'hoohacks.routing.application'
 
@@ -276,6 +276,5 @@ except ImportError:
 
 ALLOWED_HOSTS = [
     PROD_URL,
-    "hoohacks-d.herokuapp.com",
     '*'
 ]
