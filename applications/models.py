@@ -53,6 +53,7 @@ class Confirmation(models.Model):
     tshirt = models.CharField(max_length=1000, default="")
     dietary = models.CharField(max_length=1000, default="")
     phone = models.CharField(max_length=100, default="")
+    carrier = models.CharField(max_length=100, default="Other")
     github = models.CharField(max_length=1000, default="")
     notes = models.CharField(max_length=10000, default="")
     resume_file_name = models.CharField(max_length=10000, default="")

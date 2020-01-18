@@ -219,6 +219,27 @@ f = open(BASE_DIR + "/hoohacks/emails/confirmed.html", "r")
 CONFIRMED_EMAIL = f.read()
 f.close()
 
+CARRIER_EMAIL_LOOKUP = {
+    'Alltel': '@message.alltel.com',
+    'AT&T': '@txt.att.net',
+    'Nextel': '@messaging.nextel.com',
+    'Sprint': '@messaging.sprintpcs.com',
+    'T-Mobile': '@tmomail.net',
+    'US Cellular': '@mms.uscc.net',
+    'Verizon Wireless': '@vtext.com',
+    'Virgin Mobile': '@vmobl.com',
+    'Other': ''
+}
+
+SENDGRID_HOST = 'smtp.sendgrid.net'
+SENDGRID_PORT = 587
+SENDGRID_HOST_USER = 'apikey'
+SENDGRID_HOST_PASSWORD = os.environ.get('SENDGRID_HOST_PASSWORD', secret.SENDGRID_HOST_PASSWORD)
+
+TEXTING_ENABLED = True
+
+TEXTING_FROM_EMAIL = 'hoohacksdev@gmail.com'
+
 ASGI_APPLICATION = 'hoohacks.routing.application'
 
 CHANNEL_LAYERS = {

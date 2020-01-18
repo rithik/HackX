@@ -116,7 +116,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h5 style="text-align: center;">Post Notification to Facebook, Twitter and Slack</h5>
+                    <h5 style="text-align: center;">Send Notification via Slack and Text to all confirmed members</h5>
                     <br/>
                     
                     <div class="form-group">
@@ -157,7 +157,12 @@
                 console.log(postData);
                 $.post( "/send/notification", postData, function(data) {
                     console.log(data);
-                    document.getElementById('notif_resp').innerHTML = data.message;
+                    if (data.status == 200){
+                        document.getElementById('notif_resp').innerHTML = '<i class="fas fa-check-circle text-success"></i> ' + data.message;
+                    }
+                    else{
+                        document.getElementById('notif_resp').innerHTML = '<i class="fas fa-times-circle text-danger"></i> ' + data.message;
+                    }
                 });
             }
         '{% endif %}'

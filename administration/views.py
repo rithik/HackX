@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login
-from django.core.mail import send_mail
+from django.core.mail import get_connection, send_mail
 from django.contrib.auth import logout
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -588,14 +588,30 @@ def send_notification(request):
         return JsonResponse({"status": 403, "message": "There is no notification message!"})
 
     success_msg = ""
+    msg = request.POST.get('notification_msg', '')
 
     if settings.SLACK_ENABLED:
-        msg = request.POST.get('notification_msg', '')
         response = slack_client.chat_postMessage(
             channel=settings.SLACK_NOTIFICATIONS_CHANNEL,
             text=msg)
-        print(response)
         success_msg += "Notification published to Slack!"
+    
+    if settings.TEXTING_ENABLED:
+        all_confirmations = Confirmation.objects.all()
+        subject = '{} Announcement'.format(settings.EVENT_NAME)
+        connection = get_connection(host=settings.SENDGRID_HOST, 
+                                    port=settings.SENDGRID_PORT, 
+                                    username=settings.SENDGRID_HOST_USER, 
+                                    password=settings.SENDGRID_HOST_PASSWORD, 
+                                    use_tls=False) 
+
+        for confirmation in all_confirmations:
+            if confirmation.carrier != 'Other':
+                email_addr = confirmation.phone + settings.CARRIER_EMAIL_LOOKUP[confirmation.carrier]
+                send_mail(subject, msg, settings.TEXTING_FROM_EMAIL, [email_addr], connection=connection)
+        success_msg += "Notification sent via text!"
+
+        connection.close()
 
     return JsonResponse({"status": 200, "message": success_msg})
     

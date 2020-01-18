@@ -49,6 +49,10 @@
         "SLACK_TOKEN": {
             "description": "Slack API Token",
             "value": "SLACK_API_TOKEN"
+        },
+        "SENDGRID_HOST_PASSWORD":{
+            "description": "Your Sendgrid API Key. This is needed to text all confirmed participants.",
+            "value": "SENDGRID_API_KEY"
         }
     },
     "addons": [

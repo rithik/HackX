@@ -54,6 +54,16 @@
       </div>
 
       <div class="form-group">
+        <label for="tshirt">Phone Carrier (This is used to text you notifications during the event. Select "Other" if you do not want to be notified during the event.)</label>
+        <br/>
+          <select name="carrier" required title="Select your wireless carrier" class="selectpicker" data-width="100%">
+              {% for s in all_carriers %}
+                <option value="{{s}}" {% if s == c.carrier %} selected {% endif %}>{{ s }}</option>
+              {% endfor %}
+           </select>
+       </div>
+
+      <div class="form-group">
         <label for="github">GitHub Username</label>
         <br/>
            <input type="text" required class="form-control" id="github" value="{{ c.github }}" name="github">

@@ -137,7 +137,8 @@ def confirmation(request):
             "tshirt_sizes": settings.TSHIRT_SIZES, 
             "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
             "msg": "", 
-            "allow": ALLOW
+            "allow": ALLOW,
+            "all_carriers": list(settings.CARRIER_EMAIL_LOOKUP)
         })
     if request.method == "POST":
         button_type = request.POST.get('button-type', '')
@@ -155,12 +156,14 @@ def confirmation(request):
                 "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
                 "declined": True,
                 "msg": "We're sorry that you can't make it to {}. You can still confirm your spot until the confirmation deadline ({}).".format(settings.EVENT_NAME, conf_deadline), 
-                "allow": ALLOW
+                "allow": ALLOW,
+                "all_carriers": list(settings.CARRIER_EMAIL_LOOKUP)
             })
             
         tshirt = request.POST.get('tshirt', '')
         dietary = request.POST.get('dietary', '')
         phone = request.POST.get('phone', '')
+        carrier = request.POST.get('carrier', 'Other')
         github = request.POST.get('github', '')
         notes = request.POST.get('notes', '')
         file = request.FILES['file']
@@ -174,7 +177,8 @@ def confirmation(request):
                 "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
                 "declined": False,
                 "msg": "", 
-                "allow": ALLOW
+                "allow": ALLOW,
+                "all_carriers": list(settings.CARRIER_EMAIL_LOOKUP)
             })
 
         file_path = ""
@@ -201,13 +205,15 @@ def confirmation(request):
                 "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
                 "declined": False,
                 "msg": "", 
-                "allow": ALLOW
+                "allow": ALLOW,
+                "all_carriers": list(settings.CARRIER_EMAIL_LOOKUP)
             })
 
         c.resume_file_name = file_path
         c.tshirt = tshirt
         c.dietary = dietary
         c.phone = phone
+        c.carrier = carrier
         c.github = github
         c.notes = notes
         c.confirmed = True
@@ -244,6 +250,7 @@ def confirmation(request):
                 "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
                 "msg": "Your confirmation application has been submitted!", 
                 "declined": False,
-                "allow": ALLOW
+                "allow": ALLOW,
+                "all_carriers": list(settings.CARRIER_EMAIL_LOOKUP)
             })
             
