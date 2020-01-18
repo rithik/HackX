@@ -155,6 +155,7 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 };
                 console.log(postData);
+                document.getElementById('send_notification').disabled = true;
                 $.post( "/send/notification", postData, function(data) {
                     console.log(data);
                     if (data.status == 200){
@@ -163,6 +164,7 @@
                     else{
                         document.getElementById('notif_resp').innerHTML = '<i class="fas fa-times-circle text-danger"></i> ' + data.message;
                     }
+                    document.getElementById('send_notification').disabled = false;
                 });
             }
         '{% endif %}'
