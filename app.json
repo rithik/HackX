@@ -46,7 +46,7 @@
             "description": "Are you going to be using slack? (True or False)",
             "value": "False"
         },
-        "SLACK_TOKEN": {
+        "SLACK_API_TOKEN": {
             "description": "Slack API Token",
             "value": "SLACK_API_TOKEN"
         },
