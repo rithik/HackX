@@ -22,7 +22,8 @@ def setup(request):
         tz = settings.TZ
         Settings.objects.create(
             application_submission_deadline=datetime.now(),
-            application_confirmation_deadline=datetime.now()
+            application_confirmation_deadline=datetime.now(),
+            judging_deadline=datetime.now()
         )
         o = Organization.objects.create(name="Organizers")
         o = Organization.objects.create(name="Other")

@@ -11,6 +11,7 @@ from pytz import timezone
 from datetime import datetime
 from applications.models import Application, Confirmation
 from users.models import User, EmailView, Ticket
+from administration.models import Settings
 from .models import Organization, Team, Category, Demo
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -26,6 +27,7 @@ from queue import PriorityQueue
 import heapq
 import random
 import math
+from collections import deque
 
 @login_required
 def make_judge_manual(request):
@@ -574,7 +576,7 @@ def judging_queue(request):
         return redirect('/')
         
     if request.method == 'GET':
-        demos = Demo.objects.filter(judge=request.user).order_by('team__table')
+        demos = Demo.objects.filter(judge=request.user, team__is_anchor=False).order_by('team__table')
         demos = sorted(demos, key=lambda d: d.is_for_judge_category, reverse=True)
         demo_queue = []
         past_demos = []
@@ -584,9 +586,18 @@ def judging_queue(request):
             else:
                 demo_queue.append(demo)
 
+        # This ensures that all of the judges do not start judging with the teams with the lower table numbers
+        demo_queue_rotated = deque(demo_queue)
+        rotate_amt = hash(request.user) % (len(demo_queue))
+        demo_queue_rotated.rotate(rotate_amt)
+
+        normalization_demos = Demo.objects.filter(judge=request.user, team__is_anchor=True).order_by('team__table')
+        for d in normalization_demos:
+            demo_queue_rotated.insert(0, d)
+
         context = {
             'user': request.user,
-            'demo_queue': demo_queue,
+            'demo_queue': demo_queue_rotated,
             'past_demos': past_demos,
             'highlight': 'judging'
         }
@@ -618,12 +629,19 @@ def evaluate(request):
 
                 # Get any initial data
                 demos = Demo.objects.filter(judge=request.user, team=team)
+                remaining_demos = Demo.objects.filter(judge=request.user, completed=False).count()
+                time_remaining = Settings.objects.all()[0].judging_deadline - datetime.now().astimezone(settings.TZ)
+                minutes_left = (int) (time_remaining.total_seconds() / 60.0)
+                time_per_presentation = (int) ((minutes_left - (remaining_demos * 1)) / remaining_demos)
+
                 if len(demos) > 0:
                     demo = demos[0]
 
                 context = {
                     "demo": demo,
                     "all_teams": Team.objects.all(),
+                    "remaining_demos": remaining_demos,
+                    "time_per_presentation": time_per_presentation,
                     'highlight': 'judging'
                 }
 

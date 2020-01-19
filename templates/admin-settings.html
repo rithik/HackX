@@ -35,6 +35,12 @@
                 <input type="datetime-local" class="form-control" value="{{ application_confirmation_date }}" id="confirmsubmission" aria-describedby="confirmsubmissionHelp" placeholder="Confirmation Date">
                 <small id="confirmsubmissionHelp" class="form-text text-muted">The date when confirmation can no longer be submitted</small>
             </div>
+
+            <div class="form-group">
+                <label for="judgingdeadline">Judging Deadline</label>
+                <input type="datetime-local" class="form-control" value="{{ judging_deadline }}" id="judgingdeadline" aria-describedby="judgingdeadlineHelp" placeholder="Judging End Date">
+                <small id="judgingdeadlineHelp" class="form-text text-muted">The time when judging is expected to end. Judging can still happen after this time</small>
+            </div>
     
             <button class="btn btn-outline-primary" onclick="updateSettings()">Update</button>
             
@@ -46,9 +52,11 @@
           function updateSettings(){
               var app = document.getElementById('appsubmission').value;
               var confirm = document.getElementById('confirmsubmission').value;
+              var judging = document.getElementById('judgingdeadline').value;
               var postData = {
                 submission_deadline: app, 
                 confirmation_deadline: confirm,
+                judging_deadline: judging,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             }
             console.log(postData);

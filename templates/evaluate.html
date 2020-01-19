@@ -196,7 +196,60 @@
                 </div>
 
             </form>
+
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <p style="text-align: center;">You still have to judge <b style="color: black;">{{ remaining_demos }} projects</b>. Expect to spend at most <b style="color: black">{{ time_per_presentation }} minutes</b> per presentation.</p>
+                    <h1 style="text-align: center;"><time>00:00</time></h1>
+                    <center> <button id="start" class="btn btn-outline-primary" style="margin-right: 10px;">Start</button><button id="stop" class="btn btn-outline-primary" style="margin-right: 10px;">Stop</button><button id="clear" class="btn btn-outline-primary">Clear</button></center>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
             
+            <script>
+                var h1 = document.getElementsByTagName('h1')[0],
+                start = document.getElementById('start'),
+                stop = document.getElementById('stop'),
+                clear = document.getElementById('clear'),
+                seconds = 0, minutes = 0, hours = 0,
+                t;
+
+            function add() {
+                seconds++;
+                if (seconds >= 60) {
+                    seconds = 0;
+                    minutes++;
+                    if (minutes >= 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+                }
+                
+                h1.textContent = (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+                timer();
+            }
+            function timer() {
+                t = setTimeout(add, 1000);
+            }
+
+            /* Start button */
+            start.onclick = timer;
+
+            /* Stop button */
+            stop.onclick = function() {
+                clearTimeout(t);
+            }
+
+            /* Clear button */
+            clear.onclick = function() {
+                h1.textContent = "00:00:00";
+                seconds = 0; minutes = 0; hours = 0;
+            }
+            </script>
             
         </div>
         <div class="col-lg-1"></div>

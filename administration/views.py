@@ -565,6 +565,7 @@ def admin_settings(request):
         return render(request, 'admin-settings.html', {
             "application_submission_date": s.application_submission_deadline.astimezone(settings.TZ).strftime("%Y-%m-%dT%H:%M"),
             "application_confirmation_date": s.application_confirmation_deadline.astimezone(settings.TZ).strftime("%Y-%m-%dT%H:%M"),
+            "judging_deadline": s.judging_deadline.astimezone(settings.TZ).strftime("%Y-%m-%dT%H:%M"),
             "highlight": "admin", 
             "adminHighlight": "settings"
         })
@@ -572,9 +573,11 @@ def admin_settings(request):
     if request.method == "POST":
         submission_deadline = request.POST.get('submission_deadline', None)
         confirmation_deadline = request.POST.get('confirmation_deadline', None)
+        judging_deadline = request.POST.get('judging_deadline', None)
         s = Settings.objects.all()[0]
         s.application_submission_deadline = settings.TZ.localize(datetime.strptime(submission_deadline, "%Y-%m-%dT%H:%M"))
         s.application_confirmation_deadline = settings.TZ.localize(datetime.strptime(confirmation_deadline, "%Y-%m-%dT%H:%M"))
+        s.judging_deadline = settings.TZ.localize(datetime.strptime(judging_deadline, "%Y-%m-%dT%H:%M"))
         s.save()
         return JsonResponse({
             'message': 'success'

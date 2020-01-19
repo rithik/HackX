@@ -13,9 +13,13 @@ class Settings(models.Model):
     '''
     application_submission_deadline = models.DateTimeField(auto_now_add=True)
     application_confirmation_deadline = models.DateTimeField(auto_now_add=True)
+    judging_deadline = models.DateTimeField(auto_now_add=True)
     
     def application_submission_deadline_fmt(self):
         return self.application_submission_deadline.astimezone(settings.TZ).strftime("%B %d, %Y %I:%M %p %Z")
     
     def application_confirmation_deadline_fmt(self):
         return self.application_confirmation_deadline.astimezone(settings.TZ).strftime("%B %d, %Y %I:%M %p %Z")
+            
+    def judging_deadline_fmt(self):
+        return self.judging_deadline.astimezone(settings.TZ).strftime("%B %d, %Y %I:%M %p %Z")
