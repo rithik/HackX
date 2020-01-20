@@ -178,8 +178,8 @@ GRADUATION_YEARS_TITLES = {
     "2021": "Junior",
     "2022": "Sophomore",
     "2023": "Freshman",
-    "2024": "High School",
-    "2025": "High School"
+    "2024": "High School Senior",
+    "2025": "High School Junior"
 }
 RACES = ["African American", "American Indian", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
