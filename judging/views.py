@@ -633,6 +633,8 @@ def evaluate(request):
                 time_remaining = Settings.objects.all()[0].judging_deadline - datetime.now().astimezone(settings.TZ)
                 minutes_left = (int) (time_remaining.total_seconds() / 60.0)
                 time_per_presentation = (int) ((minutes_left - (remaining_demos * 1)) / remaining_demos)
+                if time_per_presentation < 0:
+                    time_per_presentation = 0
 
                 if len(demos) > 0:
                     demo = demos[0]
