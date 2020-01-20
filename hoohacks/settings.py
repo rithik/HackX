@@ -173,6 +173,14 @@ APPLICATION_CONFIRMATION_DEADLINE_FMT = APPLICATION_CONFIRMATION_DEADLINE.strfti
 
 SCHOOLS = []
 GRADUATION_YEARS = [2020, 2021, 2022, 2023, 2024, 2025]
+GRADUATION_YEARS_TITLES = {
+    "2020": "Senior",
+    "2021": "Junior",
+    "2022": "Sophomore",
+    "2023": "Freshman",
+    "2024": "High School",
+    "2025": "High School"
+}
 RACES = ["African American", "American Indian", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
 GENDERS = ["Female", "Male", "Non-binary", "Transgender", "Other", "Prefer not to say"]

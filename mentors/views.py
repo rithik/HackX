@@ -362,6 +362,6 @@ def resume_book(request, error=False):
     return render(request, "resume-book.html", {
         "highlight": "resume-book", 
         "user": u, 
-        "grad_years": settings.GRADUATION_YEARS, 
+        "grad_years": settings.GRADUATION_YEARS_TITLES, 
         "error": error
     })
