@@ -212,7 +212,7 @@ def claim_ticket(request):
         t.save()
         if settings.SLACK_ENABLED:
             msg = ":new: :ticket: A new ticket has been created! \n \n Question: {} \n Location: {} \n User: {} \n Phone Number: {} \n Status: {} \n \n View Ticket at {}mentor/tickets#ticket-{}".format(
-                t.question, t.location, request.user.full_name, t.contact, t.status, settings.PROD_URL, t.id
+                t.question, t.location, t.user.full_name, t.contact, t.status, settings.PROD_URL, t.id
             )
             response = slack_client.chat_update(
                 channel=settings.SLACK_MENTOR_TICKET_CHANNEL,
@@ -267,7 +267,7 @@ def unclaim_ticket(request):
 
         if settings.SLACK_ENABLED:
             msg = ":new: :ticket: A new ticket has been created! \n \n Question: {} \n Location: {} \n User: {} \n Phone Number: {} \n Status: {} \n \n View Ticket at {}mentor/tickets#ticket-{}".format(
-                t.question, t.location, request.user.full_name, t.contact, t.status, settings.PROD_URL, t.id
+                t.question, t.location, t.user.full_name, t.contact, t.status, settings.PROD_URL, t.id
             )
             response = slack_client.chat_update(
                 channel=settings.SLACK_MENTOR_TICKET_CHANNEL,
