@@ -28,11 +28,17 @@ from .models import Settings
 import dropbox
 import os
 import slack
+import tweepy
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 slack_client = None
 if settings.SLACK_ENABLED:
     slack_client = slack.WebClient(token=settings.SLACK_API_TOKEN)
+
+if settings.TWITTER_ENABLED:
+    auth = tweepy.OAuthHandler(settings.TWITTER_CONSUMER_KEY, settings.TWITTER_CONSUMER_SECRET)
+    auth.set_access_token(settings.TWITTER_ACCESS_TOKEN, settings.TWITTER_ACCESS_TOKEN_SECRET)
+    api = tweepy.API(auth)
 
 @login_required
 def create_judges(request):
@@ -615,6 +621,9 @@ def send_notification(request):
         success_msg += "Notification sent via text! "
 
         connection.close()
+    
+    if settings.TWITTER_ENABLED:
+        api.update_status(msg)
+        success_msg += "Notification published on Twitter! "
 
     return JsonResponse({"status": 200, "message": success_msg})
-    
