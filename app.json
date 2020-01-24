@@ -53,6 +53,26 @@
         "SENDGRID_HOST_PASSWORD":{
             "description": "Your Sendgrid API Key. This is needed to text all confirmed participants.",
             "value": "SENDGRID_API_KEY"
+        },
+        "TWITTER_ENABLED": {
+            "description": "Are you going to be using Twitter to send notifications? (True or False)",
+            "value": "False"
+        },
+        "TWITTER_CONSUMER_KEY": {
+            "description": "Twitter Consumer Key",
+            "value": "TWITTER_CONSUMER_KEY"
+        },
+        "TWITTER_CONSUMER_SECRET":{
+            "description": "Twitter Consumer Secret",
+            "value": "TWITTER_CONSUMER_SECRET"
+        },
+        "TWITTER_ACCESS_TOKEN": {
+            "description": "Twitter Access Token",
+            "value": "TWITTER_ACCESS_TOKEN"
+        },
+        "TWITTER_ACCESS_TOKEN_SECRET":{
+            "description": "Twitter Access Token Secret",
+            "value": "TWITTER_ACCESS_TOKEN_SECRET"
         }
     },
     "addons": [
