@@ -588,7 +588,10 @@ def judging_queue(request):
 
         # This ensures that all of the judges do not start judging with the teams with the lower table numbers
         demo_queue_rotated = deque(demo_queue)
-        rotate_amt = hash(request.user) % (len(demo_queue))
+        if len(demo_queue) == 0:
+            rotate_amt = 0
+        else:
+            rotate_amt = hash(request.user) % (len(demo_queue))
         demo_queue_rotated.rotate(rotate_amt)
 
         normalization_demos = Demo.objects.filter(judge=request.user, team__is_anchor=True).order_by('team__table')
