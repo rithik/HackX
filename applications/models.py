@@ -21,6 +21,7 @@ class Application(models.Model):
 
     birthday = models.CharField(max_length=1000, default="")
     mlh_rules = models.BooleanField(default=False)
+    mlh_consent = models.BooleanField(default=False)
     hackathons = models.IntegerField(default=0)
     app_complete = models.BooleanField(default=False)
 

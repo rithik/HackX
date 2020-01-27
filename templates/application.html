@@ -108,8 +108,13 @@
             </div>
 
         <div class="form-check">
+          <input type="checkbox" class="form-check-input" name="mlh-consent" {% if app.mlh_consent %} checked {% endif %} id="exampleCheck2">
+          <label class="form-check-label required-field" for="exampleCheck2">I authorize you to share my application/registration information for event administration, ranking, MLH administration, pre- and post-event informational e-mails, and occasional messages about hackathons in-line with the <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. I further agree to the terms of both the <a href="https://github.com/MLH/mlh-policies/tree/master/prize-terms-and-conditions" target="_blank">MLH Contest Terms and Conditions</a> and the <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a></label>
+        </div>
+          
+        <div class="form-check">
            <input required type="checkbox" class="form-check-input" name="mlh" {% if app.mlh_rules %} checked {% endif %} id="exampleCheck1">
-           <label class="form-check-label required-field" for="exampleCheck1">I agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>.</label>
+           <label class="form-check-label required-field" for="exampleCheck1">I have read and agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>.</label>
          </div>
 
          <br/>

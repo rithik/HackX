@@ -74,6 +74,7 @@ def application(request, msg=''):
         hackathons = request.POST.get('hackathons', '')
         why = request.POST.get('why', '')
         mlh = request.POST.get('mlh', '')
+        mlh_consent = request.POST.get('mlh-consent', '')
 
         a.first_name = first_name
         a.last_name = last_name
@@ -91,6 +92,11 @@ def application(request, msg=''):
             a.mlh_rules = True
         else:
             a.mlh_rules = False
+
+        if mlh_consent == "on":
+            a.mlh_consent = True
+        else:
+            a.mlh_consent = False
 
         a.app_complete = True
         u.first_name = first_name
