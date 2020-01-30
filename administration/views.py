@@ -237,11 +237,12 @@ def get_stats():
             Confirmation.objects.filter(tshirt="L").count(),
             Confirmation.objects.filter(tshirt="XL").count()
         ),
-        "dietary": "Vegetarian({}) Vegan({}) Nut Allergy({}) Halal({}) None({})".format(
+        "dietary": "Vegetarian({}) Vegan({}) Nut Allergy({}) Halal({}) Gluten Free({}) None({})".format(
             Confirmation.objects.filter(dietary="Vegetarian").count(),
             Confirmation.objects.filter(dietary="Vegan").count(),
             Confirmation.objects.filter(dietary="Nut Allery").count(),
             Confirmation.objects.filter(dietary="Halal").count(),
+            Confirmation.objects.filter(dietary="Gluten Free").count(),
             Confirmation.objects.filter(dietary="None").count()
         ),
         "genders": {

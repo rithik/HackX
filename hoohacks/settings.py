@@ -196,7 +196,7 @@ RACES = ["African American", "American Indian", "Asian",
 GENDERS = ["Female", "Male", "Non-binary", "Transgender", "Other", "Prefer not to say"]
 TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
 TSHIRT_SIZES = ["XS", "S", "M", "L", "XL"]
-DIETARY_RESTRICTIONS = ["None", "Vegetarian", "Vegan", "Nut Allergy", "Halal", "Other"]
+DIETARY_RESTRICTIONS = ["None", "Vegetarian", "Vegan", "Nut Allergy", "Halal", "Gluten Free", "Other"]
 CITIES = ["Pittsburgh", "Washington, DC", "Richmond", "NYC", "Charlottesville"] # Test Cities
 
 f = open(BASE_DIR + "/hoohacks/data/schools.csv", "r")
