@@ -114,7 +114,7 @@
           
         <div class="form-check">
            <input required type="checkbox" class="form-check-input" name="mlh" {% if app.mlh_rules %} checked {% endif %} id="exampleCheck1">
-           <label class="form-check-label required-field" for="exampleCheck1">I have read and agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>.</label>
+           <label class="form-check-label required-field" for="exampleCheck1">I have read and agree to the <a class="email-link" href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>.</label>
          </div>
 
          <br/>
@@ -123,8 +123,22 @@
     <hr style="width:30%">
     <br/>
 
-    <b>Do you need travel reimbursement?</b>
+    <div class="form-group">
+      <b>{{ event_name }} Travel Reimbursement Policies:</b> 
+      <ul>
+        <li>You are not guaranteed to receive travel reimbursement unless you visit the Travel Reimbursement booth at {{ event_name }} (more information will follow).</li>
+        <li>You may be asked to show proof of purchase for tickets or gas so please remember to keep all of your receipts.</li>
+        <li>If you are travelling from a location for which there is a bus provided by HooHacks, a travel reimbursement will NOT be provided. You should obtain a bus ticket from <a class="email-link" href="https://www.tickettailor.com/events/hoohacks1/" target="_blank">https://www.tickettailor.com/events/hoohacks1/</a>. You will be required to pay a $10 fee, however, this money will be reimbursed if you attend the event. If you do not show up, the $10 fee that you have paid will be used to offset the cost of this event.</li>
+        <li>If you are driving, {{ event_name }} will provide you with up to $0.10/mile up to a maximum of $40. </li>
+        <li>If you are flying, {{ event_name }} will provide you up to a maximum of $100. </li>
+        <li>If you are taking a bus or a train, {{ event_name }} will provide you up to a maximum of $75. </li>
+        <li>If you are taking another form of transport, please notify us by contacting us at <a class="email-link" href="mailto:{{ contact_email }}">{{ contact_email }}</a>. </li>
+      </ul>
+    </div>
+    
+    <br/>
 
+    <b>Do you need travel reimbursement?</b>
     <div class="form-check">
        <input type="checkbox" class="form-check-input" name="travel" {% if app.travel %} checked {% endif %} id="need-travel">
        <label class="form-check-label" for="need-travel">Yes, I need travel reimbursement.</label>
@@ -132,19 +146,6 @@
      <br/>
 
      <div id="travel-app-main" {% if app.travel %} style="display: block;" {% else %} style="display: none;" {% endif %}>
-
-      <div class="form-group">
-        <b>{{ event_name }} Travel Reimbursement Policies:</b> 
-        <ul>
-          <li>You are not guaranteed to receive travel reimbursement unless you visit the Travel Reimbursement booth at {{ event_name }} (more information will follow).</li>
-          <li>You may be asked to show proof of purchase for tickets or gas so please remember to keep all of your receipts.</li>
-          <li>If you are travelling from a location for which there is a bus provided by HooHacks, a travel reimbursement will NOT be provided. You should obtain a bus ticket from <a class="email-link" href="https://www.tickettailor.com/events/hoohacks1/" target="_blank">https://www.tickettailor.com/events/hoohacks1/</a>. You will be required to pay a $10 fee, however, this money will be reimbursed if you attend the event. If you do not show up, the $10 fee that you have paid will be used to offset the cost of this event.</li>
-          <li>If you are driving, {{ event_name }} will provide you with up to $0.10/mile up to a maximum of $40. </li>
-          <li>If you are flying, {{ event_name }} will provide you up to a maximum of $100. </li>
-          <li>If you are taking a bus or a train, {{ event_name }} will provide you up to a maximum of $75. </li>
-          <li>If you are taking another form of transport, please notify us by contacting us at <a class="email-link" href="mailto:{{ contact_email }}">{{ contact_email }}</a>. </li>
-        </ul>
-      </div>
 
       <div class="form-group">
         <label for="where-from" class="required-field">Where are you travelling from?</label>
