@@ -104,7 +104,7 @@
            <div class="form-group">
              <label for="why" class="required-field">What do you hope to get out of HooHacks?</label>
              <br/>
-                <textarea required class="form-control" id="why" placeholder="Tell us why you want to attend HooHacks" name="why">{% if app.app_complete %}{{ app.why }}{% endif %}</textarea>
+                <textarea required class="form-control" id="why" maxlength="1700" placeholder="Tell us why you want to attend HooHacks" name="why">{% if app.app_complete %}{{ app.why }}{% endif %}</textarea>
             </div>
 
         <div class="form-check">
