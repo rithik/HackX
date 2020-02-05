@@ -99,7 +99,7 @@ def login_page(request):
         elif request.POST.get('button-type') == "login":
             email = request.POST.get('email','')
             password = request.POST.get('password','')
-            u = User.objects.filter(email=email)
+            u = User.objects.filter(email__iexact=email)
             if u.count() == 0:
                 return render(request, "login_page.html", {"message":"No account found with this email address!"})
             u = u.first()
