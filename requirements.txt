@@ -24,7 +24,7 @@ daphne==2.3.0
 DateJS==0.4
 decorator==4.4.0
 defusedxml==0.6.0
-Django==2.2.9
+Django==2.2.10
 django-heroku
 django-pipeline==1.6.14
 djwebsockets==0.9.0
