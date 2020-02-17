@@ -50,7 +50,7 @@
      <div class="form-group">
        <label for="phone" class="required-field">Phone Number</label>
        <br/>
-          <input type="tel" required class="form-control" id="phone" value="{{ c.phone }}" name="phone">
+          <input type="tel" required class="form-control" id="phone" value="{{ c.phone }}" pattern="^[0-9]{8,12}$" name="phone">
       </div>
 
       <div class="form-group">
