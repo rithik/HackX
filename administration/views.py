@@ -220,6 +220,18 @@ def get_stats():
         if c.declined:
             schools[school]['declined']+=1
 
+    total_reimbursement = 0
+    total_accepted_reimbursement = 0
+    for a in Application.objects.all():
+        num_cost = 0
+        try:
+            num_cost = float(a.cost)
+            if a.accepted:
+                total_accepted_reimbursement += num_cost
+            total_reimbursement += num_cost
+        except:
+            pass
+
     return {
         "hackers": total,
         "verified": User.objects.filter(verified=True).count(),
@@ -230,6 +242,8 @@ def get_stats():
         "confirmed": Confirmation.objects.filter(confirmed=True).count(),
         "declined": Confirmation.objects.filter(declined=True).count(),
         "reimbursement": Application.objects.filter(travel=True).count(),
+        "total_reimbursement": "${}".format(total_reimbursement),
+        "total_accepted_reimbursement": "${}".format(total_accepted_reimbursement),
         "tshirt": "XS({}) S({}) M({}) L({}) XL({})".format(
             Confirmation.objects.filter(tshirt="XS").count(),
             Confirmation.objects.filter(tshirt="S").count(),
