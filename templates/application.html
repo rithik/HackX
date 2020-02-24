@@ -109,7 +109,7 @@
 
         <div class="form-check">
           <input type="checkbox" class="form-check-input" name="mlh-consent" {% if app.mlh_consent %} checked {% endif %} id="exampleCheck2">
-          <label class="form-check-label required-field" for="exampleCheck2">I authorize you to share my application/registration information for event administration, ranking, MLH administration, pre- and post-event informational e-mails, and occasional messages about hackathons in-line with the <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. I further agree to the terms of both the <a href="https://github.com/MLH/mlh-policies/tree/master/prize-terms-and-conditions" target="_blank">MLH Contest Terms and Conditions</a> and the <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a></label>
+          <label class="form-check-label required-field" for="exampleCheck2">I authorize you to share my application/registration information for event administration, ranking, MLH administration, pre- and post-event informational e-mails, and occasional messages about hackathons in-line with the <a class="email-link" href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. I further agree to the terms of both the <a class="email-link" href="https://github.com/MLH/mlh-policies/tree/master/prize-terms-and-conditions" target="_blank">MLH Contest Terms and Conditions</a> and the <a class="email-link" href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a></label>
         </div>
           
         <div class="form-check">
@@ -123,6 +123,30 @@
     <hr style="width:30%">
     <br/>
 
+    
+    <div class="form-group">
+      <b> Buses provided by {{ event_name }} leaving Saturday, March 28th</b>
+      <div class="row">
+        <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
+          <b>DC/Maryland Bus</b> <br/><br/>
+          <b>5:30 am</b> - Pickup at UMD Stamp Student Union<br/><br/>
+          <b>6:15 am</b> - Pickup at GWU Business School
+        </div>
+        <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
+          <b>Northern Virginia Bus</b> <br/><br/>
+          <b>6:15 am</b> - Pickup at Thomas Jefferson High School for Science and Technology<br/><br/>
+          <b>7:00 am</b> - Pickup at GMU K Lot (4584 Patriot Cir, Fairfax, VA 22030)
+        </div>
+        <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
+          <b>Virginia Tech Bus</b><br/><br/>
+          <b>6:30 am</b> - Pickup at Goodwin Hall
+        </div>
+      </div>
+      <b>All buses will depart from UVA at 4:00pm on Sunday, March 29th.</b>
+    </div>
+
+    
+    <br/>
     <div class="form-group">
       <b>{{ event_name }} Travel Reimbursement Policies:</b> 
       <ul>
@@ -132,7 +156,7 @@
         <li>If you are driving, {{ event_name }} will provide you with up to $0.10/mile up to a maximum of $40. </li>
         <li>If you are flying, {{ event_name }} will provide you up to a maximum of $100. </li>
         <li>If you are taking a bus or a train, {{ event_name }} will provide you up to a maximum of $75. </li>
-        <li>If you are taking another form of transport, please notify us by contacting us at <a class="email-link" href="mailto:{{ contact_email }}">{{ contact_email }}</a>. </li>
+        <li>If you are taking another form of transport or have any questions, please contact us at <a class="email-link" href="mailto:{{ contact_email }}">{{ contact_email }}</a>. </li>
       </ul>
     </div>
     
