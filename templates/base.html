@@ -36,6 +36,9 @@
     <script src="https://browser.sentry-cdn.com/5.9.0/bundle.min.js" integrity="sha384-hMcetfUA+TR8vwXLe2PQTtnfYMs/1BMpXcmNGMNVjzbdKcd5mQ50kU6EC1fPHHq7" crossorigin="anonymous"></script>
     <script>
         Sentry.init({ dsn: 'https://2d79f7a06e134e00a3941966544f3126@sentry.io/1812182' });
+        Sentry.configureScope(function(scope) {
+            scope.setUser({"email": '{{ user.email }}'});
+        });
     </script>
     
 
