@@ -21,7 +21,7 @@ dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 def application(request, msg=''):
     ALLOW = True
     tz = timezone('US/Eastern')
-    if tz.localize(datetime.now()) >= Settings.objects.all()[0].application_submission_deadline:
+    if datetime.now().timestamp() >=  Settings.objects.all()[0].application_submission_deadline.timestamp():
         ALLOW = False
     u = request.user
     a = u.application
@@ -130,7 +130,7 @@ def confirmation(request):
             'message': 'Not authorized'
         })
     ALLOW = True
-    if tz.localize(datetime.now()) >= Settings.objects.all()[0].application_confirmation_deadline:
+    if datetime.now().timestamp() >= Settings.objects.all()[0].application_confirmation_deadline.timestamp():
         ALLOW = False
     if not u:
         return redirect("/logout")
