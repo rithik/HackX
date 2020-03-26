@@ -30,6 +30,7 @@ import os
 import slack
 import tweepy
 import csv
+import traceback
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 slack_client = None
@@ -474,6 +475,7 @@ def accept_user(request, user_id):
         h.save()
         return JsonResponse({"status": 200, "message": "Success"})
     except:
+        traceback.print_exception()
         return JsonResponse({"status": 404, "message": "Error"})
 
 @login_required
