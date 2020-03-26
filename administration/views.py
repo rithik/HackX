@@ -474,8 +474,8 @@ def accept_user(request, user_id):
         a.save()
         h.save()
         return JsonResponse({"status": 200, "message": "Success"})
-    except Exception:
-        traceback.print_exception()
+    except:
+        traceback.print_exc()
         return JsonResponse({"status": 404, "message": "Error"})
 
 @login_required
