@@ -50,7 +50,7 @@ def make_judge_manual(request):
         if judge_password == settings.JUDGING_PASSWORD:
             u.is_judge = True
             u.first_name = first_name
-            u.last_name = first_name
+            u.last_name = last_name
             o = Organization.objects.get(id=org_id)
             u.organization = o
             u.save()
