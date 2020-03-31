@@ -407,7 +407,8 @@ def assign_demos(request):
     judges = User.objects.filter(is_judge=True)
 
     for k in Demo.objects.all():
-        k.delete()
+        if not k.completed:
+            k.delete()
 
     # ensure everyone is signed up for non-opt-in prizes
     non_opt_in_categories = Category.objects.filter(is_opt_in=False)
