@@ -36,9 +36,9 @@
                         <div class="form-group">
                             <label for="t-selection"><b>Team</b></label>
                             <br/>
-                            <select class="form-control selectpicker" id="team-selection" name='team'>
+                            <select class="form-control selectpicker" id="team-selection" name='team' onchange="changeURL()">
                                 {% for t in all_teams %}
-                                    <option {% if t.id == demo.team.id %} selected {% endif %} value="{{ t.id }}">Table {{ t.table }} - {{ t.name }}</option>
+                                    <option {% if t.id == demo.team.id %} selected {% endif %} data-link="{{ t.link }}" value="{{ t.id }}">Table {{ t.table }} - {{ t.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -47,6 +47,13 @@
                 </div>
                 <br/>
                 <hr style="width:100%">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p style="text-align: center; color:black">View Submission Here: <a href="{{ demo.team.link }}" id="submission_url" target="_blank" style="color: #017bff;"> {{demo.team.link}} </a></p> </p>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-lg-3"></div>
                     <div class="col-lg-6">
@@ -210,6 +217,14 @@
             </div>
             
             <script>
+
+                function changeURL(){
+                    window.dropdown_team_select = document.getElementById("team-selection");
+                    var url = dropdown_team_select.options[dropdown_team_select.selectedIndex].getAttribute("data-link");
+                    document.getElementById("submission_url").innerText = url;
+                    document.getElementById("submission_url").href = url;
+                }
+
                 var h1 = document.getElementsByTagName('h1')[0],
                 start = document.getElementById('start'),
                 stop = document.getElementById('stop'),
