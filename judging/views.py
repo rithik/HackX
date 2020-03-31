@@ -109,7 +109,7 @@ def import_categories_from_devpost(request):
         soup = BeautifulSoup(r.text, 'html.parser')
 
         # Scrape prize information
-        prize_list_items = soup.find_all('li', attrs={'class': 'prize'})
+        prize_list_items = soup.find_all('div', attrs={'class': 'prize'})
         raw_prize_texts = []
         for prize_li in prize_list_items:
             raw_prize_texts.append(prize_li.find('h6').text.strip())
