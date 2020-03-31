@@ -57,7 +57,7 @@ def make_judge_manual(request):
             return render(request, "make-judge.html", {
                 "highlight": "", 
                 "user": u,
-                "msg": "You are now an judge!",
+                "msg": "You are now a judge!",
                 "organizations": Organization.objects.all()
             })
         else:
