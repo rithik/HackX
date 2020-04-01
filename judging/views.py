@@ -599,10 +599,26 @@ def judging_queue(request):
         for d in normalization_demos:
             demo_queue_rotated.insert(0, d)
 
+        demo_queue_data = []
+        for d in demo_queue_rotated:
+            demo_queue_data.append({
+                "demo": d,
+                "team": d.team,
+                "categories": d.team.categories.all()
+            })
+
+        past_demo_data = []
+        for d in past_demos:
+            past_demo_data.append({
+                "demo": d,
+                "team": d.team,
+                "categories": d.team.categories.all()
+            })
+
         context = {
             'user': request.user,
-            'demo_queue': demo_queue_rotated,
-            'past_demos': past_demos,
+            'demo_queue': demo_queue_data,
+            'past_demos': past_demo_data,
             'highlight': 'judging'
         }
         return render(request, 'queue.html', context)
