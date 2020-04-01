@@ -640,6 +640,8 @@ def evaluate(request):
                 if time_per_presentation < 0:
                     time_per_presentation = 0
 
+                demo = demos
+
                 if len(demos) > 0:
                     demo = demos[0]
 
@@ -688,6 +690,24 @@ def evaluate(request):
         return redirect('judging_queue')
 
 @login_required
+def get_team_categories(request):
+    if request.method == "GET":
+        team_id = request.GET.get('team_id', -1)
+        if team_id == -1:
+            return JsonResponse({
+                "Error": "Could not get Team Categories - invalid team id"
+            })
+        t = Team.objects.get(id=int(team_id))
+        
+        return JsonResponse({
+            "categories": [category.name for category in t.categories.all()]
+        })
+
+    return JsonResponse({
+        "Error": "Not a GET request"
+    })
+
+@login_required
 def scores(request):
     # TODO: move computation into POST request
     """Page for viewing and normalizing scores."""
@@ -722,6 +742,7 @@ def scores(request):
         for k in rankings:
             count += 1
             categories = [category.name for category in k[2].categories.all()]
+            print(categories)
             ranks.append({
                 'norm_score': math.floor(k[0] * 1000) / 1000,
                 'raw_score': math.floor(k[1] * 1000) / 1000,

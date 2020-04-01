@@ -34,5 +34,6 @@ urlpatterns = [
     path('normalize', views.normalize_teams, name='normalize_teams'),
     path('assign_anchor_to_judges', views.assign_anchor_to_judges, name='assign_anchor_to_judges'),
     path('simulate_demos', views.simulate_demos, name='simulate_demos'),
-    path('normalize_scores', views.normalize_scores, name='normalize_scores')
+    path('normalize_scores', views.normalize_scores, name='normalize_scores'),
+    path('get_team_categories', views.get_team_categories, name='get_team_categories')
 ]
