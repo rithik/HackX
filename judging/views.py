@@ -28,6 +28,7 @@ import heapq
 import random
 import math
 from collections import deque
+from itertools import chain
 
 @login_required
 def make_judge_manual(request):
@@ -661,9 +662,14 @@ def evaluate(request):
                 if len(demos) > 0:
                     demo = demos[0]
 
+                no_table_teams = Team.objects.filter(table="").all().order_by('name')
+                table_teams = Team.objects.exclude(table="").all()
+
+                all_teams = chain(table_teams, no_table_teams)
+
                 context = {
                     "demo": demo,
-                    "all_teams": Team.objects.all(),
+                    "all_teams": all_teams,
                     "remaining_demos": remaining_demos,
                     "time_per_presentation": time_per_presentation,
                     'highlight': 'judging'
