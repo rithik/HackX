@@ -651,6 +651,8 @@ def evaluate(request):
                 # Get any initial data
                 demos = Demo.objects.filter(judge=request.user, team=team)
                 remaining_demos = Demo.objects.filter(judge=request.user, completed=False).count()
+                if remaining_demos == 0:
+                    remaining_demos = 1
                 time_remaining = Settings.objects.all()[0].judging_deadline - datetime.now().astimezone(settings.TZ)
                 minutes_left = (int) (time_remaining.total_seconds() / 60.0)
                 time_per_presentation = (int) ((minutes_left - (remaining_demos * 1)) / remaining_demos)
