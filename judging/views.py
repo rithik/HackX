@@ -744,7 +744,7 @@ def scores(request):
         teams = Team.objects.all()
         team_scores = []
         for team in teams:
-            team_demos = Demo.objects.filter(team=team)
+            team_demos = Demo.objects.filter(team=team).filter(completed=True)
             demo_raw_totals = []
             demo_norm_totals = []
             for demo in team_demos:
