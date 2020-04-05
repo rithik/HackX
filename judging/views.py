@@ -767,13 +767,19 @@ def scores(request):
             count += 1
             categories = [category.name for category in k[2].categories.all()]
             print(categories)
+            judges = []
+            demos = Demo.objects.filter(team=k[2])
+            for k in demos:
+                judges.append(k.judge.name)
+
             ranks.append({
                 'norm_score': math.floor(k[0] * 1000) / 1000,
                 'raw_score': math.floor(k[1] * 1000) / 1000,
                 'team': k[2].name,
                 'ranking': count,
                 'id': k[2].id,
-                'categories': categories
+                'categories': categories,
+                'judges': judges,
             })
         
         # norm_score, raw_score, winner = rankings[0]
