@@ -770,7 +770,7 @@ def scores(request):
             judges = []
             demos = Demo.objects.filter(team=k[2])
             for k in demos:
-                judges.append(k.judge.name)
+                judges.append("{} {}".format(k.judge.first_name, k.judge.first_name))
 
             ranks.append({
                 'norm_score': math.floor(k[0] * 1000) / 1000,
