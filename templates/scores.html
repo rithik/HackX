@@ -90,6 +90,8 @@
                       </div>
                       <div class="row">
                             <p style="color: black;text-align: center; width: 100%;"><b>Categories Submitted</b>: {% for category in t.categories %} {{ category }}{% if not forloop.last %},{% endif %}{% endfor %}</p>
+                            <br/>
+                            <p style="color: black;text-align: center; width: 100%;"><b>Judges</b>: {% for judge in t.judges %} {{ judge }}{% if not forloop.last %},{% endif %}{% endfor %}</p>
                       </div>
                     </div>
                     <br/>
