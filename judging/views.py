@@ -768,9 +768,9 @@ def scores(request):
             categories = [category.name for category in k[2].categories.all()]
             print(categories)
             judges = []
-            demos = Demo.objects.filter(team=k[2])
-            for k in demos:
-                judges.append("{} {}".format(k.judge.first_name, k.judge.first_name))
+            demos = Demo.objects.filter(team=k[2]).all()
+            for demo in demos:
+                judges.append("{} {}".format(demo.judge.first_name, demo.judge.last_name))
 
             ranks.append({
                 'norm_score': math.floor(k[0] * 1000) / 1000,
