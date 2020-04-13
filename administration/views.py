@@ -384,7 +384,7 @@ def tshirt_order_export(request):
         user = User.objects.get(id=order_write[0])
         tshirt = TshirtOrder.objects.get(user=user)
         order_write.insert(0, user.first_name)
-        order_write.insert(0, user.last_name)
+        order_write.insert(1, user.last_name)
         order_write[2] = user.email
         order_write.append(tshirt.is_valid_url)
         writer.writerow(order_write)    
