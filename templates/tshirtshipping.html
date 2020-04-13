@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Submit T-Shirt Order{% endblock %}
+
+{% block content %}
+    <h2 class="main-title"> <center>Submit T-Shirt Order</center> </h2>
+    <hr style="width:50%">
+
+    <br/>
+    <br/>
+
+    <form class="form-signin" method="POST" action="/order/tshirt" style="width:60%; margin:auto; display:block;">
+        {% csrf_token %}
+        {% if not msg == "" %}
+            <div class="alert alert-success" role="alert">
+                {{ msg }}
+            </div>
+        {% endif %}
+
+        {% if not error == "" %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        {% if error == "" %}
+            <div class="form-group">
+                <label for="size" class="required-field">T-Shirt Size</label>
+                <br/>
+                <select name="size" required title="Select your T-Shirt size" class="selectpicker" data-width="100%">
+                    {% for s in tshirt_sizes %}
+                        <option value="{{s}}" {% if s == size %} selected {% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="street_address" class="required-field">Street Address</label>
+                <input type="text" max-length="200" required class="form-control" id="street_address" placeholder="Street Address" name="street-address" value="{{ street_address }}">
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <label for="city" class="required-field">City</label>
+                    <input type="text" max-length="100" required class="form-control" id="city" placeholder="City" name="city" value="{{ city }}">
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label for="state" class="required-field">State</label>
+                    <input type="text" max-length="100" required class="form-control" id="state" placeholder="State" name="state" value="{{ state }}">
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label for="country" class="required-field">Country</label>
+                    <input type="text" max-length="100" required class="form-control" id="country" placeholder="Country" name="country" value="{{ country }}">
+                </div>
+                <div class="col-lg-3 form-group">
+                    <label for="zip-code" class="required-field">Zip Code</label>
+                    <input type="text" max-length="10" required class="form-control" id="zip-code" placeholder="Zip code" name="zip-code" value="{{ zip_code }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="devpost_url" class="required-field">Devpost Submission URL</label>
+                <input type="text" max-length="200" required class="form-control" id="devpost_url" placeholder="Devpost Submission URL" name="devpost-url" value="{{ devpost_url }}">
+            </div>
+
+            <div class="form-group">
+                <label for="devpost_email" class="required-field">Email used for Devpost Submission</label>
+                <input type="email" max-length="200" required class="form-control" id="devpost_email" placeholder="Email used for Devpost Submission" name="devpost-email" value="{{ devpost_email }}">
+            </div>
+
+            <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="place-order" type="submit">Submit T-shirt Order!</button>
+        {% endif %}
+    </form>
+
+{% endblock %}

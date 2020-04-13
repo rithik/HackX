@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 import uuid
 from pytz import timezone
 from datetime import datetime
-from .models import Application, Confirmation
+from .models import Application, Confirmation, TshirtOrder
 from users.models import User, EmailView
 import dropbox 
 from administration.models import Settings
@@ -259,4 +259,84 @@ def confirmation(request):
                 "allow": ALLOW,
                 "all_carriers": list(settings.CARRIER_EMAIL_LOOKUP)
             })
-            
+
+@login_required
+def order_tshirt(request):
+    user = request.user
+    a = user.application
+    c = user.confirmation
+    if not a.accepted:
+        return render(request, "tshirtshipping.html", {
+            "user": user, 
+            "highlight": "confirmation",
+            "tshirt_sizes": settings.TSHIRT_SIZES, 
+            "msg": "", 
+            "error": "Unfortunately, you cannot order a t-shirt! You did not confirm your registration in time."
+        })
+
+    if not c.confirmed:
+        return render(request, "tshirtshipping.html", {
+            "user": user, 
+            "highlight": "confirmation",
+            "tshirt_sizes": settings.TSHIRT_SIZES, 
+            "msg": "", 
+            "error": "Unfortunately, you cannot order a t-shirt! You did not confirm your registration in time."
+        })
+
+    if request.method == "POST":
+        t = TshirtOrder.objects.get(user=request.user)
+        size = request.POST.get('size', '')
+        street_address = request.POST.get('street-address', '')
+        city = request.POST.get('city', '')
+        state = request.POST.get('state', '')
+        country = request.POST.get('country', '')
+        zip_code = request.POST.get('zip-code', '')
+        devpost_url = request.POST.get('devpost-url', '')
+        devpost_email = request.POST.get('devpost-email', '')
+
+        t.tshirt = size
+        t.street_address = street_address
+        t.city = city
+        t.state = state
+        t.country = country
+        t.zip_code = zip_code
+        t.devpost_url = devpost_url
+        t.devpost_email = devpost_email
+        t.save()
+
+        return render(request, "tshirtshipping.html", {
+            "user": user, 
+            "highlight": "confirmation",
+            "tshirt_sizes": settings.TSHIRT_SIZES, 
+            "msg": "Your T-Shirt order has been placed! Due to the COVID-19 situation, it may take a few weeks for your t-shirt to actually ship to you.", 
+            "error": "",
+            "size": t.tshirt,
+            "street_address": t.street_address,
+            "city": t.city,
+            "state": t.state, 
+            "country": t.country,
+            "zip_code": t.zip_code,
+            "devpost_url": t.devpost_url,
+            "devpost_email": t.devpost_email
+        })
+
+    t = TshirtOrder.objects.filter(user=request.user).count()
+    if t == 0: 
+        t = TshirtOrder.objects.create(user=request.user)
+    else:
+        t = TshirtOrder.objects.get(user=request.user)
+    return render(request, "tshirtshipping.html", {
+        "user": user, 
+        "highlight": "confirmation",
+        "tshirt_sizes": settings.TSHIRT_SIZES, 
+        "msg": "", 
+        "error": "",
+        "size": t.tshirt,
+        "street_address": t.street_address,
+        "city": t.city, 
+        "state": t.state, 
+        "country": t.country,
+        "zip_code": t.zip_code,
+        "devpost_url": t.devpost_url,
+        "devpost_email": t.devpost_email
+    })
