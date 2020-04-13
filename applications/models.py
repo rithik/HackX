@@ -82,5 +82,13 @@ class TshirtOrder(models.Model):
     devpost_url = models.URLField()
     devpost_email = models.EmailField(max_length=100, default="")
     
+    @property
+    def is_valid_url(self):
+        from judging.models import Team
+        t = Team.objects.filter(link=self.devpost_url).count()
+        if t > 0:
+            return True
+        return False
+
     def __str__(self):
         return "TshirtShipping: {}".format(self.user)
