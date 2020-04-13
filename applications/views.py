@@ -268,7 +268,7 @@ def order_tshirt(request):
     if not a.accepted:
         return render(request, "tshirtshipping.html", {
             "user": user, 
-            "highlight": "confirmation",
+            "highlight": "order-tshirt",
             "tshirt_sizes": settings.TSHIRT_SIZES, 
             "msg": "", 
             "error": "Unfortunately, you cannot order a t-shirt! You did not confirm your registration in time."
@@ -277,7 +277,7 @@ def order_tshirt(request):
     if not c.confirmed:
         return render(request, "tshirtshipping.html", {
             "user": user, 
-            "highlight": "confirmation",
+            "highlight": "order-tshirt",
             "tshirt_sizes": settings.TSHIRT_SIZES, 
             "msg": "", 
             "error": "Unfortunately, you cannot order a t-shirt! You did not confirm your registration in time."
@@ -306,7 +306,7 @@ def order_tshirt(request):
 
         return render(request, "tshirtshipping.html", {
             "user": user, 
-            "highlight": "confirmation",
+            "highlight": "order-tshirt",
             "tshirt_sizes": settings.TSHIRT_SIZES, 
             "msg": "Your T-Shirt order has been placed! Due to the COVID-19 situation, it may take a few weeks for your t-shirt to actually ship to you.", 
             "error": "",
@@ -327,7 +327,7 @@ def order_tshirt(request):
         t = TshirtOrder.objects.get(user=request.user)
     return render(request, "tshirtshipping.html", {
         "user": user, 
-        "highlight": "confirmation",
+        "highlight": "order-tshirt",
         "tshirt_sizes": settings.TSHIRT_SIZES, 
         "msg": "", 
         "error": "",

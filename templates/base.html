@@ -82,6 +82,12 @@
                         Confirmation
                     </a>
                 </li>
+                <li {% if highlight == "order-tshirt" %} class="active" {% endif %}>
+                    <a href="/order/tshirt">
+                        <i class="fas fa-tshirt"></i>
+                        Order T-Shirt
+                    </a>
+                </li>
                 <li {% if highlight == "ticket" %} class="active" {% endif %}>
                     <a href="/tickets">
                         <i class="fas fa-user"></i>
@@ -110,6 +116,12 @@
                         <a href="/admin">
                             <i class="fas fa-user"></i>
                             Admin
+                        </a>
+                    </li>
+                    <li {% if highlight == "order-tshirt-download" %} class="active" {% endif %}>
+                        <a href="/download/order/tshirt">
+                            <i class="fas fa-tshirt"></i>
+                            Download T-Shirt Orders
                         </a>
                     </li>
                 {% endif %}
