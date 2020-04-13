@@ -82,7 +82,6 @@ class TshirtOrder(models.Model):
     devpost_url = models.URLField()
     devpost_email = models.EmailField(max_length=100, default="")
     
-<<<<<<< HEAD
     @property
     def is_valid_url(self):
         from judging.models import Team
@@ -91,7 +90,5 @@ class TshirtOrder(models.Model):
             return True
         return False
 
-=======
->>>>>>> e29fe7b016deb9ad2221528bc2778cd7ffde168d
     def __str__(self):
         return "TshirtShipping: {}".format(self.user)
