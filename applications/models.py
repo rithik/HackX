@@ -65,3 +65,22 @@ class Confirmation(models.Model):
     def __str__(self):
         return  "Confirmation: {}".format(self.user)
         
+class TshirtOrder(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="tshirt_order"
+    )
+
+    tshirt = models.CharField(max_length=10, default="")
+    street_address = models.CharField(max_length=200, default="")
+    city = models.CharField(max_length=100, default="")
+    state = models.CharField(max_length=100, default="")
+    country = models.CharField(max_length=100, default="")
+    zip_code = models.CharField(max_length=10, default="")
+    devpost_url = models.URLField()
+    devpost_email = models.EmailField(max_length=100, default="")
+    
+    def __str__(self):
+        return "TshirtShipping: {}".format(self.user)

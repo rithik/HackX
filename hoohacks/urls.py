@@ -53,5 +53,7 @@ urlpatterns = [
     path('download/resume/me/<str:uid>', mentors.views.get_resume_by_id),
     path('download/my/resume', mentors.views.get_my_resume),
     path('send/notification', administration.views.send_notification),
+    path('order/tshirt', applications.views.order_tshirt),
+    path('download/order/tshirt', administration.views.tshirt_order_export),
     path('setup', users.views.setup, name='setup')
 ]

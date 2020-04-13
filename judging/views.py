@@ -768,7 +768,7 @@ def scores(request):
             categories = [category.name for category in k[2].categories.all()]
             print(categories)
             judges = []
-            demos = Demo.objects.filter(team=k[2]).all()
+            demos = Demo.objects.filter(team=k[2]).filter(completed=True)
             for demo in demos:
                 judges.append("{} {}".format(demo.judge.first_name, demo.judge.last_name))
 
