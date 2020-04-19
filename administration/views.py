@@ -387,6 +387,8 @@ def tshirt_order_export(request):
         order_write.insert(1, user.last_name)
         order_write[2] = user.email
         order_write.append(tshirt.is_valid_url)
+        if order_write[3] == "":
+            continue
         writer.writerow(order_write)    
     return response
 
