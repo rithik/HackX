@@ -87,13 +87,11 @@ MEDIA_ROOT = BASE_DIR + '/media/'
 
 WSGI_APPLICATION = 'hoohacks.wsgi.application'
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
 
-if DEBUG:
-    STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, 'static'),
-    ]
-else:
-    STATIC_ROOT = '/app/static'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
