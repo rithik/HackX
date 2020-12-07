@@ -93,7 +93,7 @@ if DEBUG:
         os.path.join(BASE_DIR, 'static'),
     ]
 else:
-    STATIC_ROOT = 'static'
+    STATIC_ROOT = '/app/static'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
