@@ -87,11 +87,13 @@ MEDIA_ROOT = BASE_DIR + '/media/'
 
 WSGI_APPLICATION = 'hoohacks.wsgi.application'
 STATIC_URL = '/static/'
-STATIC_ROOT = 'static'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+if DEBUG:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static')
+    ]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -182,14 +184,14 @@ APPLICATION_CONFIRMATION_DEADLINE = TZ.localize(datetime.datetime(2019, 11, 21, 
 APPLICATION_CONFIRMATION_DEADLINE_FMT = APPLICATION_CONFIRMATION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
 SCHOOLS = []
-GRADUATION_YEARS = [2020, 2021, 2022, 2023, 2024, 2025]
+GRADUATION_YEARS = [2021, 2022, 2023, 2024, 2025, 2026]
 GRADUATION_YEARS_TITLES = {
-    "2020": "Senior",
-    "2021": "Junior",
-    "2022": "Sophomore",
-    "2023": "Freshman",
-    "2024": "High School Senior",
-    "2025": "High School Junior"
+    "2021": "Senior",
+    "2022": "Junior",
+    "2023": "Sophomore",
+    "2024": "Freshman",
+    "2025": "High School Senior",
+    "2026": "High School Junior"
 }
 RACES = ["African American", "American Indian", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
