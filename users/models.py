@@ -5,7 +5,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 from datetime import datetime
 import uuid 
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
+sg = SendGridAPIClient(settings.SENDGRID_HOST_PASSWORD)
 class User(AbstractUser):
 
     email = models.EmailField(unique=True)
@@ -55,8 +58,14 @@ class EmailView(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def send_email(self):
-        send_mail(self.subject, self.message, settings.EMAIL_HOST_USER, [self.user.email], html_message=self.message)
-        self.sent = datetime.now()
+        email = Mail(from_email=settings.SENDGRID_FROM_EMAIL, to_emails=self.user.email, subject=self.subject, html_content=self.message)
+        try:
+            response = sg.send(email)
+            print(response)
+            print(response.status_code)
+            self.sent = datetime.now()
+        except Exception as e:
+            print(e.message)
         self.save()
 
     def __str__(self):
