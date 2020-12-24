@@ -46,7 +46,7 @@ Make sure that your Gmail account is allowed to send emails from less secure app
 
 To setup a user as an admin in the HackX system, navigate to `http://localhost:8000/make/admin`. Use the `ADMIN_PASSWORD` set in the `secret.py` file.
 
-To setup a user as an mentor in the HackX system, navigate to `http://localhost:8000/make/mentor`. Use the `MENTOR_PASSWORD` set in the `secret.py` file.
+To setup a user as a mentor in the HackX system, navigate to `http://localhost:8000/make/mentor`. Use the `MENTOR_PASSWORD` set in the `secret.py` file.
 
 To setup a user as a judge in the HackX system, navigate to `http://localhost:8000/make/judge`. Use the `JUDGING_PASSWORD` set in the `secret.py` file.
 

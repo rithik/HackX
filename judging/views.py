@@ -28,6 +28,7 @@ import heapq
 import random
 import math
 from collections import deque
+from itertools import chain
 
 @login_required
 def make_judge_manual(request):
@@ -50,14 +51,14 @@ def make_judge_manual(request):
         if judge_password == settings.JUDGING_PASSWORD:
             u.is_judge = True
             u.first_name = first_name
-            u.last_name = first_name
+            u.last_name = last_name
             o = Organization.objects.get(id=org_id)
             u.organization = o
             u.save()
             return render(request, "make-judge.html", {
                 "highlight": "", 
                 "user": u,
-                "msg": "You are now an judge!",
+                "msg": "You are now a judge!",
                 "organizations": Organization.objects.all()
             })
         else:
@@ -109,7 +110,7 @@ def import_categories_from_devpost(request):
         soup = BeautifulSoup(r.text, 'html.parser')
 
         # Scrape prize information
-        prize_list_items = soup.find_all('li', attrs={'class': 'prize'})
+        prize_list_items = soup.find_all('div', attrs={'class': 'prize'})
         raw_prize_texts = []
         for prize_li in prize_list_items:
             raw_prize_texts.append(prize_li.find('h6').text.strip())
@@ -407,7 +408,8 @@ def assign_demos(request):
     judges = User.objects.filter(is_judge=True)
 
     for k in Demo.objects.all():
-        k.delete()
+        if not k.completed:
+            k.delete()
 
     # ensure everyone is signed up for non-opt-in prizes
     non_opt_in_categories = Category.objects.filter(is_opt_in=False)
@@ -598,10 +600,26 @@ def judging_queue(request):
         for d in normalization_demos:
             demo_queue_rotated.insert(0, d)
 
+        demo_queue_data = []
+        for d in demo_queue_rotated:
+            demo_queue_data.append({
+                "demo": d,
+                "team": d.team,
+                "categories": d.team.categories.all()
+            })
+
+        past_demo_data = []
+        for d in past_demos:
+            past_demo_data.append({
+                "demo": d,
+                "team": d.team,
+                "categories": d.team.categories.all()
+            })
+
         context = {
             'user': request.user,
-            'demo_queue': demo_queue_rotated,
-            'past_demos': past_demos,
+            'demo_queue': demo_queue_data,
+            'past_demos': past_demo_data,
             'highlight': 'judging'
         }
         return render(request, 'queue.html', context)
@@ -633,18 +651,27 @@ def evaluate(request):
                 # Get any initial data
                 demos = Demo.objects.filter(judge=request.user, team=team)
                 remaining_demos = Demo.objects.filter(judge=request.user, completed=False).count()
+                if remaining_demos == 0:
+                    remaining_demos = 1
                 time_remaining = Settings.objects.all()[0].judging_deadline - datetime.now().astimezone(settings.TZ)
                 minutes_left = (int) (time_remaining.total_seconds() / 60.0)
                 time_per_presentation = (int) ((minutes_left - (remaining_demos * 1)) / remaining_demos)
                 if time_per_presentation < 0:
                     time_per_presentation = 0
 
+                demo = demos
+
                 if len(demos) > 0:
                     demo = demos[0]
 
+                no_table_teams = Team.objects.filter(table="").all().order_by('name')
+                table_teams = Team.objects.exclude(table="").all()
+
+                all_teams = chain(table_teams, no_table_teams)
+
                 context = {
                     "demo": demo,
-                    "all_teams": Team.objects.all(),
+                    "all_teams": all_teams,
                     "remaining_demos": remaining_demos,
                     "time_per_presentation": time_per_presentation,
                     'highlight': 'judging'
@@ -687,6 +714,24 @@ def evaluate(request):
         return redirect('judging_queue')
 
 @login_required
+def get_team_categories(request):
+    if request.method == "GET":
+        team_id = request.GET.get('team_id', -1)
+        if team_id == -1:
+            return JsonResponse({
+                "Error": "Could not get Team Categories - invalid team id"
+            })
+        t = Team.objects.get(id=int(team_id))
+        
+        return JsonResponse({
+            "categories": [category.name for category in t.categories.all()]
+        })
+
+    return JsonResponse({
+        "Error": "Not a GET request"
+    })
+
+@login_required
 def scores(request):
     # TODO: move computation into POST request
     """Page for viewing and normalizing scores."""
@@ -699,7 +744,7 @@ def scores(request):
         teams = Team.objects.all()
         team_scores = []
         for team in teams:
-            team_demos = Demo.objects.filter(team=team)
+            team_demos = Demo.objects.filter(team=team).filter(completed=True)
             demo_raw_totals = []
             demo_norm_totals = []
             for demo in team_demos:
@@ -721,13 +766,20 @@ def scores(request):
         for k in rankings:
             count += 1
             categories = [category.name for category in k[2].categories.all()]
+            print(categories)
+            judges = []
+            demos = Demo.objects.filter(team=k[2]).filter(completed=True)
+            for demo in demos:
+                judges.append("{} {}".format(demo.judge.first_name, demo.judge.last_name))
+
             ranks.append({
                 'norm_score': math.floor(k[0] * 1000) / 1000,
                 'raw_score': math.floor(k[1] * 1000) / 1000,
                 'team': k[2].name,
                 'ranking': count,
                 'id': k[2].id,
-                'categories': categories
+                'categories': categories,
+                'judges': judges,
             })
         
         # norm_score, raw_score, winner = rankings[0]

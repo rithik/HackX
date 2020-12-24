@@ -40,8 +40,10 @@
                                 <div class="form-group">
                                     {% if d.team.is_anchor %}
                                         <p style="text-align:center; font-size:22px; color:black">Sponsor Lounge - {{ d.team.name }}</p>
+                                        <p style="color: black;text-align: center; width: 100%;"><b>Categories Submitted</b>: {% for c in d.categories %}{{ c.name }}{% endfor %}</p>
                                     {% else %}
                                         <p style="text-align:center; font-size:22px; color:black">Table {{ d.team.table }} - {{ d.team.name }}</p>
+                                        <p style="color: black;text-align: center; width: 100%;"><b>Categories Submitted</b>: {% for c in d.categories %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -73,8 +75,10 @@
                                 <div class="form-group">
                                     {% if d.team.is_anchor %}
                                         <p style="text-align:center; font-size:22px; color:black">Sponsor Lounge - {{ d.team.name }}</p>
+                                        <p style="color: black;text-align: center; width: 100%;"><b>Categories Submitted</b>: {% for c in d.categories %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
                                     {% else %}
                                         <p style="text-align:center; font-size:22px; color:black">Table {{ d.team.table }} - {{ d.team.name }}</p>
+                                        <p style="color: black;text-align: center; width: 100%;"><b>Categories Submitted</b>: {% for c in d.categories %}{{ c.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
                                     {% endif %}
                                 </div>
                             </div>

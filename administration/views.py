@@ -13,7 +13,7 @@ import uuid
 from pytz import timezone
 import pytz
 from datetime import datetime
-from applications.models import Application, Confirmation
+from applications.models import Application, Confirmation, TshirtOrder
 from users.models import User, EmailView
 from judging.models import Organization
 from channels.layers import get_channel_layer
@@ -30,6 +30,7 @@ import os
 import slack
 import tweepy
 import csv
+import traceback
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 slack_client = None
@@ -364,6 +365,34 @@ def admin_export_csv(request):
     return response
 
 @login_required
+def tshirt_order_export(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'inline; filename="data.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['First Name', 'Last name', 'Email Address', 'T-Shirt Size', 'Street Address', 'City', 
+        'State', 'Country', 'Zip Code', 'Devpost URL', 'Devpost Email', 'Valid DevPost URL'])
+    tshirt_orders = TshirtOrder.objects.all().values_list('user', 'tshirt', 'street_address', 'city', 'state', 'country',
+        'zip_code', 'devpost_url', 'devpost_email')
+    for order in tshirt_orders:
+        order_write = list(order)
+        user = User.objects.get(id=order_write[0])
+        tshirt = TshirtOrder.objects.get(user=user)
+        order_write.insert(0, user.first_name)
+        order_write.insert(1, user.last_name)
+        order_write[2] = user.email
+        order_write.append(tshirt.is_valid_url)
+        if order_write[3] == "":
+            continue
+        writer.writerow(order_write)    
+    return response
+
+@login_required
 def qr_request(request, typ, num, tf):
     if tf == "true":
         tf = True
@@ -474,6 +503,7 @@ def accept_user(request, user_id):
         h.save()
         return JsonResponse({"status": 200, "message": "Success"})
     except:
+        traceback.print_exc()
         return JsonResponse({"status": 404, "message": "Error"})
 
 @login_required

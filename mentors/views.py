@@ -52,7 +52,7 @@ def make_mentor_manual(request):
             return render(request, "make-mentor.html", {
                 "highlight": "", 
                 "user": u,
-                "msg": "You are now an mentor!",
+                "msg": "You are now a mentor!",
                 "organizations": Organization.objects.all()
             })
         else:

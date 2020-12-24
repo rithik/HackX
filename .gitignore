@@ -10,3 +10,4 @@ administration/nametags/
 img.png
 db.sqlite3
 dump.rdb
+*.dump
