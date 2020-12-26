@@ -428,8 +428,6 @@ def assign_demos(request):
             for judge in judges_for_category:
                 if len(Demo.objects.filter(team=team, judge=judge).all()) == 0:
                     Demo.objects.create(judge=judge, team=team)
-    judge = User.objects.get(email="rithik@gmail.com")
-    demos = Demo.objects.filter(judge=judge)
 
     # # second, assign teams to non-sponsor prizes
     # # priority queue for teams (priority = number of demos already assigned)
