@@ -256,6 +256,31 @@ def view_puzzle(request, pid):
     }
     return render(request, "view_puzzle.html", context)
 
+@login_required
+def puzzle_leaderboard(request):
+    u = request.user
+    if not request.user.is_authenticated:
+        return redirect('logout')
+    teams_data = []
+    all_teams = PuzzleTeam.objects.all()
+    for team in all_teams:
+        team_data = {
+            "id": team.id,
+            "name": team.name,
+            "member_names": ", ".join(["{} {}".format(member.first_name, member.last_name) for member in team.users.all()]),
+            "points_earned": sum([ps.points_earned for ps in team.solutions.all()])
+        }
+        if team_data["member_names"] != "":
+            teams_data.append(team_data)
+
+    teams_data = sorted(teams_data, key=lambda k:k['points_earned'], reverse=True)
+    context = {
+        "user": u,
+        "highlight": "puzzles",
+        "teams": teams_data
+    }
+    return render(request, "puzzle_leaderboard.html", context)
+
 def login_page(request):
     if request.method == "GET":
         if request.user.is_authenticated:

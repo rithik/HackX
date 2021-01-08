@@ -43,6 +43,7 @@ urlpatterns = [
     path('puzzles/add', users.views.add_puzzle),
     path('puzzles/update', users.views.update_puzzle),
     path('puzzles/delete', users.views.delete_puzzle),
+    path('puzzles/leaderboard', users.views.puzzle_leaderboard),
     path('puzzles/view/<str:pid>', users.views.view_puzzle),
     path('application', applications.views.application),
     path('application/<str:msg>', applications.views.application),
