@@ -191,7 +191,7 @@ GRADUATION_YEARS_TITLES = {
     "2025": "High School Senior",
     "2026": "High School Junior"
 }
-RACES = ["African American", "American Indian", "Asian",
+RACES = ["African American", "Native American", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
 GENDERS = ["Female", "Male", "Non-binary", "Transgender", "Other", "Prefer not to say"]
 TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
