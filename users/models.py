@@ -24,6 +24,7 @@ class Puzzle(models.Model):
     def __str__(self):
         return self.text
 
+
 class PuzzleTeam(models.Model):
     name = models.CharField(max_length=100, default="New Team")
     unique_code = models.CharField(
@@ -31,6 +32,22 @@ class PuzzleTeam(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class PuzzleSolution(models.Model):
+    team = models.ForeignKey(
+        PuzzleTeam, on_delete=models.SET_NULL, null=True, blank=True, related_name="solutions")
+
+    puzzle = models.ForeignKey(
+        Puzzle, on_delete=models.SET_NULL, null=True, blank=True, related_name="solutions")
+
+    most_recent_solution = models.CharField(max_length=1000)
+    locked = models.BooleanField(default=False)
+    num_attempts = models.IntegerField()
+    points_earned = models.DecimalField(default=0.0, decimal_places=4, max_digits=8)
+
+    def __str__(self):
+        return "{} - {}".format(self.puzzle, self.team)
 
 
 class User(AbstractUser):

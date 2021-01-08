@@ -6,14 +6,16 @@ from django.contrib.auth import logout
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-from datetime import datetime
+from datetime import datetime, timezone as tz
 from pytz import timezone
 import uuid
-from .models import Puzzle, User, EmailView, PuzzleTeam
+from .models import Puzzle, PuzzleSolution, User, EmailView, PuzzleTeam
 from applications.models import Application, Confirmation
 from administration.models import Settings
 from judging.models import Organization
-
+import re
+import time
+import math
 
 def redirect_dashboard(request):
     return redirect('/dashboard')
@@ -62,27 +64,28 @@ def dashboard(request):
 
 
 @login_required
-def view_teams(request):
+def view_puzzles(request):
     u = request.user
     if not request.user.is_authenticated:
         return redirect("/logout")
     if u.application.app_complete == False:
         context = {
             "user": u,
-            "highlight": "team",
+            "highlight": "puzzles",
             "team": None,
             "allowed": False
         }
-        return render(request, "teams.html", context)
+        return render(request, "puzzles.html", context)
 
     context = None
     if request.method == "GET":
         context = {
             "user": u,
-            "highlight": "team",
+            "highlight": "puzzles",
             "team": u.team if u.team else None,
             "msg": "",
-            "allowed": True
+            "allowed": True, 
+            "puzzles": Puzzle.objects.all()
         }
     if request.method == "POST":
         button_type = request.POST.get('button-type', '')
@@ -94,22 +97,24 @@ def view_teams(request):
                 u.save()
                 context = {
                     "user": u,
-                    "highlight": "team",
+                    "highlight": "puzzles",
                     "team": u.team if u.team else None,
                     "msg": "Added to Team",
                     "error": False,
                     "section": "join",
-                    "allowed": True
+                    "allowed": True,
+                    "puzzles": Puzzle.objects.all()
                 }
             except:
                 context = {
                     "user": u,
-                    "highlight": "team",
+                    "highlight": "puzzles",
                     "team": u.team if u.team else None,
                     "msg": "Invalid Team ID entered",
                     "error": True,
                     "section": "join",
-                    "allowed": True
+                    "allowed": True,
+                    "puzzles": Puzzle.objects.all()
                 }
         elif button_type == "create":
             team_name = request.POST.get('team-name', '')
@@ -118,12 +123,13 @@ def view_teams(request):
             u.save()
             context = {
                 "user": u,
-                "highlight": "team",
+                "highlight": "puzzles",
                 "team": u.team if u.team else None,
                 "msg": "Created New Team",
                 "error": False,
                 "section": "create",
-                "allowed": True
+                "allowed": True,
+                "puzzles": Puzzle.objects.all()
             }
         elif button_type == "leave":
             if u.team.count() == 1:
@@ -133,35 +139,38 @@ def view_teams(request):
                 u.save()
             context = {
                 "user": u,
-                "highlight": "team",
+                "highlight": "puzzles",
                 "team": None,
                 "msg": "Left Team",
                 "error": False,
                 "section": "join",
-                "allowed": True
+                "allowed": True,
+                "puzzles": Puzzle.objects.all()
             }
         elif button_type == "delete":
             u.team.delete()
             context = {
                 "user": u,
-                "highlight": "team",
+                "highlight": "puzzles",
                 "team": None,
                 "msg": "Team Deleted",
                 "error": False,
                 "section": "join",
-                "allowed": True
+                "allowed": True,
+                "puzzles": Puzzle.objects.all()
             }
     if context == None:
         context = {
             "user": u,
-            "highlight": "team",
+            "highlight": "puzzles",
             "team": u.team if u.team else None,
             "msg": "Invalid request",
             "error": True,
             "section": "join",
-            "allowed": True
+            "allowed": True,
+            "puzzles": Puzzle.objects.all()
         }
-    return render(request, "teams.html", context)
+    return render(request, "puzzles.html", context)
 
 
 @login_required
@@ -200,6 +209,52 @@ def delete_puzzle(request):
     p = Puzzle.objects.get(id=puzzle_id)
     p.delete()
     return JsonResponse({"status": 200, "message": "Success"})
+
+@login_required
+def view_puzzle(request, pid):
+    u = request.user
+    if not request.user.is_authenticated:
+        return redirect('logout')
+    p = Puzzle.objects.get(id=int(pid))
+    ps = PuzzleSolution.objects.filter(team=u.team, puzzle=p)
+    msg = ""
+    error = False
+    if ps.count() == 0:
+        ps = PuzzleSolution.objects.create(team=u.team, puzzle=p, num_attempts=0)
+    else:
+        ps = ps.first()
+    if request.method == "POST":
+        user_solution = request.POST.get('solution', '')
+        ps.num_attempts += 1
+        ps.most_recent_solution = user_solution
+        ps.save()
+
+        regex = re.compile(p.regex_answer)
+        valid_solution = regex.match(str(user_solution))
+        if valid_solution or ps.num_attempts >= 20:
+            ps.locked = True
+        if valid_solution: 
+            confirmation_deadline = Settings.objects.first().application_confirmation_deadline
+            num_hours = divmod((datetime.now(tz.utc) - confirmation_deadline).total_seconds(), 3600)[0] 
+            points_earned = (math.exp(-0.01 * num_hours + 4.61) - (ps.num_attempts * 3))/100 * p.max_points
+            msg = "The code has been cracked! Your team has earned {} points".format(round(points_earned, 4))
+            error = False
+            ps.points_earned = points_earned
+            ps.save()
+        else: 
+            msg = "Sorry, that's not correct. Your team has {} attempts remaining.".format(20 - ps.num_attempts)
+            error = True
+
+    context = {
+        "user": u,
+        "highlight": "puzzles",
+        "team": u.team,
+        "puzzle": p,
+        "solution": ps,
+        "msg": msg,
+        "error": error
+    }
+    return render(request, "view_puzzle.html", context)
 
 def login_page(request):
     if request.method == "GET":
