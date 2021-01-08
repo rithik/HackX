@@ -78,6 +78,7 @@ def view_puzzles(request):
         return render(request, "puzzles.html", context)
 
     context = None
+    locked = [solution.puzzle.id for solution in u.team.solutions.all() if solution.locked]
     if request.method == "GET":
         context = {
             "user": u,
@@ -85,7 +86,8 @@ def view_puzzles(request):
             "team": u.team if u.team else None,
             "msg": "",
             "allowed": True, 
-            "puzzles": Puzzle.objects.all()
+            "puzzles": Puzzle.objects.all(),
+            "locked": locked
         }
     if request.method == "POST":
         button_type = request.POST.get('button-type', '')
@@ -103,7 +105,8 @@ def view_puzzles(request):
                     "error": False,
                     "section": "join",
                     "allowed": True,
-                    "puzzles": Puzzle.objects.all()
+                    "puzzles": Puzzle.objects.all(),
+                    "locked": locked
                 }
             except:
                 context = {
@@ -114,7 +117,8 @@ def view_puzzles(request):
                     "error": True,
                     "section": "join",
                     "allowed": True,
-                    "puzzles": Puzzle.objects.all()
+                    "puzzles": Puzzle.objects.all(),
+                    "locked": locked
                 }
         elif button_type == "create":
             team_name = request.POST.get('team-name', '')
@@ -129,7 +133,8 @@ def view_puzzles(request):
                 "error": False,
                 "section": "create",
                 "allowed": True,
-                "puzzles": Puzzle.objects.all()
+                "puzzles": Puzzle.objects.all(),
+                "locked": locked
             }
         elif button_type == "leave":
             if u.team.count() == 1:
@@ -145,7 +150,8 @@ def view_puzzles(request):
                 "error": False,
                 "section": "join",
                 "allowed": True,
-                "puzzles": Puzzle.objects.all()
+                "puzzles": Puzzle.objects.all(),
+                "locked": locked
             }
         elif button_type == "delete":
             u.team.delete()
@@ -157,7 +163,8 @@ def view_puzzles(request):
                 "error": False,
                 "section": "join",
                 "allowed": True,
-                "puzzles": Puzzle.objects.all()
+                "puzzles": Puzzle.objects.all(),
+                "locked": locked
             }
     if context == None:
         context = {
@@ -168,10 +175,20 @@ def view_puzzles(request):
             "error": True,
             "section": "join",
             "allowed": True,
-            "puzzles": Puzzle.objects.all()
+            "puzzles": Puzzle.objects.all(),
+            "locked": locked
         }
     return render(request, "puzzles.html", context)
 
+@login_required
+def change_puzzle_team_name(request):
+    u = request.user
+    if not request.user.is_authenticated:
+        return redirect("/logout")
+    team = u.team
+    team.name = request.POST.get('name', '')
+    team.save()
+    return JsonResponse({"status": 200, "message": "Success"})
 
 @login_required
 def add_puzzle(request):
@@ -211,7 +228,7 @@ def delete_puzzle(request):
     return JsonResponse({"status": 200, "message": "Success"})
 
 @login_required
-def view_puzzle(request, pid):
+def solve_puzzle(request, pid):
     u = request.user
     if not request.user.is_authenticated:
         return redirect('logout')

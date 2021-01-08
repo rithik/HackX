@@ -19,9 +19,11 @@
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
         {% for puzzle in puzzles %}
-            <a href="/puzzles/view/{{ puzzle.id }}" class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" 
-            id="join-team-button">View Puzzle {{ forloop.counter }}</a>
+            <a href="/puzzles/view/{{ puzzle.id }}" class="btn btn-lg {% if not puzzle.id in locked %}btn-primary{% else %}btn-secondary{% endif %} btn-block text-uppercase" name="button-type" 
+            id="puzzle-{{ puzzle.id }}">View Puzzle {{ forloop.counter }}</a>
         {% endfor %}
+        <a href="/puzzles/leaderboard" class="btn btn-lg btn-info btn-block text-uppercase" name="button-type" 
+            id="puzzle-leaderboard-button">Leaderboard</a>
     </div>
     <div class="col-lg-3"></div>
 </div>
@@ -49,7 +51,7 @@
 <hr style="width:30%">
 <br />
 
-<form class="form-signin" method="POST" action="/teams" style="width:60%; margin:auto; display:block;">
+<form class="form-signin" method="POST" action="/puzzles" style="width:60%; margin:auto; display:block;">
     {% csrf_token %}
     {% if not msg == "" and section == "join" %}
     {% if error == False  %}
@@ -80,7 +82,7 @@
 <hr style="width:30%">
 <br />
 
-<form class="form-signin" method="POST" action="/teams" style="width:60%; margin:auto; display:block;">
+<form class="form-signin" method="POST" action="/puzzles" style="width:60%; margin:auto; display:block;">
     {% csrf_token %}
     {% if not msg == "" and section == "create" %}
     {% if error == False  %}
@@ -110,7 +112,20 @@
 <hr style="width:30%">
 <br />
 
-<center><b>Team Name: {{ team.name }}</b></center>
+<div class="form-signin" style="width:40%; margin:auto; display:block;">
+    {% csrf_token %}
+   
+    <div class="alert alert-success" id="name-change-success" style="display: none;" role="alert">
+        Name updated!
+    </div>
+    <div class="form-group">
+        <label for="team-name" class="required-field">Team Name</label>
+        <input type="text" required class="form-control" id="team-name" placeholder="Team Name" name="team-name" value="{{ team.name }}">
+        <br />
+        <button onclick="changeTeamName()" class="btn btn-lg btn-outline-success btn-block text-uppercase" name="button-type" value="change"
+            id="change-name-button">Change Name</button>
+    </div>
+</div>
 <center><b>Share the following code with your team members: {{ team.unique_code }}</b></center>
 <br/>
 <br/>
@@ -134,7 +149,7 @@
 
 
 <br/>
-<form class="form-signin" method="POST" action="/teams" style="width:60%; margin:auto; display:block;">
+<form class="form-signin" method="POST" action="/puzzles" style="width:60%; margin:auto; display:block;">
     {% csrf_token %}
     <div class="form-group">
         <center><button type="submit" class="btn btn-outline-warning text-uppercase" name="button-type" value="leave"
@@ -171,6 +186,22 @@
         }
 
     });
+    function changeTeamName(){
+        var postData = {
+            name: document.getElementById('team-name').value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        };
+        $.post("/puzzles/change_name", postData, function(data) {
+            if (data.status == 200){
+                var alert = document.getElementById("name-change-success");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
 </script>
 {% endif %}
 {% endblock %}
