@@ -12,10 +12,15 @@ from django.utils.crypto import get_random_string
 sg = SendGridAPIClient(settings.SENDGRID_HOST_PASSWORD)
 
 
+def random_string():
+    return get_random_string(8)
+
+
 class HackerTeam(models.Model):
     name = models.CharField(max_length=100, default="New Team")
-    unique_code = models.CharField(max_length=100, unique=True, default=get_random_string(8))
-    
+    unique_code = models.CharField(
+        max_length=100, unique=True, default=random_string)
+
     def __str__(self):
         return self.name
 
