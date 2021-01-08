@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from pytz import timezone
 import uuid
-from .models import User, EmailView, HackerTeam
+from .models import Puzzle, User, EmailView, PuzzleTeam
 from applications.models import Application, Confirmation
 from administration.models import Settings
 from judging.models import Organization
@@ -89,7 +89,7 @@ def view_teams(request):
         if button_type == "join":
             try:
                 team_id = request.POST.get('team-id', '')
-                t = HackerTeam.objects.get(unique_code=team_id)
+                t = PuzzleTeam.objects.get(unique_code=team_id)
                 u.team = t
                 u.save()
                 context = {
@@ -113,7 +113,7 @@ def view_teams(request):
                 }
         elif button_type == "create":
             team_name = request.POST.get('team-name', '')
-            t = HackerTeam.objects.create(name=team_name)
+            t = PuzzleTeam.objects.create(name=team_name)
             u.team = t
             u.save()
             context = {
@@ -126,12 +126,15 @@ def view_teams(request):
                 "allowed": True
             }
         elif button_type == "leave":
-            u.team = None
-            u.save()
+            if u.team.count() == 1:
+                u.team.delete()
+            else:
+                u.team = None
+                u.save()
             context = {
                 "user": u,
                 "highlight": "team",
-                "team": u.team if u.team else None,
+                "team": None,
                 "msg": "Left Team",
                 "error": False,
                 "section": "join",
@@ -160,6 +163,43 @@ def view_teams(request):
         }
     return render(request, "teams.html", context)
 
+
+@login_required
+def add_puzzle(request):
+    u = request.user
+    if not request.user.is_authenticated:
+        return redirect("/logout")
+    puzzle_text = request.POST.get('text', '')
+    puzzle_answer = request.POST.get('answer', '')
+    puzzle_points = request.POST.get('points', 0)
+    p = Puzzle.objects.create(text=puzzle_text, regex_answer=puzzle_answer, max_points=puzzle_points)
+    return JsonResponse({"status": 200, "message": "Success", "pid": p.id})
+
+@login_required
+def update_puzzle(request):
+    u = request.user
+    if not request.user.is_authenticated:
+        return redirect("/logout")
+    puzzle_text = request.POST.get('text', '')
+    puzzle_answer = request.POST.get('answer', '')
+    puzzle_points = request.POST.get('points', 0)
+    puzzle_id = request.POST.get('pid', 0)
+    p = Puzzle.objects.get(id=puzzle_id)
+    p.text = puzzle_text
+    p.regex_answer = puzzle_answer
+    p.max_points = puzzle_points
+    p.save()
+    return JsonResponse({"status": 200, "message": "Success", "pid": p.id})
+
+@login_required
+def delete_puzzle(request):
+    u = request.user
+    if not request.user.is_authenticated:
+        return redirect("/logout")
+    puzzle_id = request.POST.get('pid', 0)
+    p = Puzzle.objects.get(id=puzzle_id)
+    p.delete()
+    return JsonResponse({"status": 200, "message": "Success"})
 
 def login_page(request):
     if request.method == "GET":

@@ -14,7 +14,7 @@ from pytz import timezone
 import pytz
 from datetime import datetime
 from applications.models import Application, Confirmation, TshirtOrder
-from users.models import HackerTeam, User, EmailView
+from users.models import Puzzle, PuzzleTeam, User, EmailView
 from judging.models import Organization
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -586,7 +586,8 @@ def view_organizations(request):
     if request.method == "GET":
         return render(request, "organizations.html",{
             "organizations": Organization.objects.all(),
-            "teams": HackerTeam.objects.all(),
+            "teams": PuzzleTeam.objects.all(),
+            "puzzles": Puzzle.objects.all(),
             "highlight": "admin", 
             "user": u,
             "adminHighlight": "organizations"

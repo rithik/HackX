@@ -16,7 +16,15 @@ def random_string():
     return get_random_string(8)
 
 
-class HackerTeam(models.Model):
+class Puzzle(models.Model):
+    text = models.TextField()
+    regex_answer = models.CharField(max_length=1000)
+    max_points = models.IntegerField()
+
+    def __str__(self):
+        return self.text
+
+class PuzzleTeam(models.Model):
     name = models.CharField(max_length=100, default="New Team")
     unique_code = models.CharField(
         max_length=100, unique=True, default=random_string)
@@ -40,7 +48,7 @@ class User(AbstractUser):
         'judging.Organization', on_delete=models.SET_NULL, null=True, blank=True)
 
     team = models.ForeignKey(
-        HackerTeam, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
+        PuzzleTeam, on_delete=models.SET_NULL, null=True, blank=True, related_name="users")
 
     sd_offset = models.DecimalField(max_digits=9, decimal_places=5, default=0)
 
