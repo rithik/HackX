@@ -1,6 +1,6 @@
 {% extends "admin.html" %}
 {% load static %}
-{% block title %}Admin - Organizations{% endblock %}
+{% block title %}Admin - Organizations and Teams{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/table.css' %}">
@@ -9,11 +9,17 @@
 {% block js %}
 
 {% endblock %}
-{% block subtitle %}Organizations{% endblock %}
+{% block subtitle %}Organizations and Teams{% endblock %}
 {% block addContent %}
-    <br/>
-    <br/>
 
+    <br/>
+    <br/>
+    <h4 class="sub-title">
+        <center>Organizations</center>
+    </h4>
+    <hr style="width:30%">
+    <br />
+    
     <div class="alert alert-success" id="org-added" style="display:none;">
         Organization Added!
     </div>
@@ -61,8 +67,35 @@
                 <button class="btn btn-outline-danger" type="button">Delete</button>
             </div>
             <br/>
-        </div>
+    </div>
+    
+    <br/>
+    <br/>
+    <h4 class="sub-title">
+        <center>Teams</center>
+    </h4>
+    <hr style="width:30%">
+    <br />
 
+    <div class="card-columns">
+        {% for team in teams %}
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ team.name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Join Code: {{ team.unique_code }}</h6>
+            <p class="card-text">
+                {% for member in team.users.all %}
+                    {{ member.first_name }} {{ member.last_name }} - {{ member.email }}
+                    <br/>
+                {% endfor %}
+            </p>
+          </div>
+        </div>
+        {% endfor %}
+        
+      </div>
+
+    
 <script>
     function addOrganization(){
         var postData = {
