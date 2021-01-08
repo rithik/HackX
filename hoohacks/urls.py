@@ -39,6 +39,7 @@ urlpatterns = [
     path('reset/<str:email_uuid>', users.views.reset_password),
     path('logout', users.views.logout_view),
     path('dashboard', users.views.dashboard),
+    path('teams', users.views.view_teams),
     path('application', applications.views.application),
     path('application/<str:msg>', applications.views.application),
     path('confirmation', applications.views.confirmation),

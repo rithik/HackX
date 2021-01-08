@@ -125,6 +125,14 @@
                         </a>
                     </li>
                 {% endif %}
+                {% if user.application.app_complete %}
+                    <li {% if highlight == "team" %} class="active" {% endif %}>
+                        <a href="/teams">
+                            <i class="fas fa-users"></i>
+                            Teams
+                        </a>
+                    </li>
+                {% endif %}
                 {% if user.is_volunteer %}
                     <li {% if highlight == "volunteer" %} class="active" {% endif %}>
                         <a href="/admin/qr">
