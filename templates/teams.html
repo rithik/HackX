@@ -100,7 +100,9 @@
 <form class="form-signin" method="POST" action="/teams" style="width:60%; margin:auto; display:block;">
     {% csrf_token %}
     <div class="form-group">
-        <center><button type="submit" class="btn btn-outline-danger text-uppercase" name="button-type" value="delete"
+        <center><button type="submit" class="btn btn-outline-warning text-uppercase" name="button-type" value="leave"
+            id="leave-team-button">Leave Team</button>
+            <button type="submit" class="btn btn-outline-danger text-uppercase" name="button-type" value="delete"
         id="delete-team-button">Delete Team</button></center>
     </div>
 </form>

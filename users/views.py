@@ -125,6 +125,18 @@ def view_teams(request):
                 "section": "create",
                 "allowed": True
             }
+        elif button_type == "leave":
+            u.team = None
+            u.save()
+            context = {
+                "user": u,
+                "highlight": "team",
+                "team": u.team if u.team else None,
+                "msg": "Left Team",
+                "error": False,
+                "section": "join",
+                "allowed": True
+            }
         elif button_type == "delete":
             u.team.delete()
             context = {
