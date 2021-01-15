@@ -45,6 +45,7 @@ class PuzzleSolution(models.Model):
     locked = models.BooleanField(default=False)
     num_attempts = models.IntegerField()
     points_earned = models.DecimalField(default=0.0, decimal_places=4, max_digits=8)
+    previous_attempts = models.CharField(max_length=2000, default="")
 
     def __str__(self):
         return "{} - {}".format(self.puzzle, self.team)

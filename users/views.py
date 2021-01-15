@@ -259,6 +259,8 @@ def solve_puzzle(request, pid):
             ps.points_earned = points_earned
             ps.save()
         else: 
+            ps.previous_attempts = "{} submitted by {}\n{}".format(user_solution, u.full_name, ps.previous_attempts)
+            ps.save()
             msg = "Sorry, that's not correct. Your team has {} attempts remaining.".format(20 - ps.num_attempts)
             error = True
 
