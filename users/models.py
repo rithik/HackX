@@ -8,6 +8,7 @@ import uuid
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from django.utils.crypto import get_random_string
+import hashlib 
 
 sg = SendGridAPIClient(settings.SENDGRID_HOST_PASSWORD)
 
@@ -44,7 +45,8 @@ class PuzzleSolution(models.Model):
     most_recent_solution = models.CharField(max_length=1000)
     locked = models.BooleanField(default=False)
     num_attempts = models.IntegerField()
-    points_earned = models.DecimalField(default=0.0, decimal_places=4, max_digits=8)
+    points_earned = models.DecimalField(
+        default=0.0, decimal_places=4, max_digits=8)
     previous_attempts = models.CharField(max_length=2000, default="")
 
     def __str__(self):
@@ -87,6 +89,10 @@ class User(AbstractUser):
     @property
     def full_name(self):
         return self.first_name + " " + self.last_name
+
+    @property
+    def raffle_id(self):
+        return hashlib.md5(self.email.encode()).hexdigest()
 
     def __str__(self):
         return self.email

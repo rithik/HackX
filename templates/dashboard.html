@@ -43,6 +43,7 @@
         <p class="card-text" style="color:#212529;">
             <center><b>Application Deadline:</b> {{ submission_deadline }}</center>
             <center><b>Confirmation Deadline:</b> {{ confirmation_deadline }}</center>
+            {% if confirmation == "accepted" %}<center><b>Your Raffle ID:</b> {{ user.raffle_id }}</center>{% endif %}
                 <br/>
                 {% if not app.app_complete %}
                     <center>You still need to complete your application!</center>
