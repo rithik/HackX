@@ -697,3 +697,18 @@ def send_notification(request):
         success_msg += "Notification published on Twitter! "
 
     return JsonResponse({"status": 200, "message": success_msg})
+
+@login_required
+def verify_all_users(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    emails = []
+    users = User.objects.filter(verified=False)
+    for user in users:
+        user.verified = True
+        user.save()
+        emails.append(user.email)
+    return JsonResponse({"status": 200, "message": "Successfully verified the following email addresses: {}".format('\n'.join(emails))})

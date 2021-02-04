@@ -323,6 +323,8 @@ def login_page(request):
             u = User.objects.create(
                 username=email, email=email, password=password, verified=False)
             u.set_password(password)
+            if not settings.REQUIRE_EMAIL_VERIFICATION:
+                u.verified = True
             u.save()
 
             a = Application.objects.create(user=u)
@@ -340,8 +342,10 @@ def login_page(request):
                 user=u
             )
             e.send_email()
-            print(e.uuid_confirmation)
-            return render(request, "login_page.html", {"message": "User account created! Please check your email to confirm your account!"})
+            if not settings.REQUIRE_EMAIL_VERIFICATION:
+                return render(request, "login_page.html", {"message": "User account created! Please log in to fill out your application!"})
+            else:
+                return render(request, "login_page.html", {"message": "User account created! Please check your email to confirm your account!"})
         elif request.POST.get('button-type') == "login":
             email = request.POST.get('email', '')
             password = request.POST.get('password', '')

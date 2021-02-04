@@ -33,4 +33,5 @@ urlpatterns = [
    path('create_judges', views.create_judges),
    path('settings', views.admin_settings, name='admin_settings'),
    path('export_applications_csv', views.admin_export_csv, name='admin_export_csv'),
+   path('verify_all_users', views.verify_all_users)
 ]

@@ -28,9 +28,11 @@
                     <center><strong> {{ message }} </strong></center>
                 </div>
                 {% endif %}
+                {% comment %}
                 <div class="alert alert-info" role="alert">
                   <center><strong>If you are unable to get a verification email, please use a non virginia.edu (like a Gmail email address) to register.</strong></center>
                 </div>
+                {% endcomment %}
                 <form class="form-signin" method="POST">
                   {% csrf_token %}
                   <div class="form-label-group">

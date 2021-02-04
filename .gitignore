@@ -8,6 +8,6 @@ venv/
 QR/
 administration/nametags/
 img.png
-db.sqlite3
+*.sqlite3
 dump.rdb
 *.dump
