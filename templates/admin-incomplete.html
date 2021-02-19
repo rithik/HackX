@@ -1,0 +1,79 @@
+{% extends "admin.html" %}
+
+{% block title %}Incomplete Applications{% endblock %}
+
+{% block subtitle %}Incomplete Applications{% endblock %}
+
+{% block js %}
+{% endblock %}
+
+{% block addContent %}
+<br />
+
+    <center><b style="font-size:24px;">Incomplete Applications - *Do not refresh this page!*</b></center>
+    <br/>
+
+<br />
+
+<button class="btn btn-lg btn-primary btn-block text-uppercase" onclick="sendEmails()">Send Incomplete Emails</button>
+<br />
+<table style="border: 2px solid black; width:100%">
+    <tbody>
+        <tr style="border: 1px solid black;">
+            <td style="padding-top:10px; padding-bottom:10px;">
+                <b>Email Address</b>
+            </td>
+            <td style="padding-top:10px; padding-bottom:10px;">
+                <b>Sent Reminder Email?</b>
+            </td>
+        </tr>
+        {% for incomplete_user in incomplete %}
+        <tr style="border: 2px solid black;">
+            <td style="padding-top:10px; padding-bottom:10px;">
+                {{ incomplete_user.email }}
+            </td>
+            <td style="padding-top:10px; padding-bottom:10px;" id="{{ incomplete_user.email }}-sent">
+                No
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br />
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+    integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
+<script>
+    function sendEmails() {
+        $.get("/admin/send_incomplete_email", function (data) {
+            console.log(data);
+        });
+    }
+
+    var ws_protocol = 'ws://';
+    if (location.protocol == 'https:') {
+        ws_protocol = 'wss://';
+    }
+
+    $(document).ready(function () {
+        window.chatSocket = new WebSocket(ws_protocol + window.location.host + '/ws/chat/' + 'main' + '/');
+        chatSocket.onopen = function (e) {
+            console.log(e);
+        };
+        chatSocket.onerror = function (e) {
+            console.log(e)
+        };
+        chatSocket.onmessage = function (e) {
+            console.log(e);
+            var data = JSON.parse(e.data);
+            data = JSON.parse(data.message);
+            document.getElementById(data.email + '-sent').innerHTML = "Sent!"
+        };
+        window.onbeforeunload = function () {
+            chatSocket.close();
+        };
+    });
+</script>
+
+{% endblock %}

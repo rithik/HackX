@@ -365,6 +365,49 @@ def admin_export_csv(request):
     return response
 
 @login_required
+def remind_incomplete_applications(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+
+    return render(request, "admin-incomplete.html", {
+        "highlight": "admin", 
+        "user": u,
+        "incomplete": [u for u in User.objects.all() if not u.application.app_complete],
+        "adminHighlight": "stats"
+    })
+
+@login_required
+def send_incomplete_email(request):
+    u = request.user
+    if not u.is_authenticated:
+        return JsonResponse({
+            'message': 'Not authorized'
+        })
+    if not u.is_admin:
+        return JsonResponse({
+            'message': 'Not authorized'
+        })
+
+    incomplete  = [u.email for u in User.objects.all() if not u.application.app_complete]
+
+    for email in incomplete:
+        layer = get_channel_layer()
+        async_to_sync(layer.group_send)('chat_main', {
+            'type': 'chat_message',
+            'message': json.dumps({
+                'email': email
+            })
+        })
+
+    return JsonResponse({
+        'status': 200,
+        'message': 'Success'
+    })
+
+@login_required
 def tshirt_order_export(request):
     u = request.user
     if not u.is_authenticated:
