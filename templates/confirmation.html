@@ -3,6 +3,7 @@
 {% block title %}Confirmation{% endblock %}
 
 {% block content %}
+{% load other_school %}
     <h2 class="main-title"> <center>Confirmation</center> </h2>
     <hr style="width:50%">
 
@@ -28,6 +29,15 @@
           {% endif %}
         {% endif %}
     <div class="form-group">
+
+      {% if app.school|startswith:"Other - " %}
+      <div class="form-group">
+        <label for="school" class="required-field">You indicated that your school was not in our list. What school do you attend?</label>
+        <br/>
+           <input type="text" required class="form-control" id="school" value="{{ app.school|removeother }}" name="school">
+       </div> 
+       {% endif %}
+
       <label for="tshirt" class="required-field">T-Shirt Size</label>
       <br/>
         <select name="tshirt" required title="Select your T-Shirt size" class="selectpicker" data-width="100%">

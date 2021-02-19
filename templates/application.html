@@ -3,6 +3,7 @@
 {% block title %}Application{% endblock %}
 
 {% block content %}
+{% load other_school %}
     <h2 class="main-title"> <center>Application</center> </h2>
     <hr style="width:50%">
 
@@ -42,7 +43,7 @@
        <br/>
        <select name="school" id="school" required class="selectpicker" title="Select your School" data-live-search="true" data-width="100%" >
           {% for s in schools %}
-            <option value="{{s}}" {% if s == app.school %} selected {% endif %}>{{ s }}</option>
+            <option value="{{s}}" {% if s == app.school|startswithrettext:"Other" %} selected {% endif %}>{{ s }}</option>
           {% endfor %}
         </select>
      </div>

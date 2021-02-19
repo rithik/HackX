@@ -79,7 +79,7 @@ def application(request, msg=''):
         a.first_name = first_name
         a.last_name = last_name
         a.birthday = birthday
-        a.school = school
+        a.school = school if school != "Other" else "Other - Other"
         a.grad_year = grad_year
         a.gender = gender
         a.race = race
@@ -172,6 +172,7 @@ def confirmation(request):
         carrier = request.POST.get('carrier', 'Other')
         github = request.POST.get('github', '')
         notes = request.POST.get('notes', '')
+        school = request.POST.get('school', '')
         file = request.FILES['file']
         if file == '':
             return render(request, "confirmation.html", {
@@ -226,6 +227,8 @@ def confirmation(request):
         c.confirmed = True
         c.declined = False
         c.save()
+        a.school = "Other - {}".format(school)
+        a.save()
 
         try:
             nametag.make_image(u.first_name, u.last_name, u.qr_hash)
