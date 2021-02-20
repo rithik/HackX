@@ -822,3 +822,16 @@ def import_raffle(request):
         "adminHighlight": "settings",
         "msg": "Successfully imported csv"
     }) 
+
+@login_required
+def add_raffle_ticket_to_all(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    users = User.objects.all()    
+    for user in users:
+        user.raffle_tickets += 1
+        user.save()
+    return JsonResponse({"status": 200})

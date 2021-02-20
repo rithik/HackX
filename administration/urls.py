@@ -37,5 +37,6 @@ urlpatterns = [
    path('remind_incomplete_users', views.remind_incomplete_applications),
    path('send_incomplete_email', views.send_incomplete_email),
    path('run_raffle', views.run_raffle),
-   path('import_raffle', views.import_raffle)
+   path('import_raffle', views.import_raffle),
+   path('add_raffle_ticket', views.add_raffle_ticket_to_all)
 ]
