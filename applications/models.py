@@ -24,8 +24,9 @@ class Application(models.Model):
     mlh_consent = models.BooleanField(default=False)
     hackathons = models.IntegerField(default=0)
     app_complete = models.BooleanField(default=False)
-
-    # ADD RESUME
+    
+    referrer = models.CharField(max_length=100, default="")
+    referrer_locked = models.BooleanField(default=False)
 
     travel = models.BooleanField(default=False)
     where_from = models.CharField(max_length=1000, default="")

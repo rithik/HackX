@@ -35,5 +35,7 @@ urlpatterns = [
    path('export_applications_csv', views.admin_export_csv, name='admin_export_csv'),
    path('verify_all_users', views.verify_all_users),
    path('remind_incomplete_users', views.remind_incomplete_applications),
-   path('send_incomplete_email', views.send_incomplete_email)
+   path('send_incomplete_email', views.send_incomplete_email),
+   path('run_raffle', views.run_raffle),
+   path('import_raffle', views.import_raffle)
 ]

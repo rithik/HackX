@@ -9,6 +9,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from django.utils.crypto import get_random_string
 import hashlib 
+import base64
 
 sg = SendGridAPIClient(settings.SENDGRID_HOST_PASSWORD)
 
@@ -86,13 +87,15 @@ class User(AbstractUser):
     sun_breakfast = models.BooleanField(default=False)
     sun_lunch = models.BooleanField(default=False)
 
+    raffle_tickets = models.DecimalField(max_digits=7, decimal_places=3, default=0)
+
     @property
     def full_name(self):
         return self.first_name + " " + self.last_name
 
     @property
     def raffle_id(self):
-        return hashlib.md5(self.email.encode()).hexdigest()
+        return base64.b64encode(self.email.encode('ascii')).decode('utf-8')
 
     def __str__(self):
         return self.email

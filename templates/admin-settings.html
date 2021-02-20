@@ -3,7 +3,7 @@
 {% block title %}Admin - Settings{% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'css/table.css' %}">
+<link rel="stylesheet" href="{% static 'css/table.css' %}">
 {% endblock %}
 
 {% block js %}
@@ -11,67 +11,126 @@
 {% endblock %}
 {% block subtitle %}Settings{% endblock %}
 {% block addContent %}
-    <br/>
-    <br/>
+<br />
+<br />
 
-    <div class="alert alert-success" id="settings-updated" style="display:none;">
-            Settings Updated!
-    </div>
-    <br/>
+<div class="alert alert-success" id="settings-updated" style="display:none;">
+    Settings Updated!
+</div>
+{% if msg != "" and msg != None %}
+<div class="alert alert-success" id="import-success">
+    Successfully imported Raffle CSV!
+</div>
+{% endif %}
+
+<br />
 <div class="row">
     <div class="col-lg-2"></div>
     <div class="col-lg-8">
-            <h1> <center>Main Settings</center> </h1>
-            <hr style="width:25%">
+        <h1>
+            <center>Raffle</center>
+        </h1>
+        <hr style="width:25%">
 
+        <center>
+            <p class="card-text" style="color:#212529;">The winner of the raffle is <b><span id="raffle-winner-name"></span> (<span id="raffle-winner-email"></span>)</b>.
+                They had <b><span id="raffle-tickets"></span></b> tickets.</p>
+        </center>
+        <br />
+        <center><button class="btn btn-outline-primary" onclick="runRaffle()">Run Raffle</button></center>
+        <br />
+        <br />
+        <form method="POST" action="/admin/import_raffle" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="form-group">
-                <label for="appsubmission">Application Submission Deadline</label>
-                <input type="datetime-local" class="form-control" value="{{ application_submission_date }}" id="appsubmission" aria-describedby="appsubmissionHelp" placeholder="Submission Date">
-                <small id="appsubmissionHelp" class="form-text text-muted">The date when applications can no longer be submitted</small>
+              <label for="raffle_csv">Import Raffle Tickets CSV</label>
+              <input type="file" name="raffle_csv" class="form-control" id="raffle_csv" aria-describedby="raffleHelp" placeholder="Raffle CSV", accept=".csv">
+              <small id="raffleHelp" class="form-text text-muted">Upload the Raffle CSV formatted in the following order RAFFLE_ID,TICKETS.</small>
             </div>
-    
-            <div class="form-group">
-                <label for="confirmsubmission">Confirmation Submission Deadline</label>
-                <input type="datetime-local" class="form-control" value="{{ application_confirmation_date }}" id="confirmsubmission" aria-describedby="confirmsubmissionHelp" placeholder="Confirmation Date">
-                <small id="confirmsubmissionHelp" class="form-text text-muted">The date when confirmation can no longer be submitted</small>
-            </div>
-
-            <div class="form-group">
-                <label for="judgingdeadline">Judging Deadline</label>
-                <input type="datetime-local" class="form-control" value="{{ judging_deadline }}" id="judgingdeadline" aria-describedby="judgingdeadlineHelp" placeholder="Judging End Date">
-                <small id="judgingdeadlineHelp" class="form-text text-muted">The time when judging is expected to end. Judging can still happen after this time</small>
-            </div>
-    
-            <button class="btn btn-outline-primary" onclick="updateSettings()">Update</button>
-            
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+        <br />
+        <br />
     </div>
     <div class="col-lg-2"></div>
 </div>
-   
-      <script>
-          function updateSettings(){
-              var app = document.getElementById('appsubmission').value;
-              var confirm = document.getElementById('confirmsubmission').value;
-              var judging = document.getElementById('judgingdeadline').value;
-              var postData = {
-                submission_deadline: app, 
-                confirmation_deadline: confirm,
-                judging_deadline: judging,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            }
-            console.log(postData);
-            $.post("/admin/settings", postData, function(data) {
-                if (data.message == "success"){
-                    var alert = document.getElementById("settings-updated");
-                    alert.style.display = "";
-                    setTimeout(
-                        function(){
-                            alert.style.display = "none";
+
+<div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        <h1>
+            <center>Main Settings</center>
+        </h1>
+        <hr style="width:25%">
+
+        <div class="form-group">
+            <label for="appsubmission">Application Submission Deadline</label>
+            <input type="datetime-local" class="form-control" value="{{ application_submission_date }}"
+                id="appsubmission" aria-describedby="appsubmissionHelp" placeholder="Submission Date">
+            <small id="appsubmissionHelp" class="form-text text-muted">The date when applications can no longer be
+                submitted</small>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmsubmission">Confirmation Submission Deadline</label>
+            <input type="datetime-local" class="form-control" value="{{ application_confirmation_date }}"
+                id="confirmsubmission" aria-describedby="confirmsubmissionHelp" placeholder="Confirmation Date">
+            <small id="confirmsubmissionHelp" class="form-text text-muted">The date when confirmation can no longer be
+                submitted</small>
+        </div>
+
+        <div class="form-group">
+            <label for="judgingdeadline">Judging Deadline</label>
+            <input type="datetime-local" class="form-control" value="{{ judging_deadline }}" id="judgingdeadline"
+                aria-describedby="judgingdeadlineHelp" placeholder="Judging End Date">
+            <small id="judgingdeadlineHelp" class="form-text text-muted">The time when judging is expected to end.
+                Judging can still happen after this time</small>
+        </div>
+
+        <button class="btn btn-outline-primary" onclick="updateSettings()">Update</button>
+
+    </div>
+    <div class="col-lg-2"></div>
+</div>
+
+<script>
+    function updateSettings() {
+        var app = document.getElementById('appsubmission').value;
+        var confirm = document.getElementById('confirmsubmission').value;
+        var judging = document.getElementById('judgingdeadline').value;
+        var postData = {
+            submission_deadline: app,
+            confirmation_deadline: confirm,
+            judging_deadline: judging,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        console.log(postData);
+        $.post("/admin/settings", postData, function (data) {
+            if (data.message == "success") {
+                var alert = document.getElementById("settings-updated");
+                alert.style.display = "";
+                setTimeout(
+                    function () {
+                        alert.style.display = "none";
                     }, 3000);
-                }
-            });
-          }
-      </script>
-      
+            }
+        });
+    }
+
+    function runRaffle() {
+        var postData = {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.post("/admin/run_raffle", postData, function (data) {
+            if (data.status == 200) {
+                console.log(data)
+                document.getElementById('raffle-winner-name').innerHTML = data.winner_name;
+                document.getElementById('raffle-winner-email').innerHTML = data.winner_email;
+                document.getElementById('raffle-tickets').innerHTML = data.tickets;
+            }
+        });
+    }
+</script>
+
 
 {% endblock %}

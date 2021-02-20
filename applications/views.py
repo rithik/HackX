@@ -14,6 +14,7 @@ from users.models import User, EmailView
 import dropbox 
 from administration.models import Settings
 from administration import nametag
+import base64 
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 
@@ -75,6 +76,7 @@ def application(request, msg=''):
         why = request.POST.get('why', '')
         mlh = request.POST.get('mlh', '')
         mlh_consent = request.POST.get('mlh-consent', '')
+        referrer = request.POST.get('referrer', '')
 
         a.first_name = first_name
         a.last_name = last_name
@@ -87,6 +89,14 @@ def application(request, msg=''):
         a.major = major
         a.hackathons = hackathons
         a.why = why
+        
+        friends = User.objects.filter(email=base64.b64decode(referrer).decode("utf-8", "ignore"))
+        if friends.count() == 1 and friends.first() != u and not a.referrer_locked:
+            a.referrer = referrer
+            a.referrer_locked = True
+            friend = friends.first()
+            friend.raffle_tickets += 1
+            friend.save()
 
         if mlh == "on":
             a.mlh_rules = True
