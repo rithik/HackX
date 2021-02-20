@@ -51,7 +51,7 @@
     <select name="school" id="school" required class="selectpicker" title="Select your School" data-live-search="true"
       data-width="100%">
       {% for s in schools %}
-      <option value="{{s}}" {% if s == app.school|startswithrettext:"Other" %} selected {% endif %}>{{ s }}</option>
+      <option value="{{s}}" {% if s == app.school|startswithrettext:"Other" or s == app.school %} selected {% endif %}>{{ s }}</option>
       {% endfor %}
     </select>
   </div>
