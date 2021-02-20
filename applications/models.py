@@ -59,6 +59,7 @@ class Confirmation(models.Model):
     github = models.CharField(max_length=1000, default="")
     notes = models.CharField(max_length=10000, default="")
     resume_file_name = models.CharField(max_length=10000, default="")
+    discord_id = models.CharField(max_length=100, default="")
 
     confirmed = models.BooleanField(default=False)
     declined = models.BooleanField(default=False)

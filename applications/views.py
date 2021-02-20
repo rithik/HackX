@@ -183,6 +183,7 @@ def confirmation(request):
         github = request.POST.get('github', '')
         notes = request.POST.get('notes', '')
         school = request.POST.get('school', '')
+        discord_id = request.POST.get('discord', '')
         file = request.FILES['file']
         if file == '':
             return render(request, "confirmation.html", {
@@ -234,6 +235,7 @@ def confirmation(request):
         c.carrier = carrier
         c.github = github
         c.notes = notes
+        c.discord_id = discord_id
         c.confirmed = True
         c.declined = False
         c.save()

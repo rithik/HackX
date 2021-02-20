@@ -29,6 +29,17 @@
           {% endif %}
         {% endif %}
     <div class="form-group">
+ 
+      <div class="form-group">
+        <label for="discord" class="required-field">HooHacks will be using Discord as the primary method of communication. Please join our <u><a style="color: blue;" target="_blank" href="https://discord.gg/hraaDtqcdz">Discord server</a></u> now! What's your Discord ID? It's usually in the format name#1234.</label>
+        <br/>
+           <input type="text" required class="form-control" placeholder="Discord ID (in the format: name#1234)" id="discord" value="{{ c.discord_id }}" name="discord">
+      </div> 
+
+      <div class="form-group">
+        <label for="facebook">HooHacks will also be using Facebook to livestream events like our Opening Ceremony. Please join our <u><a style="color: blue;" target="_blank" href="https://www.facebook.com/groups/hoohacks2021">Facebook group</a></u> now! Once you've joined, you can meet other hackathon attendees and will receive updates faster!</label>
+        <br/>
+      </div> 
 
       {% if app.school|startswith:"Other - " %}
       <div class="form-group">
