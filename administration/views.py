@@ -378,7 +378,7 @@ def remind_incomplete_applications(request):
     return render(request, "admin-incomplete.html", {
         "highlight": "admin", 
         "user": u,
-        "incomplete": [u for u in User.objects.all() if not u.application.app_complete],
+        "incomplete": [u for u in User.objects.all() if u.application and not u.application.app_complete],
         "adminHighlight": "stats"
     })
 
@@ -394,7 +394,7 @@ def send_incomplete_email(request):
             'message': 'Not authorized'
         })
 
-    incomplete  = [u for u in User.objects.all() if not u.application.app_complete]
+    incomplete  = [u for u in User.objects.all() if u.application and not u.application.app_complete]
 
     for user in incomplete:
         email_uuid = uuid.uuid1()
