@@ -237,6 +237,10 @@ f = open(BASE_DIR + "/hoohacks/emails/confirmed.html", "r")
 CONFIRMED_EMAIL = f.read()
 f.close()
 
+f = open(BASE_DIR + "/hoohacks/emails/reminder.html", "r")
+REMINDER_EMAIL = f.read()
+f.close()
+
 CARRIER_EMAIL_LOOKUP = {
     'Alltel': '@message.alltel.com',
     'AT&T': '@txt.att.net',

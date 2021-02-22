@@ -394,14 +394,24 @@ def send_incomplete_email(request):
             'message': 'Not authorized'
         })
 
-    incomplete  = [u.email for u in User.objects.all() if not u.application.app_complete]
+    incomplete  = [u for u in User.objects.all() if not u.application.app_complete]
 
-    for email in incomplete:
+    for user in incomplete:
+        email_uuid = uuid.uuid1()
+        e = EmailView.objects.create(
+            uuid_confirmation=email_uuid, 
+            subject="Sign Up for HooHacks Now!", 
+            message=settings.REMINDER_EMAIL,
+            action="reminder",
+            redirect_url="/dashboard",
+            user=user
+        )
+        e.send_email()
         layer = get_channel_layer()
         async_to_sync(layer.group_send)('chat_main', {
             'type': 'chat_message',
             'message': json.dumps({
-                'email': email
+                'email': user.email
             })
         })
 
