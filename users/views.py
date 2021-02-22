@@ -79,7 +79,10 @@ def view_puzzles(request):
         return render(request, "puzzles.html", context)
 
     context = None
-    locked = [solution.puzzle.id for solution in u.team.solutions.all() if solution.locked]
+    if u.team:
+        locked = [solution.puzzle.id for solution in u.team.solutions.all() if solution.locked]
+    else:
+        locked = []
     if request.method == "GET":
         context = {
             "user": u,
