@@ -88,6 +88,9 @@
                         Order T-Shirt
                     </a>
                 </li>
+                {% endif %}
+                {% comment %}
+                {% if user.application.accepted %}
                 <li {% if highlight == "ticket" %} class="active" {% endif %}>
                     <a href="/tickets">
                         <i class="fas fa-user"></i>
@@ -103,6 +106,7 @@
                     </a>
                 </li>
                 {% endif %}
+                {% endcomment %}
                 {% if user.is_mentor or user.is_admin %}
                 <li {% if highlight == "resume-book" %} class="active" {% endif %}>
                     <a href="/mentor/resumes">

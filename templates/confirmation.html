@@ -58,6 +58,7 @@
          </select>
      </div>
 
+     {% comment %}
      <div class="form-group">
        <label for="dietary" class="required-field">Dietary Restrictions</label>
        <br/>
@@ -67,6 +68,8 @@
              {% endfor %}
           </select>
       </div>
+
+      {% endcomment %}
 
      <div class="form-group">
        <label for="phone" class="required-field">Phone Number (Format: 7031112222)</label>
@@ -97,7 +100,7 @@
          </div>
 
        <div class="form-group">
-         <label for="notes">Anything else? (If you selected "Other" for dietary restrictions, please describe that here.)</label>
+         <label for="notes">Anything else?</label> {% comment %} (If you selected "Other" for dietary restrictions, please describe that here.) {% endcomment %}
          <br/>
          <textarea class="form-control" id="notes" placeholder="Should we know about anything else?" name="notes">{{ c.notes }}</textarea>
      </div>

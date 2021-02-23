@@ -239,8 +239,9 @@ def confirmation(request):
         c.confirmed = True
         c.declined = False
         c.save()
-        a.school = "Other - {}".format(school)
-        a.save()
+        if school != "":
+            a.school = "Other - {}".format(school)
+            a.save()
 
         try:
             nametag.make_image(u.first_name, u.last_name, u.qr_hash)
