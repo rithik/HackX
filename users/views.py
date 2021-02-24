@@ -50,7 +50,6 @@ def dashboard(request):
         if c.declined:
             confirmation = "rejected"
     try:
-        print(u.raffle_id)
         context = {
             "user": u,
             "app": a,
