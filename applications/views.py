@@ -95,7 +95,8 @@ def application(request, msg=''):
             a.referrer = referrer
             a.referrer_locked = True
             friend = friends.first()
-            friend.raffle_tickets += 1
+            friend.raffle_tickets += 2
+            u.raffle_tickets += 1
             friend.save()
 
         if mlh == "on":
