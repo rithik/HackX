@@ -11,3 +11,8 @@ img.png
 *.sqlite3
 dump.rdb
 *.dump
+keys/*
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
