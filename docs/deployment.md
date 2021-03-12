@@ -1,22 +1,18 @@
 # Steps to Deploy onto AWS
 
-## Create an EC2 Instance
+## Elastic Beanstalk
 
-- t2.micro
-- Amazon Linux
-- Security Group with HTTP, HTTPS and SSH
+1. `eb create ENV_NAME`
 
-## Connect via SSH
+2. Add Configuration Variables
+[https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https-ssl.html](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https-ssl.html)
 
-ssh -i "keys/HackX.pem" ec2-user@ec2-3-83-1-229.compute-1.amazonaws.com
+3. Create a new certificate through AWS ACM.
 
-## Install python3 and git
+4. Follow instructions to add CNAME to verify domain.
 
-`sudo yum install git python3`\
+5. Add port forwarding from 443 to 80 with the new certificate.
 
-## EBS
+## Update version
 
-sudo yum install postgresql-devel
-
-
-`eb init -p python-3.6 hackx-main`
+`eb deploy --staged -v`

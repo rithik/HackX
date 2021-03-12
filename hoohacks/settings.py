@@ -30,7 +30,7 @@ SECRET_KEY = '=)ek5=w3u09$!%g2mbn$ppbpjot1jq2o^f577gxpq&w^yh9txm'
 
 # SECURITY WARNING: don't run with debug turned on in production
 
-ON_HEROKU = 'ON_HEROKU' in os.environ
+ON_HEROKU = 'ON_HEROKU' in os.environ or 'ON_AWS' in os.environ
 
 DEBUG = False if ON_HEROKU else True
 
@@ -291,6 +291,10 @@ CHANNEL_LAYERS = {
 
 PROD_URL = os.environ.get('PROD_URL', 'http://localhost:8000/')
 
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 try:
     # Configure Django App for Heroku.
     import django_heroku
@@ -307,10 +311,8 @@ try:
             dsn=os.environ['SENTRY_DSN'],
             integrations=[DjangoIntegration()]
         )
-        SECURE_SSL_REDIRECT = True
-        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 except ImportError:
-    found = False
+    pass
 
 ALLOWED_HOSTS = [
     PROD_URL,
