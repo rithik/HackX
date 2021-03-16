@@ -17,6 +17,7 @@ daphne==2.3.0
 DateJS==0.5
 Django==2.2.13
 django-heroku
+dj_database_url
 dropbox==11.0.0
 hyperlink==20.0.1
 idna==2.10
