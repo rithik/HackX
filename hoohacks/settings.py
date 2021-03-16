@@ -294,7 +294,9 @@ PROD_URL = os.environ.get('PROD_URL', 'http://localhost:8000/')
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+    
 try:
     # Configure Django App for Heroku.
     import django_heroku
