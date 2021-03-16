@@ -11,3 +11,4 @@ img.png
 *.sqlite3
 dump.rdb
 *.dump
+keys/*
