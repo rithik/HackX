@@ -292,7 +292,8 @@ try:
         from sentry_sdk.integrations.django import DjangoIntegration
         import dj_database_url
 
-        DATABASES['default'] = dj_database_url.config(default=os.environ('AWS_DB_URL'))
+        DATABASES['default'] = dj_database_url.config(default=os.environ.get('AWS_DB_URL'))
+        
         sentry_sdk.init(
             dsn=os.environ['SENTRY_DSN'],
             integrations=[DjangoIntegration()]
