@@ -30,7 +30,7 @@ SECRET_KEY = '=)ek5=w3u09$!%g2mbn$ppbpjot1jq2o^f577gxpq&w^yh9txm'
 
 # SECURITY WARNING: don't run with debug turned on in production
 
-ON_HEROKU = 'ON_HEROKU' in os.environ
+ON_HEROKU = 'ON_HEROKU' in os.environ or 'ON_AWS' in os.environ
 
 DEBUG = False if ON_HEROKU else True
 
@@ -103,6 +103,18 @@ DATABASES = {
         'CONN_MAX_AGE': 500
     }
 }
+
+if 'RDS_HOSTNAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -279,6 +291,12 @@ CHANNEL_LAYERS = {
 
 PROD_URL = os.environ.get('PROD_URL', 'http://localhost:8000/')
 
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+    
 try:
     # Configure Django App for Heroku.
     import django_heroku
@@ -295,10 +313,8 @@ try:
             dsn=os.environ['SENTRY_DSN'],
             integrations=[DjangoIntegration()]
         )
-        SECURE_SSL_REDIRECT = True
-        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 except ImportError:
-    found = False
+    pass
 
 ALLOWED_HOSTS = [
     PROD_URL,
