@@ -288,7 +288,7 @@ if USE_PROD_DB and DEBUG:
 try:
     # Configure Django App for Heroku.
     import django_heroku
-    django_heroku.settings(locals(), databases=False)
+    django_heroku.settings(locals())
     if ON_HEROKU:
         try:
             del DATABASES['default']['OPTIONS']['sslmode']
