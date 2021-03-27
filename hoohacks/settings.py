@@ -279,6 +279,12 @@ CHANNEL_LAYERS = {
 
 PROD_URL = os.environ.get('PROD_URL', 'http://localhost:8000/')
 
+USE_PROD_DB = False
+
+if USE_PROD_DB and DEBUG:
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.config(default=secret.PROD_DB_URL)
+
 try:
     # Configure Django App for Heroku.
     import django_heroku
@@ -288,10 +294,7 @@ try:
             del DATABASES['default']['OPTIONS']['sslmode']
         except:
             pass
-        import dj_database_url
-
-        DATABASES['default'] = dj_database_url.config(default=os.environ.get('AWS_DB_URL'))
-
+        
         import sentry_sdk
         from sentry_sdk.integrations.django import DjangoIntegration
         

@@ -378,7 +378,7 @@ def remind_incomplete_applications(request):
     return render(request, "admin-incomplete.html", {
         "highlight": "admin", 
         "user": u,
-        "incomplete": [u for u in User.objects.all() if u.application and not u.application.app_complete],
+        "incomplete": [u for u in User.objects.all() if u.application and (not u.application.app_complete or (u.application.accepted and not u.confirmation.confirmed and not u.confirmation.declined))],
         "adminHighlight": "stats"
     })
 
@@ -394,13 +394,13 @@ def send_incomplete_email(request):
             'message': 'Not authorized'
         })
 
-    incomplete  = [u for u in User.objects.all() if u.application and not u.application.app_complete]
+    incomplete  = [u for u in User.objects.all() if u.application and (not u.application.app_complete or (u.application.accepted and not u.confirmation.confirmed and not u.confirmation.declined))]
 
     for user in incomplete:
         email_uuid = uuid.uuid1()
         e = EmailView.objects.create(
             uuid_confirmation=email_uuid, 
-            subject="Sign Up for HooHacks Now!", 
+            subject="[IMPORTANT]: HooHacks Application Incomplete", 
             message=settings.REMINDER_EMAIL,
             action="reminder",
             redirect_url="/dashboard",

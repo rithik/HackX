@@ -256,7 +256,7 @@ def solve_puzzle(request, pid):
         if valid_solution: 
             confirmation_deadline = Settings.objects.first().application_confirmation_deadline
             num_hours = divmod((datetime.now(tz.utc) - confirmation_deadline).total_seconds(), 3600)[0] 
-            points_earned = (math.exp(-0.01 * num_hours + 4.61) - (ps.num_attempts * 3))/100 * p.max_points
+            points_earned = (math.exp(-0.003 * num_hours + 4.61) - (ps.num_attempts * 3))/100 * p.max_points
             msg = "The code has been cracked! Your team has earned {} points".format(round(points_earned, 4))
             error = False
             ps.points_earned = points_earned
