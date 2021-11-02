@@ -26,7 +26,7 @@
       <th class="th-sm"><center>School</center></th>
       <th class="th-sm"><center>Grad Year</center></th>
       <th class="th-sm"><center>Travel Method</center></th>
-      <th class="th-sm"><center>Travel Cost</center></th>
+      <th class="th-sm"><center>Raffle ID</center></th>
     </tr>
   </thead>
   <tbody>
@@ -83,7 +83,7 @@
               <td><center>{{ a.school }}</center></td>
               <td><center>{{ a.grad_year }}</center></td>
               <td><center>{% if a.travel %}{{ a.travel_method }}{% else %}{% endif %}</center></td>
-              <td><center>{% if a.travel %}{{ a.cost }}{% else %}{% endif %}</center></td>
+              <td><center>{{ u.raffle_id }}</center></td>
             </tr>
             {% endwith %}
             {% endwith %}

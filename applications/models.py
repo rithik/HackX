@@ -24,8 +24,9 @@ class Application(models.Model):
     mlh_consent = models.BooleanField(default=False)
     hackathons = models.IntegerField(default=0)
     app_complete = models.BooleanField(default=False)
-
-    # ADD RESUME
+    
+    referrer = models.CharField(max_length=100, default="")
+    referrer_locked = models.BooleanField(default=False)
 
     travel = models.BooleanField(default=False)
     where_from = models.CharField(max_length=1000, default="")
@@ -58,6 +59,7 @@ class Confirmation(models.Model):
     github = models.CharField(max_length=1000, default="")
     notes = models.CharField(max_length=10000, default="")
     resume_file_name = models.CharField(max_length=10000, default="")
+    discord_id = models.CharField(max_length=100, default="")
 
     confirmed = models.BooleanField(default=False)
     declined = models.BooleanField(default=False)

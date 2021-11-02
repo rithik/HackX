@@ -5,7 +5,7 @@
 {% block content %}
 
 <div id="fb-root"></div>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v5.0&appId=1995587900553873&autoLogAppEvents=1"></script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v9.0&appId=477200742942308&autoLogAppEvents=1" nonce="pvaYrhcm"></script>
 
 
     <h2 class="main-title"> <center>Dashboard</center> </h2>
@@ -43,6 +43,7 @@
         <p class="card-text" style="color:#212529;">
             <center><b>Application Deadline:</b> {{ submission_deadline }}</center>
             <center><b>Confirmation Deadline:</b> {{ confirmation_deadline }}</center>
+            {% if app.app_complete %}<center><b>Your Raffle ID:</b> {{ user.raffle_id }}</center>{% endif %}
                 <br/>
                 {% if not app.app_complete %}
                     <center>You still need to complete your application!</center>
@@ -71,13 +72,31 @@
     </div>
     <br/>
     <br/>
+    <div class="card" class="main-card">
+        <div class="card-body">
+          <h4 class="card-title"><center>Refer a friend for free raffle tickets!</h4>
+          <p class="card-text" style="color:#212529;">
+            Get yourself 2 free tickets and the friend you refer 1 free ticket for our raffle, where we are giving away an Xbox, Powerbeats, and more. Here are instructions on how:
+            <ol type="1">
+                <li>Make sure you have applied, been accepted, and confirmed that you are coming to HooHacks.</li>
+                <li>Tell your friend to apply for HooHacks by linking them to <a href="https://hoohacks.io" style="color:blue">hoohacks.io</a>!</li>
+                <li>Send your friend your raffle ID ({{ user.raffle_id }}). In their application, there is a field for them to include the ID.</li>
+                <li>Once they submit, you’re all done! The tickets will be recorded under you and your friend’s name!</li>
+            </ol>
+        </div>
+      </div>
+    <br/>
     <br/>
     <div class="row">
-        <div class="col-lg-4" id="facebook-feed">
-            
+        <div class="col-lg-4">
+            <div class="fb-group" data-href="https://www.facebook.com/groups/hoohacks2021/" data-width="400" data-show-social-context="true" data-show-metadata="true"><blockquote cite="https://www.facebook.com/groups/hoohacks2021/" class="fb-xfbml-parse-ignore">HooHacks 2021 Attendees</blockquote></div>
         </div>
-        <div class="col-lg-8">
-            <a class="twitter-timeline" data-height="420" data-width="1000" data-theme="light" href="https://twitter.com/hoohacks?ref_src=twsrc%5Etfw">Tweets by hoohacks</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>        </div>
+        <div class="col-lg-4">
+            <div class="fb-page" data-href="https://www.facebook.com/hoohacks/" data-tabs="timeline,events,groups" data-width="500" data-height="500" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/hoohacks/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/hoohacks/">HooHacks</a></blockquote></div>
+        </div>
+        <div class="col-lg-4">
+            <a class="twitter-timeline" data-height="500" data-width="500" data-theme="light" href="https://twitter.com/hoohacks?ref_src=twsrc%5Etfw">Tweets by hoohacks</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>        
+        </div>
     </div>
 
 
@@ -144,7 +163,7 @@
             fbFeed.innerHTML = '<div class="fb-group" data-href="https://www.facebook.com/groups/hoohacks2020/" data-width="' + fbFeedWidth.toString() + '" data-show-social-context="true" data-show-metadata="true"></div>'; 
         }
         $(document).ready(function (){
-            setupFBFeed();
+            // setupFBFeed();
         });
 
         '{% if request.user.is_admin %}'

@@ -14,6 +14,7 @@ from users.models import User, EmailView
 import dropbox 
 from administration.models import Settings
 from administration import nametag
+import base64 
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 
@@ -75,11 +76,12 @@ def application(request, msg=''):
         why = request.POST.get('why', '')
         mlh = request.POST.get('mlh', '')
         mlh_consent = request.POST.get('mlh-consent', '')
+        referrer = request.POST.get('referrer', '')
 
         a.first_name = first_name
         a.last_name = last_name
         a.birthday = birthday
-        a.school = school
+        a.school = school if school != "Other" else "Other - Other"
         a.grad_year = grad_year
         a.gender = gender
         a.race = race
@@ -87,6 +89,15 @@ def application(request, msg=''):
         a.major = major
         a.hackathons = hackathons
         a.why = why
+        
+        friends = User.objects.filter(email=base64.b64decode(referrer).decode("utf-8", "ignore"))
+        if friends.count() == 1 and friends.first() != u and not a.referrer_locked:
+            a.referrer = referrer
+            a.referrer_locked = True
+            friend = friends.first()
+            friend.raffle_tickets += 2
+            u.raffle_tickets += 1
+            friend.save()
 
         if mlh == "on":
             a.mlh_rules = True
@@ -172,6 +183,8 @@ def confirmation(request):
         carrier = request.POST.get('carrier', 'Other')
         github = request.POST.get('github', '')
         notes = request.POST.get('notes', '')
+        school = request.POST.get('school', '')
+        discord_id = request.POST.get('discord', '')
         file = request.FILES['file']
         if file == '':
             return render(request, "confirmation.html", {
@@ -189,7 +202,8 @@ def confirmation(request):
 
         file_path = ""
         if file:
-            file_path = '/Resumes/' + str(a.grad_year) + '/' + u.full_name + "-" + str(u.qr_hash) + '-Resume.pdf'
+            curr_year = Settings.objects.all()[0].application_confirmation_deadline.year
+            file_path = '/Resumes-' + str(curr_year) +  '/' + str(a.grad_year) + '/' + u.full_name + "-" + str(u.qr_hash) + '-Resume.pdf'
             if not c.resume_file_name == "":
                 try:
                     dbx.files_delete_v2(file_path)
@@ -222,9 +236,13 @@ def confirmation(request):
         c.carrier = carrier
         c.github = github
         c.notes = notes
+        c.discord_id = discord_id
         c.confirmed = True
         c.declined = False
         c.save()
+        if school != "":
+            a.school = "Other - {}".format(school)
+            a.save()
 
         try:
             nametag.make_image(u.first_name, u.last_name, u.qr_hash)

@@ -14,7 +14,7 @@ from pytz import timezone
 import pytz
 from datetime import datetime
 from applications.models import Application, Confirmation, TshirtOrder
-from users.models import User, EmailView
+from users.models import Puzzle, PuzzleTeam, User, EmailView
 from judging.models import Organization
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -31,6 +31,9 @@ import slack
 import tweepy
 import csv
 import traceback
+from io import StringIO
+import base64
+from decimal import Decimal
 
 dbx = dropbox.Dropbox(settings.DROPBOX_ACCESS_TOKEN)
 slack_client = None
@@ -365,6 +368,59 @@ def admin_export_csv(request):
     return response
 
 @login_required
+def remind_incomplete_applications(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+
+    return render(request, "admin-incomplete.html", {
+        "highlight": "admin", 
+        "user": u,
+        "incomplete": [u for u in User.objects.all() if u.application and (not u.application.app_complete or (u.application.accepted and not u.confirmation.confirmed and not u.confirmation.declined))],
+        "adminHighlight": "stats"
+    })
+
+@login_required
+def send_incomplete_email(request):
+    u = request.user
+    if not u.is_authenticated:
+        return JsonResponse({
+            'message': 'Not authorized'
+        })
+    if not u.is_admin:
+        return JsonResponse({
+            'message': 'Not authorized'
+        })
+
+    incomplete  = [u for u in User.objects.all() if u.application and (not u.application.app_complete or (u.application.accepted and not u.confirmation.confirmed and not u.confirmation.declined))]
+
+    for user in incomplete:
+        email_uuid = uuid.uuid1()
+        e = EmailView.objects.create(
+            uuid_confirmation=email_uuid, 
+            subject="[IMPORTANT]: HooHacks Application Incomplete", 
+            message=settings.REMINDER_EMAIL,
+            action="reminder",
+            redirect_url="/dashboard",
+            user=user
+        )
+        e.send_email()
+        layer = get_channel_layer()
+        async_to_sync(layer.group_send)('chat_main', {
+            'type': 'chat_message',
+            'message': json.dumps({
+                'email': user.email
+            })
+        })
+
+    return JsonResponse({
+        'status': 200,
+        'message': 'Success'
+    })
+
+@login_required
 def tshirt_order_export(request):
     u = request.user
     if not u.is_authenticated:
@@ -586,6 +642,8 @@ def view_organizations(request):
     if request.method == "GET":
         return render(request, "organizations.html",{
             "organizations": Organization.objects.all(),
+            "teams": PuzzleTeam.objects.all(),
+            "puzzles": Puzzle.objects.all(),
             "highlight": "admin", 
             "user": u,
             "adminHighlight": "organizations"
@@ -695,3 +753,95 @@ def send_notification(request):
         success_msg += "Notification published on Twitter! "
 
     return JsonResponse({"status": 200, "message": success_msg})
+
+@login_required
+def verify_all_users(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    emails = []
+    users = User.objects.filter(verified=False)
+    for user in users:
+        user.verified = True
+        user.save()
+        emails.append(user.email)
+    return JsonResponse({"status": 200, "message": "Successfully verified the following email addresses: {}".format('\n'.join(emails))})
+
+@login_required 
+def run_raffle(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    users = User.objects.all()
+    random_dict = {}
+    for user in users:
+        random_dict[user.email] = user.raffle_tickets
+    source_list = list(random_dict.items())
+    emails = [x[0] for x in source_list]
+    tickets = [float(x[1]) for x in source_list]   
+    winner_email = random.choices(population=emails, weights=tickets, k=1)[0]
+    winner = User.objects.get(email=winner_email)
+    winner_name = winner.full_name
+    winner_tickets = int(winner.raffle_tickets)
+    return JsonResponse({"status": 200, "winner_email": winner_email, "winner_name": winner_name,  "tickets": winner_tickets})
+
+def import_raffle(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    
+    csv_file = request.FILES.get('raffle_csv', None)
+    # check is a csv file
+    if not csv_file.name.endswith('.csv'):
+        return JsonResponse({
+            "error": "Uploaded file must be a .csv"
+        })
+
+    # check if file too large
+    if csv_file.multiple_chunks():
+        return JsonResponse({
+            "error": 'Uh oh, file ({:.2f}MB) too large, max (2.5MB)'.format(
+            csv_file.size / (1000 * 1000))
+        })
+    
+    data = csv_file.read().decode("utf-8")
+    reader = csv.reader(StringIO(data), csv.excel)
+    headers = next(reader)
+    
+    for row in reader:
+        raffle_id = row[0]
+        tickets = Decimal(row[1])
+        
+        raffle_user = User.objects.get(email=base64.b64decode(raffle_id).decode("utf-8", "ignore"))
+        raffle_user.raffle_tickets += tickets
+        print(raffle_id, tickets)
+        raffle_user.save()
+
+    s = Settings.objects.all()[0]
+    return render(request, 'admin-settings.html', {
+        "application_submission_date": s.application_submission_deadline.astimezone(settings.TZ).strftime("%Y-%m-%dT%H:%M"),
+        "application_confirmation_date": s.application_confirmation_deadline.astimezone(settings.TZ).strftime("%Y-%m-%dT%H:%M"),
+        "judging_deadline": s.judging_deadline.astimezone(settings.TZ).strftime("%Y-%m-%dT%H:%M"),
+        "highlight": "admin", 
+        "adminHighlight": "settings",
+        "msg": "Successfully imported csv"
+    }) 
+
+@login_required
+def add_raffle_ticket_to_all(request):
+    u = request.user
+    if not u.is_authenticated:
+        return redirect("/logout")
+    if not u.is_admin:
+        return redirect("/dashboard")
+    users = User.objects.all()    
+    for user in users:
+        user.raffle_tickets += 1
+        user.save()
+    return JsonResponse({"status": 200})

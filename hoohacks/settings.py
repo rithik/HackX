@@ -191,7 +191,7 @@ GRADUATION_YEARS_TITLES = {
     "2025": "High School Senior",
     "2026": "High School Junior"
 }
-RACES = ["African American", "American Indian", "Asian",
+RACES = ["African American", "Native American", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
 GENDERS = ["Female", "Male", "Non-binary", "Transgender", "Other", "Prefer not to say"]
 TRAVEL_METHODS = ["Car", "Bus", "Train", "Airplane", "Other"]
@@ -237,6 +237,10 @@ f = open(BASE_DIR + "/hoohacks/emails/confirmed.html", "r")
 CONFIRMED_EMAIL = f.read()
 f.close()
 
+f = open(BASE_DIR + "/hoohacks/emails/reminder.html", "r")
+REMINDER_EMAIL = f.read()
+f.close()
+
 CARRIER_EMAIL_LOOKUP = {
     'Alltel': '@message.alltel.com',
     'AT&T': '@txt.att.net',
@@ -260,6 +264,8 @@ TEXTING_ENABLED = True
 
 TEXTING_FROM_EMAIL = os.environ.get('TEXTING_FROM_EMAIL', secret.TEXTING_FROM_EMAIL)
 
+REQUIRE_EMAIL_VERIFICATION = False
+
 ASGI_APPLICATION = 'hoohacks.routing.application'
 
 CHANNEL_LAYERS = {
@@ -273,6 +279,12 @@ CHANNEL_LAYERS = {
 
 PROD_URL = os.environ.get('PROD_URL', 'http://localhost:8000/')
 
+USE_PROD_DB = False
+
+if USE_PROD_DB and DEBUG:
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.config(default=secret.PROD_DB_URL)
+
 try:
     # Configure Django App for Heroku.
     import django_heroku
@@ -282,9 +294,10 @@ try:
             del DATABASES['default']['OPTIONS']['sslmode']
         except:
             pass
+        
         import sentry_sdk
         from sentry_sdk.integrations.django import DjangoIntegration
-
+        
         sentry_sdk.init(
             dsn=os.environ['SENTRY_DSN'],
             integrations=[DjangoIntegration()]

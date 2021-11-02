@@ -1,19 +1,30 @@
 {% extends "admin.html" %}
 {% load static %}
-{% block title %}Admin - Organizations{% endblock %}
+{% block title %}Admin - Organizations and Puzzles{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/table.css' %}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 {% endblock %}
 
 {% block js %}
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 {% endblock %}
-{% block subtitle %}Organizations{% endblock %}
-{% block addContent %}
-    <br/>
-    <br/>
 
+{% block subtitle %}Organizations and Puzzles{% endblock %}
+{% block addContent %}
+
+    <br/>
+    <br/>
+    <h4 class="sub-title">
+        <center>Organizations</center>
+    </h4>
+    <hr style="width:30%">
+    <br />
+    
     <div class="alert alert-success" id="org-added" style="display:none;">
         Organization Added!
     </div>
@@ -61,8 +72,163 @@
                 <button class="btn btn-outline-danger" type="button">Delete</button>
             </div>
             <br/>
-        </div>
+    </div>
+    
+    <br/>
+    <br/>
+    <h4 class="sub-title">
+        <center>Puzzle Teams</center>
+    </h4>
+    <hr style="width:30%">
+    <br />
 
+    <div class="card-columns">
+        {% for team in teams %}
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ team.name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Join Code: {{ team.unique_code }}</h6>
+            <p class="card-text">
+                {% for member in team.users.all %}
+                    {{ member.first_name }} {{ member.last_name }} - {{ member.email }}
+                    <br/>
+                {% endfor %}
+            </p>
+          </div>
+        </div>
+        {% endfor %}    
+    </div>
+
+    <br/>
+    <br/>
+    <h4 class="sub-title">
+        <center>Puzzles</center>
+    </h4>
+    <hr style="width:30%">
+    <br />
+
+    <div class="alert alert-success" id="p-added" style="display:none;">
+        Puzzle Added!
+    </div>
+    <div class="alert alert-success" id="p-deleted" style="display:none;">
+        Puzzle Deleted!
+    </div>
+    <div class="alert alert-success" id="p-updated" style="display:none;">
+        Puzzle Updated!
+    </div>
+    <div class="alert alert-danger" id="p-error" style="display:none;">
+        There was an error adding this Puzzle!
+    </div>
+
+    <div id="puzzles-main">
+        {% for p in puzzles %}
+            <div id="puzzle-{{ p.id }}">
+                <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="p-text-{{ p.id }}">Puzzle Text</label>
+                        <textarea type="text" required class="form-control" id="p-text-{{ p.id }}" placeholder="Puzzle Text" name="p-text">{{ p.text }}</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="p-answer-{{ p.id }}">Regex Answer</label>
+                                <input type="text" required class="form-control" id="p-answer-{{ p.id }}" placeholder="Answer in Regex Form" value="{{ p.regex_answer }}" name="p-answer">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label for="p-points-{{ p.id }}">Max Points</label>
+                                <input type="number" required class="form-control" id="p-points-{{ p.id }}" placeholder="Maximum number of points" value="{{ p.max_points }}" name="p-points">
+                            </div>
+                        </div>
+                        <div class="col-lg-3"></div>
+                    </div>
+                    <div class="row">
+                        <div style="margin: 0 auto;">
+                            <button class="btn btn-outline-primary" type="button" onclick="updatePuzzle('{{ p.id }}')">Update</button>
+                            <button class="btn btn-outline-danger" type="button" onclick="deletePuzzle('{{ p.id }}')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <br/>
+            </div>
+        {% endfor %}
+    </div>
+    
+
+    <h5> <center>Add Puzzle</center> </h5>
+    <hr style="width:25%">
+
+    <div id="puzzle-copy">
+        <div class="card">
+            <div class="card-body">
+            <div class="form-group">
+                <label for="p-text">Puzzle Text</label>
+                <textarea type="text" required class="form-control" id="p-text" placeholder="Puzzle Text" name="p-text"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label for="p-answer">Regex Answer</label>
+                        <input type="text" required class="form-control" id="p-answer" placeholder="Answer in Regex Form" name="p-answer">
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label for="p-points">Max Points</label>
+                        <input type="number" required class="form-control" id="p-points" placeholder="Maximum number of points" name="p-points">
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+            <div class="row">
+                <div style="margin: 0 auto;">
+                    <button class="btn btn-outline-success" type="button" onclick="addPuzzle()">Add</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <br/>
+    </div>
+
+    <div id="puzzle-copy-main" style="display: none;">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group">
+                <label for="p-text-copy">Puzzle Text</label>
+                <textarea type="text" required class="form-control" id="p-text-copy" placeholder="Puzzle Text" name="p-text"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label for="p-answer-copy">Regex Answer</label>
+                        <input type="text" required class="form-control" id="p-answer-copy" placeholder="Answer in Regex Form" name="p-answer-copy">
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label for="p-points-copy">Max Points</label>
+                        <input type="number" required class="form-control" id="p-points-copy" placeholder="Maximum number of points" name="p-points-copy">
+                    </div>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+            <div class="row">
+                <div style="margin: 0 auto;">
+                    <button class="btn btn-outline-primary" type="button">Update</button>
+                    <button class="btn btn-outline-danger" type="button">Delete</button>
+                </div>
+            </div>
+          </div>
+        </div>
+        <br/>
+    </div>
+    
 <script>
     function addOrganization(){
         var postData = {
@@ -132,6 +298,103 @@
                 var element = document.getElementById('total-' + id);
                 element.parentNode.removeChild(element);
                 var alert = document.getElementById("org-deleted");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+    function addPuzzle(){
+        var postData = {
+            text: document.getElementById('p-text').value,
+            answer: document.getElementById('p-answer').value,
+            points: document.getElementById('p-points').value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+
+        $.post("/puzzles/add", postData, function(data) {
+            if (data.status == 200){
+                var alert = document.getElementById("p-added");
+                alert.style.display = "";
+                
+                document.getElementById("p-text-copy").value = "";
+
+                var copyC = document.getElementById("puzzle-copy-main");
+                var clone = copyC.cloneNode(true);
+                window.c = clone;
+                clone.id = 'puzzle-' + data['pid'];
+
+                var name = clone.children[0].children[0].children[0].children[1];
+                name.id = "p-text-" + data['pid'];
+                name.value = postData.text;
+
+                var row = clone.children[0].children[0].children[1];
+                var rowB = clone.children[0].children[0].children[2].children[0];
+                var updateB = clone.children[0].children[0].children[2].children[0].children[0];
+                var deleteB = clone.children[0].children[0].children[2].children[0].children[1];
+                
+                var regexAnswer = row.children[1].children[0].children[1];
+                regexAnswer.id = "p-answer-" + data['pid'];
+                regexAnswer.value = postData.answer;
+                
+                var maxPoints = row.children[2].children[0].children[1];
+                maxPoints.id = "p-points-" + data['pid'];
+                maxPoints.value = postData.points;
+                
+                updateB.onclick = function (){
+                    updatePuzzle(data.pid);
+                };
+
+                deleteB.onclick = function (){
+                    deletePuzzle(data.pid);
+                };
+
+                document.getElementById('puzzles-main').append(clone);
+                clone.style.display = "";
+                
+                document.getElementById('p-text').value = "";
+                document.getElementById('p-answer').value = "";
+                document.getElementById('p-points').value = 0;
+
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+    function updatePuzzle(id){
+        var postData = {
+            pid: id,
+            text: document.getElementById('p-text-' + id).value,
+            answer: document.getElementById('p-answer-' + id).value,
+            points: document.getElementById('p-points-' + id).value,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.post("/puzzles/update", postData, function(data) {
+            if (data.status == 200){
+                var alert = document.getElementById("p-updated");
+                alert.style.display = "";
+                setTimeout(
+                    function(){
+                        alert.style.display = "none";
+                }, 3000);
+            }
+        });
+    }
+
+    function deletePuzzle(id){
+        var postData = {
+            pid: id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+        $.post("/puzzles/delete", postData, function(data) {
+            if (data.status == 200){
+                var element = document.getElementById('puzzle-' + id);
+                element.parentNode.removeChild(element);
+                var alert = document.getElementById("p-deleted");
                 alert.style.display = "";
                 setTimeout(
                     function(){

@@ -3,251 +3,316 @@
 {% block title %}Application{% endblock %}
 
 {% block content %}
-    <h2 class="main-title"> <center>Application</center> </h2>
-    <hr style="width:50%">
+{% load other_school %}
+<h2 class="main-title">
+  <center>Application</center>
+</h2>
+<hr style="width:50%">
 
-    <br/>
-    <br/>
+<br />
+<br />
 
-    <h4 class="sub-title"> <center>Basic Information</center> </h4>
-    <hr style="width:30%">
-    <br/>
+<h4 class="sub-title">
+  <center>Basic Information</center>
+</h4>
+<hr style="width:30%">
+<br />
 
 
-    <form class="form-signin" method="POST" action="/application" style="width:60%; margin:auto; display:block;">
-      {% csrf_token %}
-        {% if not msg == ""  %}
-            <div class="alert alert-success" role="alert">
-                {{ msg }}
-            </div>
-        {% endif %}
-     <div class="form-group">
-       <label for="first-name" class="required-field">First Name</label>
-       <input type="text" required class="form-control" id="first-name" {% if app.app_complete %} value="{{ app.first_name }}" {% endif %} placeholder="First Name" name="first-name">
-     </div>
+<form class="form-signin" method="POST" action="/application" style="width:60%; margin:auto; display:block;">
+  {% csrf_token %}
+  {% if not msg == ""  %}
+  <div class="alert alert-success" role="alert">
+    {{ msg }}
+  </div>
+  {% endif %}
+  <div class="form-group">
+    <label for="first-name" class="required-field">First Name</label>
+    <input type="text" required class="form-control" id="first-name" {% if app.app_complete %}
+      value="{{ app.first_name }}" {% endif %} placeholder="First Name" name="first-name">
+  </div>
 
-     <div class="form-group">
-      <label for="first-name" class="required-field">Last Name</label>
-      <input type="text" required class="form-control" id="last-name" {% if app.app_complete %} value="{{ app.last_name }}" {% endif %} placeholder="Last Name" name="last-name">
+  <div class="form-group">
+    <label for="first-name" class="required-field">Last Name</label>
+    <input type="text" required class="form-control" id="last-name" {% if app.app_complete %}
+      value="{{ app.last_name }}" {% endif %} placeholder="Last Name" name="last-name">
+  </div>
+
+  <div class="form-group">
+    <label for="date" class="required-field">Birthday</label>
+    <br />
+    <input type="date" required class="form-control" id="date" {% if app.app_complete %} value="{{ app.birthday }}"
+      {% endif %} name="birthday">
+  </div>
+
+  <div class="form-group">
+    <label for="school" class="required-field">School (Select "Other" if your school is not listed)</label>
+    <br />
+    <select name="school" id="school" required class="selectpicker" title="Select your School" data-live-search="true"
+      data-width="100%">
+      {% for s in schools %}
+      <option value="{{s}}" {% if s == app.school|startswithrettext:"Other" or s == app.school %} selected {% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="grad-year" class="required-field"><b>College</b> Graduation Year</label>
+    <br />
+    <select name="grad-year" required title="Select your COLLEGE Graduation Year" class="selectpicker"
+      data-width="100%">
+      {% for s in grad_year %}
+      <script>
+        console.log('{{ app.grad_year }}');
+        console.log('{{ s }}');
+        console.log('{{ s }}' == '{{ app.grad_year }}');
+      </script>
+      <option value="{{s}}" {% if s == app.grad_year %} selected {% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="gender" class="required-field">Gender</label>
+    <br />
+    <select name="gender" required title="Select your Gender" class="selectpicker" data-width="100%">
+      {% for s in genders %}
+      <option value="{{s}}" {% if s == app.gender %} selected {% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="race" class="required-field">Race</label>
+    <br />
+    <select name="race" required title="Select your Race" class="selectpicker" data-width="100%">
+      {% for s in races %}
+      <option value="{{s}}" {% if s == app.race %} selected {% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="describe" class="required-field">I would describe myself as a...</label>
+    <br />
+    <input type="text" required class="form-control" maxlength="150" id="describe" {% if app.app_complete %}
+      value="{{ app.describe }}" {% endif %}
+      placeholder="Web Developer, Mobile expert, Backend Engineer, Business Developer" name="describe">
+  </div>
+
+  <div class="form-group">
+    <label for="major" class="required-field">Major</label>
+    <br />
+    <input type="text" required class="form-control" id="major" {% if app.app_complete %} value="{{ app.major }}"
+      {% endif %} placeholder="Your current major" name="major">
+  </div>
+
+  <div class="form-group">
+    <label for="hackathons" class="required-field">How many hackathons have you attended?</label>
+    <br />
+    <input type="number" min="0" required class="form-control" id="hackathons" {% if app.app_complete %}
+      value="{{ app.hackathons }}" {% endif %} placeholder="Number of hackathons attended" name="hackathons">
+  </div>
+
+  <div class="form-group">
+    <label for="why" class="required-field">What do you hope to get out of HooHacks?</label>
+    <br />
+    <textarea required class="form-control" id="why" maxlength="1700"
+      placeholder="Tell us why you want to attend HooHacks"
+      name="why">{% if app.app_complete %}{{ app.why }}{% endif %}</textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="referrer">Did someone tell you to register for HooHacks? If so, enter their Raffle ID so that they can get an extra ticket in our raffle! Their raffle ID can be found on the top of the dashboard page.</label>
+    <br />
+    <input type="text" {% if app.referrer_locked %} disabled {% endif %} class="form-control" id="major" {% if app.referrer %} value="{{ app.referrer }}"
+      {% endif %} placeholder="Referrer's Raffle ID" name="referrer">
+  </div>
+
+
+  <div class="form-check">
+    <input required type="checkbox" class="form-check-input" name="mlh-rules-2" {% if app.mlh_rules %} checked
+      {% endif %} id="exampleCheck2">
+    <label class="form-check-label required-field" for="exampleCheck2">
+      I authorize you to share my application/registration information with Major League Hacking for event
+      administration, ranking, and MLH administration in-line with the <a class="email-link"
+        href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. I further agree to the terms of both the
+      <a class="email-link" href="https://github.com/MLH/mlh-policies/tree/master/prize-terms-and-conditions"
+        target="_blank">MLH Contest Terms and Conditions</a> and the <a class="email-link" href="https://mlh.io/privacy"
+        target="_blank">MLH Privacy Policy</a>.</label>
+  </div>
+
+  <div class="form-check">
+    <input required type="checkbox" class="form-check-input" name="mlh" {% if app.mlh_rules %} checked {% endif %}
+      id="exampleCheck1">
+    <label class="form-check-label required-field" for="exampleCheck1">I have read and agree to the <a
+        class="email-link" href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of
+        Conduct</a>.</label>
+  </div>
+
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" name="mlh-consent" {% if app.mlh_consent %} checked {% endif %}
+      id="exampleCheck3">
+    <label class="form-check-label" for="exampleCheck3">I authorize MLH to send me pre- and post-event informational
+      emails, which contain free credit and opportunities from their partners.</label>
+  </div>
+
+  <br />
+
+  {% comment %}
+
+  <h4 class="sub-title">
+    <center>Travel</center>
+  </h4>
+  <hr style="width:30%">
+  <br />
+
+
+  <div class="form-group">
+    <b> Buses provided by {{ event_name }} leaving Saturday, March 28th</b>
+    <div class="row">
+      <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
+        <b>DC/Maryland Bus</b> <br /><br />
+        <b>5:30 am</b> - Pickup at UMD Stamp Student Union<br /><br />
+        <b>6:15 am</b> - Pickup at GWU Business School
+      </div>
+      <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
+        <b>Northern Virginia Bus</b> <br /><br />
+        <b>6:15 am</b> - Pickup at Thomas Jefferson High School for Science and Technology<br /><br />
+        <b>7:00 am</b> - Pickup at GMU K Lot (4584 Patriot Cir, Fairfax, VA 22030)
+      </div>
+      <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
+        <b>Virginia Tech Bus</b><br /><br />
+        <b>6:30 am</b> - Pickup at Goodwin Hall
+      </div>
     </div>
+    <b>All buses will depart from UVA at 4:00pm on Sunday, March 29th.</b>
+  </div>
 
-     <div class="form-group">
-       <label for="date" class="required-field">Birthday</label>
-       <br/>
-          <input type="date" required class="form-control" id="date" {% if app.app_complete %} value="{{ app.birthday }}" {% endif %} name="birthday">
-      </div>
 
-     <div class="form-group">
-       <label for="school" class="required-field">School (Select "Other" if your school is not listed)</label>
-       <br/>
-       <select name="school" id="school" required class="selectpicker" title="Select your School" data-live-search="true" data-width="100%" >
-          {% for s in schools %}
-            <option value="{{s}}" {% if s == app.school %} selected {% endif %}>{{ s }}</option>
-          {% endfor %}
-        </select>
-     </div>
+  <br />
+  <div class="form-group">
+    <b>{{ event_name }} Travel Reimbursement Policies:</b>
+    <ul>
+      <li>You are not guaranteed to receive travel reimbursement unless you visit the Travel Reimbursement booth at
+        {{ event_name }} (more information will follow).</li>
+      <li>You may be asked to show proof of purchase for tickets or gas so please remember to keep all of your receipts.
+      </li>
+      <li>If you are travelling from a location for which there is a bus provided by HooHacks, a travel reimbursement
+        will NOT be provided. You should obtain a bus ticket from <a class="email-link"
+          href="https://www.tickettailor.com/events/hoohacks1/"
+          target="_blank">https://www.tickettailor.com/events/hoohacks1/</a>. You will be required to pay a $10 fee,
+        however, this money will be reimbursed if you attend the event. If you do not show up, the $10 fee that you have
+        paid will be used to offset the cost of this event.</li>
+      <li>If you are driving, {{ event_name }} will provide you with up to $0.10/mile up to a maximum of $40. </li>
+      <li>If you are flying, {{ event_name }} will provide you up to a maximum of $100. </li>
+      <li>If you are taking a bus or a train, {{ event_name }} will provide you up to a maximum of $75. </li>
+      <li>If you are taking another form of transport or have any questions, please contact us at <a class="email-link"
+          href="mailto:{{ contact_email }}">{{ contact_email }}</a>. </li>
+    </ul>
+  </div>
 
-     <div class="form-group">
-       <label for="grad-year" class="required-field"><b>College</b> Graduation Year</label>
-       <br/>
-         <select name="grad-year" required title="Select your COLLEGE Graduation Year" class="selectpicker" data-width="100%">
-             {% for s in grad_year %}
-              <script> 
-              console.log('{{ app.grad_year }}');
-              console.log('{{ s }}');
-              console.log('{{ s }}' == '{{ app.grad_year }}');
-              
-               </script>
-               <option value="{{s}}" {% if s == app.grad_year %} selected {% endif %}>{{ s }}</option>
-             {% endfor %}
-          </select>
-      </div>
+  <br />
 
-      <div class="form-group">
-        <label for="gender" class="required-field">Gender</label>
-        <br/>
-          <select name="gender" required title="Select your Gender" class="selectpicker" data-width="100%">
-              {% for s in genders %}
-                <option value="{{s}}" {% if s == app.gender %} selected {% endif %}>{{ s }}</option>
-              {% endfor %}
-           </select>
-       </div>
+  <b>Do you need travel reimbursement?</b>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" name="travel" {% if app.travel %} checked {% endif %}
+      id="need-travel">
+    <label class="form-check-label" for="need-travel">Yes, I need travel reimbursement.</label>
+  </div>
+  <br />
 
-       <div class="form-group">
-         <label for="race" class="required-field">Race</label>
-         <br/>
-           <select name="race" required title="Select your Race" class="selectpicker" data-width="100%">
-               {% for s in races %}
-                 <option value="{{s}}" {% if s == app.race %} selected {% endif %}>{{ s }}</option>
-               {% endfor %}
-            </select>
-        </div>
+  <div id="travel-app-main" {% if app.travel %} style="display: block;" {% else %} style="display: none;" {% endif %}>
 
-        <div class="form-group">
-          <label for="describe" class="required-field">I would describe myself as a...</label>
-          <br/>
-             <input type="text" required class="form-control" id="describe" {% if app.app_complete %} value="{{ app.describe }}" {% endif %} placeholder="Web Developer, Mobile expert, Backend Engineer, Business Developer" name="describe">
-         </div>
-
-         <div class="form-group">
-           <label for="major" class="required-field">Major</label>
-           <br/>
-              <input type="text" required class="form-control" id="major" {% if app.app_complete %} value="{{ app.major }}" {% endif %} placeholder="Your current major" name="major">
-          </div>
-
-          <div class="form-group">
-            <label for="hackathons" class="required-field">How many hackathons have you attended?</label>
-            <br/>
-               <input type="number" min="0" required class="form-control" id="hackathons" {% if app.app_complete %} value="{{ app.hackathons }}" {% endif %} placeholder="Number of hackathons attended" name="hackathons">
-           </div>
-
-           <div class="form-group">
-             <label for="why" class="required-field">What do you hope to get out of HooHacks?</label>
-             <br/>
-                <textarea required class="form-control" id="why" maxlength="1700" placeholder="Tell us why you want to attend HooHacks" name="why">{% if app.app_complete %}{{ app.why }}{% endif %}</textarea>
-            </div>
-
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" name="mlh-consent" {% if app.mlh_consent %} checked {% endif %} id="exampleCheck2">
-          <label class="form-check-label required-field" for="exampleCheck2">I authorize you to share my application/registration information for event administration, ranking, MLH administration, pre- and post-event informational e-mails, and occasional messages about hackathons in-line with the <a class="email-link" href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. I further agree to the terms of both the <a class="email-link" href="https://github.com/MLH/mlh-policies/tree/master/prize-terms-and-conditions" target="_blank">MLH Contest Terms and Conditions</a> and the <a class="email-link" href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a></label>
-        </div>
-          
-        <div class="form-check">
-           <input required type="checkbox" class="form-check-input" name="mlh" {% if app.mlh_rules %} checked {% endif %} id="exampleCheck1">
-           <label class="form-check-label required-field" for="exampleCheck1">I have read and agree to the <a class="email-link" href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>.</label>
-         </div>
-
-         <br/>
-
-    <h4 class="sub-title"> <center>Travel</center> </h4>
-    <hr style="width:30%">
-    <br/>
-
-    
     <div class="form-group">
-      <b> Buses provided by {{ event_name }} leaving Saturday, March 28th</b>
-      <div class="row">
-        <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
-          <b>DC/Maryland Bus</b> <br/><br/>
-          <b>5:30 am</b> - Pickup at UMD Stamp Student Union<br/><br/>
-          <b>6:15 am</b> - Pickup at GWU Business School
-        </div>
-        <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
-          <b>Northern Virginia Bus</b> <br/><br/>
-          <b>6:15 am</b> - Pickup at Thomas Jefferson High School for Science and Technology<br/><br/>
-          <b>7:00 am</b> - Pickup at GMU K Lot (4584 Patriot Cir, Fairfax, VA 22030)
-        </div>
-        <div class="col-lg-4" style="background-color: #144d9f; color: white; padding: 10px; border: white 2px solid;">
-          <b>Virginia Tech Bus</b><br/><br/>
-          <b>6:30 am</b> - Pickup at Goodwin Hall
-        </div>
-      </div>
-      <b>All buses will depart from UVA at 4:00pm on Sunday, March 29th.</b>
+      <label for="where-from" class="required-field">Where are you travelling from?</label>
+      <input type="name" class="form-control" id="where-from" {% if app.where_from %} value="{{ app.where_from }}"
+        {% endif %} placeholder="Please be specific - City, State" name="where-from">
     </div>
 
-    
-    <br/>
     <div class="form-group">
-      <b>{{ event_name }} Travel Reimbursement Policies:</b> 
-      <ul>
-        <li>You are not guaranteed to receive travel reimbursement unless you visit the Travel Reimbursement booth at {{ event_name }} (more information will follow).</li>
-        <li>You may be asked to show proof of purchase for tickets or gas so please remember to keep all of your receipts.</li>
-        <li>If you are travelling from a location for which there is a bus provided by HooHacks, a travel reimbursement will NOT be provided. You should obtain a bus ticket from <a class="email-link" href="https://www.tickettailor.com/events/hoohacks1/" target="_blank">https://www.tickettailor.com/events/hoohacks1/</a>. You will be required to pay a $10 fee, however, this money will be reimbursed if you attend the event. If you do not show up, the $10 fee that you have paid will be used to offset the cost of this event.</li>
-        <li>If you are driving, {{ event_name }} will provide you with up to $0.10/mile up to a maximum of $40. </li>
-        <li>If you are flying, {{ event_name }} will provide you up to a maximum of $100. </li>
-        <li>If you are taking a bus or a train, {{ event_name }} will provide you up to a maximum of $75. </li>
-        <li>If you are taking another form of transport or have any questions, please contact us at <a class="email-link" href="mailto:{{ contact_email }}">{{ contact_email }}</a>. </li>
-      </ul>
+      <label for="travel-method" class="required-field">How will you be travelling?</label>
+      <br />
+      <select name="travel-method" id="travel-method" title="Select your travel method" class="selectpicker"
+        data-live-search="true" data-width="100%">
+        {% for s in travel_methods %}
+        <option value="{{s}}" {% if s == app.travel_method %} selected {% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
     </div>
-    
-    <br/>
 
-    <b>Do you need travel reimbursement?</b>
-    <div class="form-check">
-       <input type="checkbox" class="form-check-input" name="travel" {% if app.travel %} checked {% endif %} id="need-travel">
-       <label class="form-check-label" for="need-travel">Yes, I need travel reimbursement.</label>
-     </div>
-     <br/>
+    <div class="form-group">
+      <label for="miles" class="required-field">How many miles are you travelling?</label>
+      <br />
+      <input type="number" class="form-control" min="0" id="miles" {% if app.miles %} value="{{ app.miles }}"
+        {% endif %} placeholder="Number of miles" name="miles">
+    </div>
 
-     <div id="travel-app-main" {% if app.travel %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+    <div class="form-group">
+      <label for="cost" class="required-field">How much reimbursement will you need?</label>
+      <br />
+      <input type="number" class="form-control" min="0" id="cost" step="0.01" {% if app.cost %} value="{{ app.cost }}"
+        {% endif %} placeholder="Cost" name="cost">
+    </div>
 
-      <div class="form-group">
-        <label for="where-from" class="required-field">Where are you travelling from?</label>
-        <input type="name" class="form-control" id="where-from" {% if app.where_from %} value="{{ app.where_from }}" {% endif %} placeholder="Please be specific - City, State" name="where-from">
-      </div>
- 
-      <div class="form-group">
-        <label for="travel-method" class="required-field">How will you be travelling?</label>
-        <br/>
-        <select name="travel-method" id="travel-method" title="Select your travel method" class="selectpicker" data-live-search="true" data-width="100%">
-           {% for s in travel_methods %}
-             <option value="{{s}}" {% if s == app.travel_method %} selected {% endif %}>{{ s }}</option>
-           {% endfor %}
-         </select>
-      </div>
- 
-         <div class="form-group">
-           <label for="miles" class="required-field">How many miles are you travelling?</label>
-           <br/>
-              <input type="number" class="form-control" min="0" id="miles" {% if app.miles %} value="{{ app.miles }}" {% endif %} placeholder="Number of miles" name="miles">
-          </div>
- 
-          <div class="form-group">
-            <label for="cost" class="required-field">How much reimbursement will you need?</label>
-            <br/>
-               <input type="number" class="form-control" min="0" id="cost" step="0.01" {% if app.cost %} value="{{ app.cost }}" {% endif %} placeholder="Cost" name="cost">
-           </div>
-         
-     </div>
+  </div>
 
-     <br/>
-    {% if allow %}
-     <p>By clicking the Submit Application button, I agree to share the information I provided with the {{ event_name }} organization, along with the event sponsors and the Major League Hacking (MLH) organization. </p>
-      <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="application" id="submit-app-button">Submit Application</button>
-    {% else %}
-      <center>Unfortunately, you can no longer submit an application!</center>
-    {% endif %}
-    </form>
+  {% endcomment %}
 
-    <script>
-    $("#need-travel").change(function(){
-      if (document.getElementById('need-travel').checked){
-        document.getElementById('travel-app-main').style.display = "block";
-      }
-      else{
-        document.getElementById('travel-app-main').style.display = "none";
-      }
-    });
-    
-    $(function(){
-      var dtToday = new Date();
-      
-      var month = dtToday.getMonth() + 1;
-      var day = dtToday.getDate();
-      var year = dtToday.getFullYear();
-      if(month < 10){
-        month = '0' + month.toString();
-      }
-      if(day < 10){
-          day = '0' + day.toString();
-      }
-      var maxDate = year + '-' + month + '-' + day;
-      $('#date').attr('max', maxDate);
+  <br />
+  {% if allow %}
+  <p>By clicking the Submit Application button, I agree to share the information I provided with the {{ event_name }}
+    organization, along with the event sponsors and the Major League Hacking (MLH) organization. </p>
+  <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="application"
+    id="submit-app-button">Submit Application</button>
+  {% else %}
+  <center>Unfortunately, you can no longer submit an application!</center>
+  {% endif %}
+</form>
 
-      mobilecheck = function() {
-        var check = false;
-        (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
-        return check;
+<script>
+  $("#need-travel").change(function () {
+    if (document.getElementById('need-travel').checked) {
+      document.getElementById('travel-app-main').style.display = "block";
+    } else {
+      document.getElementById('travel-app-main').style.display = "none";
+    }
+  });
+
+  $(function () {
+    var dtToday = new Date();
+
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+    if (month < 10) {
+      month = '0' + month.toString();
+    }
+    if (day < 10) {
+      day = '0' + day.toString();
+    }
+    var maxDate = year + '-' + month + '-' + day;
+    $('#date').attr('max', maxDate);
+
+    mobilecheck = function () {
+      var check = false;
+      (function (a) {
+        if (
+          /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i
+          .test(a) ||
+          /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i
+          .test(a.substr(0, 4))) check = true;
+      })(navigator.userAgent || navigator.vendor || window.opera);
+      return check;
     };
-      if (mobilecheck()){
-        document.getElementById('submit-app-button').classList.add('btn-sm');
-        document.getElementById('submit-app-button').classList.remove('btn-lg');
-      }
-      else{
-        document.getElementById('submit-app-button').classList.remove('btn-sm');
-        document.getElementById('submit-app-button').classList.add('btn-lg');
-      }
+    if (mobilecheck()) {
+      document.getElementById('submit-app-button').classList.add('btn-sm');
+      document.getElementById('submit-app-button').classList.remove('btn-lg');
+    } else {
+      document.getElementById('submit-app-button').classList.remove('btn-sm');
+      document.getElementById('submit-app-button').classList.add('btn-lg');
+    }
 
-    });
-    </script>
+  });
+</script>
 {% endblock %}
