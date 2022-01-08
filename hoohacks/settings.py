@@ -30,7 +30,7 @@ SECRET_KEY = '=)ek5=w3u09$!%g2mbn$ppbpjot1jq2o^f577gxpq&w^yh9txm'
 
 # SECURITY WARNING: don't run with debug turned on in production
 
-ON_HEROKU = 'ON_HEROKU' in os.environ
+ON_HEROKU = 'ON_HEROKU' in os.environ or 'ON_AWS' in os.environ
 
 DEBUG = False if ON_HEROKU else True
 
@@ -104,6 +104,18 @@ DATABASES = {
     }
 }
 
+if 'RDS_HOSTNAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
+    }
+
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -175,21 +187,21 @@ MAX_NUMBER_TICKETS = 2
 EVENT_NAME = os.environ.get('EVENT_NAME', 'HooHacks')
 
 TZ = timezone('US/Eastern')
-APPLICATION_SUBMISSION_DEADLINE = TZ.localize(datetime.datetime(2019, 11, 20, 23, 59, 59, 0))
+APPLICATION_SUBMISSION_DEADLINE = TZ.localize(datetime.datetime(2022, 1, 20, 23, 59, 59, 0))
 APPLICATION_SUBMISSION_DEADLINE_FMT = APPLICATION_SUBMISSION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
-APPLICATION_CONFIRMATION_DEADLINE = TZ.localize(datetime.datetime(2019, 11, 21, 23, 59, 59, 0))
+APPLICATION_CONFIRMATION_DEADLINE = TZ.localize(datetime.datetime(2022, 1, 21, 23, 59, 59, 0))
 APPLICATION_CONFIRMATION_DEADLINE_FMT = APPLICATION_CONFIRMATION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
 SCHOOLS = []
-GRADUATION_YEARS = [2021, 2022, 2023, 2024, 2025, 2026]
+GRADUATION_YEARS = [2022, 2023, 2024, 2025, 2026, 2027]
 GRADUATION_YEARS_TITLES = {
-    "2021": "Senior",
-    "2022": "Junior",
-    "2023": "Sophomore",
-    "2024": "Freshman",
-    "2025": "High School Senior",
-    "2026": "High School Junior"
+    "2022": "Senior",
+    "2023": "Junior",
+    "2024": "Sophomore",
+    "2025": "Freshman",
+    "2026": "High School Senior",
+    "2027": "High School Junior"
 }
 RACES = ["African American", "Native American", "Asian",
     "Hispanic", "Native Hawaiian", "White", "Other"]
@@ -279,6 +291,11 @@ CHANNEL_LAYERS = {
 
 PROD_URL = os.environ.get('PROD_URL', 'http://localhost:8000/')
 
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
 USE_PROD_DB = False
 
 if USE_PROD_DB and DEBUG:
@@ -302,10 +319,8 @@ try:
             dsn=os.environ['SENTRY_DSN'],
             integrations=[DjangoIntegration()]
         )
-        SECURE_SSL_REDIRECT = True
-        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 except ImportError:
-    found = False
+    pass
 
 ALLOWED_HOSTS = [
     PROD_URL,
