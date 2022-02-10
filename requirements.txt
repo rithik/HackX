@@ -15,7 +15,7 @@ constantly==15.1.0
 cryptography==3.3.2
 daphne==2.3.0
 DateJS==0.5
-Django==2.2.13
+Django==2.2.27
 django-heroku
 dj_database_url
 dropbox==11.0.0
