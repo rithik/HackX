@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import url, include
+from django.conf.urls import include
+from django.urls import re_path
 from django.contrib.auth import views as auth_views
 import users
 import applications
@@ -29,11 +30,11 @@ handler500 = views.handler500
 
 urlpatterns = [
     path('administration/', admin.site.urls),
-    url(r'^users/', include('users.urls')),
-    url(r'^apps/', include('applications.urls')),
-    url(r'^admin/', include('administration.urls')),
-    url(r'^mentor/', include('mentors.urls')),
-    url(r'^judging/', include('judging.urls')),
+    re_path(r'^users/', include('users.urls')),
+    re_path(r'^apps/', include('applications.urls')),
+    re_path(r'^admin/', include('administration.urls')),
+    re_path(r'^mentor/', include('mentors.urls')),
+    re_path(r'^judging/', include('judging.urls')),
     path('', users.views.redirect_dashboard),
     path('emails/<str:email_uuid>', views.receive_email),
     path('reset/<str:email_uuid>', users.views.reset_password),

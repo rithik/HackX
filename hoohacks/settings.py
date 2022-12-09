@@ -144,41 +144,68 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login'
 LOGIN_REDIRECT_URL = '/dashboard'
 
-ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', secret.ADMIN_PASSWORD)
-MENTOR_PASSWORD = os.environ.get('MENTOR_PASSWORD', secret.MENTOR_PASSWORD)
-VOLUNTEER_PASSWORD = os.environ.get('VOLUNTEER_PASSWORD', secret.VOLUNTEER_PASSWORD)
-JUDGING_PASSWORD = os.environ.get('JUDGING_PASSWORD', secret.JUDGING_PASSWORD)
-DROPBOX_ACCESS_TOKEN = os.environ.get('DROPBOX_ACCESS_TOKEN', secret.DROPBOX_ACCESS_TOKEN)
+# ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', secret.ADMIN_PASSWORD)
+# MENTOR_PASSWORD = os.environ.get('MENTOR_PASSWORD', secret.MENTOR_PASSWORD)
+# VOLUNTEER_PASSWORD = os.environ.get('VOLUNTEER_PASSWORD', secret.VOLUNTEER_PASSWORD)
+# JUDGING_PASSWORD = os.environ.get('JUDGING_PASSWORD', secret.JUDGING_PASSWORD)
+# DROPBOX_ACCESS_TOKEN = os.environ.get('DROPBOX_ACCESS_TOKEN', secret.DROPBOX_ACCESS_TOKEN)
 
-SLACK_ENABLED = os.environ.get('SLACK_ENABLED', secret.SLACK_ENABLED) 
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')
+MENTOR_PASSWORD = os.environ.get('MENTOR_PASSWORD')
+VOLUNTEER_PASSWORD = os.environ.get('VOLUNTEER_PASSWORD')
+JUDGING_PASSWORD = os.environ.get('JUDGING_PASSWORD')
+DROPBOX_ACCESS_TOKEN = os.environ.get('DROPBOX_ACCESS_TOKEN')
+
+# SLACK_ENABLED = os.environ.get('SLACK_ENABLED', secret.SLACK_ENABLED) 
+# if SLACK_ENABLED == "True":
+#     SLACK_ENABLED = True
+# if SLACK_ENABLED != True:
+#     SLACK_ENABLED = False
+# SLACK_API_TOKEN = os.environ.get('SLACK_API_TOKEN', secret.SLACK_API_TOKEN)
+# SLACK_MENTOR_TICKET_CHANNEL = ""
+# if SLACK_ENABLED:
+#     SLACK_MENTOR_TICKET_CHANNEL = "G010LQSEU75"
+#     SLACK_NOTIFICATIONS_CHANNEL = "CSQKP19EC"
+
+SLACK_ENABLED = os.environ.get('SLACK_ENABLED') 
 if SLACK_ENABLED == "True":
     SLACK_ENABLED = True
 if SLACK_ENABLED != True:
     SLACK_ENABLED = False
-SLACK_API_TOKEN = os.environ.get('SLACK_API_TOKEN', secret.SLACK_API_TOKEN)
+SLACK_API_TOKEN = os.environ.get('SLACK_API_TOKEN')
 SLACK_MENTOR_TICKET_CHANNEL = ""
 if SLACK_ENABLED:
     SLACK_MENTOR_TICKET_CHANNEL = "G010LQSEU75"
     SLACK_NOTIFICATIONS_CHANNEL = "CSQKP19EC"
 
-TWITTER_ENABLED = os.environ.get('TWITTER_ENABLED', secret.TWITTER_ENABLED) 
+# TWITTER_ENABLED = os.environ.get('TWITTER_ENABLED', secret.TWITTER_ENABLED) 
+# if TWITTER_ENABLED == "True":
+#     TWITTER_ENABLED = True
+# if TWITTER_ENABLED != True:
+#     TWITTER_ENABLED = False
+# TWITTER_CONSUMER_KEY = os.environ.get('TWITTER_CONSUMER_KEY', secret.TWITTER_CONSUMER_KEY)
+# TWITTER_CONSUMER_SECRET = os.environ.get('TWITTER_CONSUMER_SECRET', secret.TWITTER_CONSUMER_SECRET)
+# TWITTER_ACCESS_TOKEN = os.environ.get('TWITTER_ACCESS_TOKEN', secret.TWITTER_ACCESS_TOKEN)
+# TWITTER_ACCESS_TOKEN_SECRET = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET', secret.TWITTER_ACCESS_TOKEN_SECRET)
+
+TWITTER_ENABLED = os.environ.get('TWITTER_ENABLED') 
 if TWITTER_ENABLED == "True":
     TWITTER_ENABLED = True
 if TWITTER_ENABLED != True:
     TWITTER_ENABLED = False
-TWITTER_CONSUMER_KEY = os.environ.get('TWITTER_CONSUMER_KEY', secret.TWITTER_CONSUMER_KEY)
-TWITTER_CONSUMER_SECRET = os.environ.get('TWITTER_CONSUMER_SECRET', secret.TWITTER_CONSUMER_SECRET)
-TWITTER_ACCESS_TOKEN = os.environ.get('TWITTER_ACCESS_TOKEN', secret.TWITTER_ACCESS_TOKEN)
-TWITTER_ACCESS_TOKEN_SECRET = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET', secret.TWITTER_ACCESS_TOKEN_SECRET)
+TWITTER_CONSUMER_KEY = os.environ.get('TWITTER_CONSUMER_KEY')
+TWITTER_CONSUMER_SECRET = os.environ.get('TWITTER_CONSUMER_SECRET')
+TWITTER_ACCESS_TOKEN = os.environ.get('TWITTER_ACCESS_TOKEN')
+TWITTER_ACCESS_TOKEN_SECRET = os.environ.get('TWITTER_ACCESS_TOKEN_SECRET')
 
 MAX_NUMBER_TICKETS = 2
 EVENT_NAME = os.environ.get('EVENT_NAME', 'HooHacks')
 
 TZ = timezone('US/Eastern')
-APPLICATION_SUBMISSION_DEADLINE = TZ.localize(datetime.datetime(2022, 1, 20, 23, 59, 59, 0))
+APPLICATION_SUBMISSION_DEADLINE = TZ.localize(datetime.datetime(2024, 2, 20, 23, 59, 59, 0))
 APPLICATION_SUBMISSION_DEADLINE_FMT = APPLICATION_SUBMISSION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
-APPLICATION_CONFIRMATION_DEADLINE = TZ.localize(datetime.datetime(2022, 1, 21, 23, 59, 59, 0))
+APPLICATION_CONFIRMATION_DEADLINE = TZ.localize(datetime.datetime(2024, 2, 21, 23, 59, 59, 0))
 APPLICATION_CONFIRMATION_DEADLINE_FMT = APPLICATION_CONFIRMATION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
 
 SCHOOLS = []
@@ -199,17 +226,19 @@ TSHIRT_SIZES = ["XS", "S", "M", "L", "XL"]
 DIETARY_RESTRICTIONS = ["None", "Vegetarian", "Vegan", "Nut Allergy", "Halal", "Gluten Free", "Other"]
 CITIES = ["Pittsburgh", "Washington, DC", "Richmond", "NYC", "Charlottesville"] # Test Cities
 
-f = open(BASE_DIR + "/hoohacks/data/schools.csv", "r")
-for school in f:
-    SCHOOLS.append(school.strip())
+with open(BASE_DIR + "/hoohacks/data/schools.txt", encoding='utf8') as f:
+    for school in f.read():
+        SCHOOLS.append(school.strip())
 f.close()
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('GMAIL_USERNAME', secret.GMAIL_USERNAME)
-EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD', secret.GMAIL_PASSWORD)
+# EMAIL_HOST_USER = os.environ.get('GMAIL_USERNAME', secret.GMAIL_USERNAME)
+# EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD', secret.GMAIL_PASSWORD)
+EMAIL_HOST_USER = os.environ.get('GMAIL_USERNAME')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 
 CONTACT_EMAIL = "travel@hoohacks.io"
 
@@ -256,17 +285,21 @@ CARRIER_EMAIL_LOOKUP = {
 SENDGRID_HOST = 'smtp.sendgrid.net'
 SENDGRID_PORT = 587
 SENDGRID_HOST_USER = 'apikey'
-SENDGRID_HOST_PASSWORD = os.environ.get('SENDGRID_HOST_PASSWORD', secret.SENDGRID_HOST_PASSWORD)
+# SENDGRID_HOST_PASSWORD = os.environ.get('SENDGRID_HOST_PASSWORD', secret.SENDGRID_HOST_PASSWORD)
+SENDGRID_HOST_PASSWORD = os.environ.get('SENDGRID_HOST_PASSWORD')
+
 
 SENDGRID_FROM_EMAIL = 'team@hoohacks.io'
 
 TEXTING_ENABLED = True
 
-TEXTING_FROM_EMAIL = os.environ.get('TEXTING_FROM_EMAIL', secret.TEXTING_FROM_EMAIL)
+# TEXTING_FROM_EMAIL = os.environ.get('TEXTING_FROM_EMAIL', secret.TEXTING_FROM_EMAIL)
+TEXTING_FROM_EMAIL = os.environ.get('TEXTING_FROM_EMAIL')
+
 
 REQUIRE_EMAIL_VERIFICATION = False
 
-ASGI_APPLICATION = 'hoohacks.routing.application'
+WSGI_APPLICATION = 'hoohacks.wsgi.application'
 
 CHANNEL_LAYERS = {
     'default': {
@@ -281,9 +314,12 @@ PROD_URL = os.environ.get('PROD_URL', 'http://localhost:8000/')
 
 USE_PROD_DB = False
 
+
 if USE_PROD_DB and DEBUG:
     import dj_database_url
-    DATABASES['default'] = dj_database_url.config(default=secret.PROD_DB_URL)
+    # DATABASES['default'] = dj_database_url.config(default=secret.PROD_DB_URL)
+    DATABASES['default'] = dj_database_url.config(default=os.environ.get("PROD_DB_URL"))
+
 
 try:
     # Configure Django App for Heroku.
@@ -306,6 +342,21 @@ try:
         SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 except ImportError:
     found = False
+
+
+# Activate Django-Heroku.
+# Use this code to avoid the psycopg2 / django-heroku error!  
+# Do NOT import django-heroku above!
+# try:
+#     if 'HEROKU' in os.environ:
+#         import django_heroku
+#         django_heroku.settings(locals())
+#     if 'DATABASE_URL' in os.environ:
+#         import dj_database_url
+#         DATABASES = {'default': dj_database_url.config()}
+# except ImportError:
+#     found = False
+
 
 ALLOWED_HOSTS = [
     PROD_URL,

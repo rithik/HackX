@@ -14,8 +14,8 @@ from applications.models import Application, Confirmation
 from administration.models import Settings
 from judging.models import Organization
 import re
-import time
 import math
+
 
 def redirect_dashboard(request):
     return redirect('/dashboard')
@@ -25,8 +25,8 @@ def setup(request):
     if len(Settings.objects.all()) == 0:
         tz = settings.TZ
         Settings.objects.create(
-            application_submission_deadline=datetime.now(),
-            application_confirmation_deadline=datetime.now(),
+            application_submission_deadline=datetime(2023, 11, 20, 23, 59, 59, 0),
+            application_confirmation_deadline=datetime(2023, 11, 20, 23, 59, 59, 0),
             judging_deadline=datetime.now()
         )
         o = Organization.objects.create(name="Organizers")
