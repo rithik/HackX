@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-try:
-    from . import secret
-except ImportError:
-    from . import secret_example as secret
+# try:
+#     from . import secret
+# except ImportError:
+#     from . import secret_example as secret
 import datetime 
 from pytz import timezone
 
@@ -227,8 +227,8 @@ DIETARY_RESTRICTIONS = ["None", "Vegetarian", "Vegan", "Nut Allergy", "Halal", "
 CITIES = ["Pittsburgh", "Washington, DC", "Richmond", "NYC", "Charlottesville"] # Test Cities
 
 with open(BASE_DIR + "/hoohacks/data/schools.txt", encoding='utf8') as f:
-    for school in f.read():
-        SCHOOLS.append(school.strip())
+    for school in f.read().split("\n"):
+        SCHOOLS.append(school)
 f.close()
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -289,7 +289,7 @@ SENDGRID_HOST_USER = 'apikey'
 SENDGRID_HOST_PASSWORD = os.environ.get('SENDGRID_HOST_PASSWORD')
 
 
-SENDGRID_FROM_EMAIL = 'team@hoohacks.io'
+SENDGRID_FROM_EMAIL = 'hackathon.virginia@gmail.com'
 
 TEXTING_ENABLED = True
 
@@ -297,7 +297,7 @@ TEXTING_ENABLED = True
 TEXTING_FROM_EMAIL = os.environ.get('TEXTING_FROM_EMAIL')
 
 
-REQUIRE_EMAIL_VERIFICATION = False
+REQUIRE_EMAIL_VERIFICATION = True
 
 WSGI_APPLICATION = 'hoohacks.wsgi.application'
 
@@ -317,8 +317,8 @@ USE_PROD_DB = False
 
 if USE_PROD_DB and DEBUG:
     import dj_database_url
-    # DATABASES['default'] = dj_database_url.config(default=secret.PROD_DB_URL)
-    DATABASES['default'] = dj_database_url.config(default=os.environ.get("PROD_DB_URL"))
+    DATABASES['default'] = dj_database_url.config(default=secret.PROD_DB_URL)
+    # DATABASES['default'] = dj_database_url.config(default=os.environ.get("PROD_DB_URL"))
 
 
 try:
