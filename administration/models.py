@@ -13,13 +13,13 @@ class Settings(models.Model):
 
     '''
         CODE AS OF 12/08/2022, edited
-            application_submission_deadline = settings.TZ.localize(datetime(2023, 11, 20, 23, 59, 59, 0))
-    application_confirmation_deadline = settings.TZ.localize(datetime(2023, 11, 20, 23, 59, 59, 0))
-    judging_deadline = models.DateTimeField(auto_now_add=True)
+        application_submission_deadline = settings.TZ.localize(datetime(2023, 11, 20, 23, 59, 59, 0))
+        application_confirmation_deadline = settings.TZ.localize(datetime(2023, 11, 20, 23, 59, 59, 0))
+        judging_deadline = models.DateTimeField(auto_now_add=True)
     '''
 
-    application_submission_deadline = models.DateTimeField()
-    application_confirmation_deadline = models.DateTimeField()
+    application_submission_deadline = settings.TZ.localize(datetime(2023, 2, 25, 23, 59, 59, 0))
+    application_confirmation_deadline = settings.TZ.localize(datetime(2023, 3, 4, 23, 59, 59, 0))
     judging_deadline = models.DateTimeField(auto_now_add=True)
 
     

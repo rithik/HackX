@@ -42,6 +42,7 @@ def application(request, msg=''):
             "grad_year": settings.GRADUATION_YEARS,
             "highlight": "application",
             "travel_methods": settings.TRAVEL_METHODS, 
+            "dietary_restrictions": settings.DIETARY_RESTRICTIONS,
             "msg": msg, 
             "allow": ALLOW
         })
@@ -77,6 +78,11 @@ def application(request, msg=''):
         mlh = request.POST.get('mlh', '')
         mlh_consent = request.POST.get('mlh-consent', '')
         referrer = request.POST.get('referrer', '')
+        dietary_restriction = request.POST.get('dietary-restriction', '')
+        travel = True if request.POST.get('travel', '') == "Yes" else False
+
+        if dietary_restriction == "Other":
+            dietary_restriction = request.POST.get('dietary-other', '')
 
         a.first_name = first_name
         a.last_name = last_name
@@ -89,6 +95,8 @@ def application(request, msg=''):
         a.major = major
         a.hackathons = hackathons
         a.why = why
+        a.dietary_restriction = dietary_restriction
+        a.travel = travel
         
         friends = User.objects.filter(email=base64.b64decode(referrer).decode("utf-8", "ignore"))
         if friends.count() == 1 and friends.first() != u and not a.referrer_locked:
@@ -117,18 +125,6 @@ def application(request, msg=''):
         a.save()
         
         return redirect(application, msg='saved')
-        # render(request, "application.html", {
-        #     "user": u, 
-        #     "app": a,
-        #     "schools": settings.SCHOOLS, 
-        #     "genders": settings.GENDERS,
-        #     "races": settings.RACES, 
-        #     "grad_year": settings.GRADUATION_YEARS,
-        #     "highlight": "application",
-        #     "travel_methods": settings.TRAVEL_METHODS, 
-        #     "msg": "Your application has been submitted!", 
-        #     "allow": ALLOW
-        # })
 
 @login_required
 def confirmation(request):

@@ -18,6 +18,7 @@ class Application(models.Model):
     describe = models.CharField(max_length=200, default="")
     why = models.CharField(max_length=1800, default="")
     major = models.CharField(max_length=1000, default="")
+    dietary_restriction = models.CharField(max_length=100, default="")
 
     birthday = models.CharField(max_length=1000, default="")
     mlh_rules = models.BooleanField(default=False)

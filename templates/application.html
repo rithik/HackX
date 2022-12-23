@@ -122,6 +122,49 @@
       name="why">{% if app.app_complete %}{{ app.why }}{% endif %}</textarea>
   </div>
 
+
+   <script type="text/javascript"> 
+      function showInput() {
+        var ddl = document.getElementById("dietary-restriction");
+        var selectedValue = ddl.options[ddl.selectedIndex].value;   
+        if (selectedValue == "Other") {
+          document.getElementById("dietary-other-div").style.display = "block";
+          document.getElementById("dietary-other").required = true;
+        } else {
+          document.getElementById("dietary-other-div").style.display = "none";
+          document.getElementById("dietary-other").required = false;
+        }
+      }
+  </script>
+
+ <label for="travel" class="required-field">Do you need travel reimbursement/provided bus transportation?</label>
+ <div class="form-check" style="margin-top: -30px; margin-bottom:-10px;">
+    <br />
+    <input type="radio" class="form-check-input col-xs-2" required name="travel" {% if app.app_complete and app.travel%} checked {% endif %}value="Yes"
+      id="need-travel">Yes, I need travel reimbursement.</input>
+    <br />
+    <input type="radio" class="form-check-input col-xs-2" required name="travel" {% if app.app_complete and not app.travel%} checked {% endif %} value="No"
+      id="need-travel">No, I do not need travel reimbursement.</input>
+  </div> 
+  <br />
+
+  <div class="form-group">
+    <label for="dietary-restriction" class="required-field">Dietary Restrictions</label>
+    <br />
+    <select name="dietary-restriction" id="dietary-restriction" onchange="showInput();" required title="Select any Dietary Restrictions" class="selectpicker" data-width="100%">
+      {% for s in dietary_restrictions %}
+      <option id="dietary-{{s}}" value="{{s}}" {% if app.app_complete and s == "Other" and app.dietary_restriction not in dietary_restrictions %} selected {% elif s == app.dietary_restriction %} selected {% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group" id="dietary-other-div" {% if app.app_complete and app.dietary_restriction in dietary_restrictions %} style="display: none;" {% endif %}>
+    <label for="dietary-other" class="required-field">Please specify Other Dietary Restriction</label>
+    <br />
+    <input type="text" class="form-control" {% if app.app_complete and app.dietary_restriction not in dietary_restrictions %} value="{{ app.dietary_restriction }}" {% endif %} id="dietary-other" placeholder="Dairy, Fish, Fructose" name="dietary-other">
+  </div>
+
+
   <div class="form-group">
     <label for="referrer">Did someone tell you to register for HooHacks? If so, enter their Raffle ID so that they can get an extra ticket in our raffle! Their raffle ID can be found on the top of the dashboard page.</label>
     <br />
@@ -262,7 +305,8 @@
   <br />
   {% if allow %}
   <p>By clicking the Submit Application button, I agree to share the information I provided with the {{ event_name }}
-    organization, along with the event sponsors and the Major League Hacking (MLH) organization. </p>
+    organization, along with the event sponsors and the Major League Hacking (MLH) organization. You also confirm that you are
+    <b>18+ years</b> of age.</p>
   <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="application"
     id="submit-app-button">Submit Application</button>
   {% else %}
