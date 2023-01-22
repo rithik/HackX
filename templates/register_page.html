@@ -28,11 +28,6 @@
                     <center><strong> {{ message }} </strong></center>
                 </div>
                 {% endif %}
-                {% comment %}
-                <div class="alert alert-info" role="alert">
-                  <center><strong>If you are unable to get a verification email, please use a non virginia.edu (like a Gmail email address) to register.</strong></center>
-                </div>
-                {% endcomment %}
                 <form class="form-signin" method="POST">
                   {% csrf_token %}
                   <div class="form-label-group">
@@ -45,10 +40,14 @@
                 <label for="inputPassword">Password</label>
               </div>
 
-              <button class="btn btn-lg btn-primary btn-block text-uppercase" name="button-type" value="login">Sign in</button>
-              <a class="btn btn-lg btn-info btn-block text-uppercase" name="button-type" value="register" href="/users/register">Register</a>
+              <div class="form-label-group">
+                <input type="password" id="confirmPassword" class="form-control" name="confirmPassword" placeholder="Confirm Password" required>
+                <label for="inputPassword">Confirm Password</label>
+              </div>
+
+              <button class="btn btn-lg btn-info btn-block text-uppercase" name="button-type" value="register" type="submit">Register</button>
                <hr class="my-4">
-               <a class="btn btn-lg btn-danger btn-block text-uppercase" style="color:white" href="/users/forgot/">Forgot my password</a>
+               <a class="btn btn-lg btn-primary btn-block text-uppercase"  href="/users/login/">Return to Login</a>
             </form>
 
 
