@@ -325,6 +325,7 @@ try:
     # Configure Django App for Heroku.
     import django_heroku
     django_heroku.settings(locals())
+    DATABASES['default']['CONN_MAX_AGE'] = 0
     if ON_HEROKU:
         try:
             del DATABASES['default']['OPTIONS']['sslmode']
@@ -342,21 +343,6 @@ try:
         SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 except ImportError:
     found = False
-
-
-# Activate Django-Heroku.
-# Use this code to avoid the psycopg2 / django-heroku error!  
-# Do NOT import django-heroku above!
-# try:
-#     if 'HEROKU' in os.environ:
-#         import django_heroku
-#         django_heroku.settings(locals())
-#     if 'DATABASE_URL' in os.environ:
-#         import dj_database_url
-#         DATABASES = {'default': dj_database_url.config()}
-# except ImportError:
-#     found = False
-
 
 ALLOWED_HOSTS = [
     PROD_URL,
