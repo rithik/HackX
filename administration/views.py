@@ -356,10 +356,10 @@ def admin_export_csv(request):
     response['Content-Disposition'] = 'inline; filename="data.csv"'
     writer = csv.writer(response)
     writer.writerow(['First Name', 'Last name', 'Email Address', 'School', 'Grad Year', 
-        'Gender', 'Race', 'Describe', 'Why', 'Major', 'Birthday', 'Travel', 'Where From', 'Travel Method', 
+        'Gender', 'Race', 'Describe', 'Dietary Restriction', 'Why', 'Major', 'Birthday', 'Travel', 'Where From', 'Travel Method', 
         'Miles', 'Cost', 'Accepted', 'Waitlisted', 'Rejected'])
     users = Application.objects.all().values_list('first_name', 'last_name', 'user', 'school', 'grad_year', 
-        'gender', 'race', 'describe', 'why', 'major', 'birthday', 'travel', 'where_from', 'travel_method', 
+        'gender', 'race', 'describe', 'dietary_restriction', 'why', 'major', 'birthday', 'travel', 'where_from', 'travel_method', 
         'miles', 'cost', 'accepted', 'waitlisted', 'rejected')
     for user in users:
         app_write = list(user)
@@ -547,7 +547,7 @@ def accept_user(request, user_id):
         e = EmailView.objects.create(
             uuid_confirmation=email_uuid, 
             subject="HooHacks Status Update", 
-            message=settings.ACCEPTED_EMAIL.format(h.application.full_name, Settings.objects.all()[0].application_submission_deadline_fmt(), settings.PROD_URL, email_uuid),
+            message=settings.ACCEPTED_EMAIL.format(h.application.full_name, Settings.objects.all()[0].application_confirmation_deadline_fmt(), settings.PROD_URL, email_uuid),
             action="accepted",
             redirect_url="/dashboard",
             user=h
