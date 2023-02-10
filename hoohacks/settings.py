@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-try:
-    from . import secret
-except ImportError:
-    from . import secret_example as secret
+# try:
+#     from . import secret
+# except ImportError:
+#     from . import secret_example as secret
 import datetime 
 from pytz import timezone
 
