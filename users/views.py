@@ -352,7 +352,8 @@ def register_page(request):
         # )
         # e.send_email()
         if not settings.REQUIRE_EMAIL_VERIFICATION:
-            return render(request, "login_page.html", {"message": "User account created! Please log in to fill out your application!"})
+            return redirect("/users/login") # Fixes weird bug where URL doesn't change
+            #return redirect("/users/login", {"message": "User account created! Please log in to fill out your application!"})
         else:
             return render(request, "login_page.html", {"message": "User account created! Please check your email to confirm your account!"})
     
