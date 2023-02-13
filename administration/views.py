@@ -8,10 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, JsonResponse
 from django.core.files import File
 
-import glob
 import uuid
 from pytz import timezone
-import pytz
 from datetime import datetime
 from applications.models import Application, Confirmation, TshirtOrder
 from users.models import Puzzle, PuzzleTeam, User, EmailView
@@ -20,7 +18,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from . import nametag
 from zipfile import ZipFile
-import os
+from collections import Counter
 import json
 import random
 from itertools import product
@@ -217,6 +215,20 @@ def get_stats():
             schools[a.school]['rejected']+=1
         if a.app_complete:
             schools[a.school]['complete']+=1
+    
+    applications_completed = Counter()
+    for row in Application.objects.filter(app_complete=True).order_by('created_at'):
+        yymmdd = row.created_at.strftime("%m/%d/%Y")
+        applications_completed[yymmdd] += 1
+    
+    # unpack dict keys / values into two lists
+    labels, values = zip(*applications_completed.items())
+
+    applications_completed_stats = {
+        "labels": labels,
+        "values": values,
+    }
+
 
     for c in Confirmation.objects.all():
         school = c.user.application.school
@@ -248,6 +260,7 @@ def get_stats():
         "declined": Confirmation.objects.filter(declined=True).count(),
         "reimbursement": Application.objects.filter(travel=True).count(),
         "total_reimbursement": "${}".format(total_reimbursement),
+        "applications_completed": applications_completed_stats,
         "total_accepted_reimbursement": "${}".format(total_accepted_reimbursement),
         "tshirt": "XS({}) S({}) M({}) L({}) XL({})".format(
             Confirmation.objects.filter(tshirt="XS").count(),
