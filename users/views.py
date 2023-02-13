@@ -14,8 +14,8 @@ from applications.models import Application, Confirmation
 from administration.models import Settings
 from judging.models import Organization
 import re
-import time
 import math
+
 
 def redirect_dashboard(request):
     return redirect('/dashboard')
@@ -25,8 +25,8 @@ def setup(request):
     if len(Settings.objects.all()) == 0:
         tz = settings.TZ
         Settings.objects.create(
-            application_submission_deadline=datetime.now(),
-            application_confirmation_deadline=datetime.now(),
+            # application_submission_deadline=datetime(2023, 2, 25, 23, 59, 59, 0),
+            # application_confirmation_deadline=datetime(2023, 3, 4, 23, 59, 59, 0),
             judging_deadline=datetime.now()
         )
         o = Organization.objects.create(name="Organizers")
@@ -304,6 +304,60 @@ def puzzle_leaderboard(request):
     }
     return render(request, "puzzle_leaderboard.html", context)
 
+def register_page(request):
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            return redirect("/dashboard")
+        else:
+            return render(request, "register_page.html", {"message": "None"})
+    else:
+        email = request.POST.get('email', '')
+        f = User.objects.filter(email=email)
+        if not f.count() == 0:
+            return render(request, "register_page.html", {"message": "There is already an account found with this email address!"})
+
+        password = request.POST.get('password', '')
+        confirmPassword = request.POST.get('confirmPassword', '')
+
+        u = User.objects.filter(email=email)
+        if len(u) != 0:
+            return redirect('index')
+
+        if password != confirmPassword:
+            return render(request, "register_page.html", {"message": "The passwords do not match. Please try again."})
+
+        u = User.objects.create(
+                username=email, email=email, password=password, verified=False)
+        u.set_password(password)
+        if not settings.REQUIRE_EMAIL_VERIFICATION:
+            u.verified = True
+        u.save()
+
+        a = Application.objects.create(user=u)
+        c = Confirmation.objects.create(user=u)
+
+        # COMMENTED OUT TO AVOID SENDGRID ISSUES
+
+        # tz = timezone('US/Eastern')
+        # email_uuid = uuid.uuid1()
+        # e = EmailView.objects.create(
+        #     uuid_confirmation=email_uuid,
+        #     subject="HooHacks Email Verification",
+        #     message=settings.VERIFY_EMAIL.format(
+        #         u.email, settings.PROD_URL, email_uuid),
+        #     action="verify",
+        #     sent=tz.localize(datetime.now()),
+        #     redirect_url="/users/login/",
+        #     user=u
+        # )
+        # e.send_email()
+        if not settings.REQUIRE_EMAIL_VERIFICATION:
+            return redirect("/users/login") # Fixes weird bug where URL doesn't change
+            #return redirect("/users/login", {"message": "User account created! Please log in to fill out your application!"})
+        else:
+            return render(request, "login_page.html", {"message": "User account created! Please check your email to confirm your account!"})
+    
+
 def login_page(request):
     if request.method == "GET":
         if request.user.is_authenticated:
@@ -311,60 +365,22 @@ def login_page(request):
         else:
             return render(request, "login_page.html", {"message": "None"})
     else:
-        if request.POST.get('button-type') == "register":
-            email = request.POST.get('email', '')
-            f = User.objects.filter(email=email)
-            if not f.count() == 0:
-                return render(request, "login_page.html", {"message": "There is already an account found with this email address!"})
-
-            email = request.POST.get('email', '')
-            password = request.POST.get('password', '')
-            u = User.objects.filter(email=email)
-            if len(u) != 0:
-                return redirect('index')
-
-            u = User.objects.create(
-                username=email, email=email, password=password, verified=False)
-            u.set_password(password)
-            if not settings.REQUIRE_EMAIL_VERIFICATION:
-                u.verified = True
-            u.save()
-
-            a = Application.objects.create(user=u)
-            c = Confirmation.objects.create(user=u)
-            tz = timezone('US/Eastern')
-            email_uuid = uuid.uuid1()
-            e = EmailView.objects.create(
-                uuid_confirmation=email_uuid,
-                subject="HooHacks Email Verification",
-                message=settings.VERIFY_EMAIL.format(
-                    u.email, settings.PROD_URL, email_uuid),
-                action="verify",
-                sent=tz.localize(datetime.now()),
-                redirect_url="/users/login/",
-                user=u
-            )
-            e.send_email()
-            if not settings.REQUIRE_EMAIL_VERIFICATION:
-                return render(request, "login_page.html", {"message": "User account created! Please log in to fill out your application!"})
-            else:
-                return render(request, "login_page.html", {"message": "User account created! Please check your email to confirm your account!"})
-        elif request.POST.get('button-type') == "login":
-            email = request.POST.get('email', '')
-            password = request.POST.get('password', '')
-            u = User.objects.filter(email__iexact=email)
-            if u.count() == 0:
-                return render(request, "login_page.html", {"message": "No account found with this email address!"})
-            u = u.first()
-            user = authenticate(
-                request, username=u.username, password=password)
-            if user is not None:
-                if not u.verified:
-                    return render(request, "login_page.html", {"message": "Your account was not verified! Please check your email (and spam folder) to confirm your account!"})
-                login(request, user)
-                next_url = request.GET.get('next', '/dashboard')
-                return redirect(next_url)
-            return render(request, "login_page.html", {"message": "Incorrect Password!"})
+        
+        email = request.POST.get('email', '')
+        password = request.POST.get('password', '')
+        u = User.objects.filter(email__iexact=email)
+        if u.count() == 0:
+            return render(request, "login_page.html", {"message": "No account found with this email address!"})
+        u = u.first()
+        user = authenticate(
+            request, username=u.username, password=password)
+        if user is not None:
+            if not u.verified:
+                return render(request, "login_page.html", {"message": "Your account was not verified! Please check your email (and spam folder) to confirm your account!"})
+            login(request, user)
+            next_url = request.GET.get('next', '/dashboard')
+            return redirect(next_url)
+        return render(request, "login_page.html", {"message": "Incorrect Password!"})
 
 
 def forgot_password(request):
@@ -391,6 +407,31 @@ def forgot_password(request):
         e.send_email()
         print(e.uuid_confirmation)
         return render(request, "forgot_password.html", {"message": "Check your email to reset your password!", "show": False})
+
+def resend_verification(request):
+    if request.method == "GET":
+        return render(request, "resend_verification.html", {"message": "Please enter your email address to resend the verification email!", "show": True})
+    if request.method == "POST":
+        email = request.POST.get('email', '')
+        u = User.objects.filter(email=email)
+        if u.count() == 0:
+            return render(request, "resend_verification.html", {"message": "There is no user associated with that email address!", "show": True})
+        u = u.first()
+        tz = timezone('US/Eastern')
+        email_uuid = uuid.uuid1()
+        e = EmailView.objects.create(
+            uuid_confirmation=email_uuid,
+            subject="HooHacks Email Verification",
+            message=settings.VERIFY_EMAIL.format(
+                u.email, settings.PROD_URL, email_uuid),
+            action="verify",
+            sent=tz.localize(datetime.now()),
+            redirect_url="/users/login/",
+            user=u
+        )
+        e.send_email()
+        print(e.uuid_confirmation)
+        return render(request, "resend_verification.html", {"message": "Check your email for your verification!", "show": False})
 
 
 def reset_password(request, email_uuid):

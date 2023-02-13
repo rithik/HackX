@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
-import datetime 
-from pytz import timezone
+from datetime import datetime
 
 class Settings(models.Model):
     '''
@@ -11,9 +10,18 @@ class Settings(models.Model):
     APPLICATION_CONFIRMATION_DEADLINE = tz.localize(datetime.datetime(2019, 11, 21, 23, 59, 59, 0))
     APPLICATION_CONFIRMATION_DEADLINE_FMT = APPLICATION_CONFIRMATION_DEADLINE.strftime("%B %d, %Y %I:%M:%S %Z")
     '''
-    application_submission_deadline = models.DateTimeField(auto_now_add=True)
-    application_confirmation_deadline = models.DateTimeField(auto_now_add=True)
+
+    '''
+        CODE AS OF 12/08/2022, edited
+        application_submission_deadline = settings.TZ.localize(datetime(2023, 11, 20, 23, 59, 59, 0))
+        application_confirmation_deadline = settings.TZ.localize(datetime(2023, 11, 20, 23, 59, 59, 0))
+        judging_deadline = models.DateTimeField(auto_now_add=True)
+    '''
+
+    application_submission_deadline = settings.TZ.localize(datetime(2023, 2, 25, 23, 59, 59, 0))
+    application_confirmation_deadline = settings.TZ.localize(datetime(2023, 3, 4, 23, 59, 59, 0))
     judging_deadline = models.DateTimeField(auto_now_add=True)
+
     
     def application_submission_deadline_fmt(self):
         return self.application_submission_deadline.astimezone(settings.TZ).strftime("%B %d, %Y %I:%M %p %Z")

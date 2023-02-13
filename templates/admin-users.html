@@ -33,7 +33,6 @@
         {% for u in all_hackers %}
             {% with a=u.application %}
 
-
             <tr
             {% with c=u.confirmation %}
             {% if u.confirmation %}
@@ -50,19 +49,17 @@
             data-hackathons="{{ a.hackathons }}" data-birthday="{{ a.birthday }}" data-travel="{{ a.travel }}"
             data-where-from="{{ a.where_from }}" data-travel-method="{{ a.travel_method }}" data-miles="{{ a.miles }}"
             data-cost="{{ a.cost }}" data-accepted="{{ a.accepted }}" data-waitlisted="{{ a.waitlisted }}"
-            data-declined="{{ a.declined }}" data-app-complete="{{ a.app_complete }}" 
+            data-declined="{{ a.declined }}" data-app-complete="{{ a.app_complete }}" data-dietary="{{ a.dietary_restriction }}" 
             {% if u.confirmation %} 
               data-comments="{{ c.notes }}" 
               data-github="{{ c.github }}" 
               data-tshirt="{{ c.tshirt }}" 
-              data-dietary="{{ c.dietary }}" 
               data-phone="{{ c.phone }}" 
               data-resume-file-name="{{ c.resume_file_name }}"
             {% else %} 
               data-comments=""
               data-github="" 
               data-tshirt="" 
-              data-dietary="" 
               data-phone="" 
               data-resume-file-name=""
             {% endif %}
@@ -135,6 +132,9 @@
         <b>Birthday: </b> <span id="birthday"></span>
         <br/>
         <br/>
+        <b>Dietary Restrictions: </b> <span id="dietary"></span>
+        <br/>
+        <br/>
         <b>Travel Reimbursement Needed: </b> <span id="travel"></span>
         <br/>
         <br/>
@@ -148,9 +148,6 @@
         <br/>
         <br/>
         <b>T-Shirt Size: </b> <span id="tshirt"></span>
-        <br/>
-        <br/>
-        <b>Dietary Restrictions: </b> <span id="dietary"></span>
         <br/>
         <br/>
         <b>Phone: </b> <span id="phone"></span>
@@ -214,6 +211,7 @@
             $('#describe').html($(this).data('describe'));
             $('#why').html($(this).data('why'));
             $('#major').html($(this).data('major'));
+            $('#dietary').html($(this).data('dietary'));
             $('#birthday').html($(this).data('birthday'));
             $('#travel').html($(this).data('travel'));
             $('#travel-method').html($(this).data('travel-method'));
@@ -239,7 +237,6 @@
                 $('#status').html("Incomplete Application");
             }
             $('#tshirt').html($(this).data('tshirt'));
-            $('#dietary').html($(this).data('dietary'));
             $('#phone').html($(this).data('phone'));
             $('#github').html($(this).data('github'));
             if ($(this).data('resume-file-name') == ""){

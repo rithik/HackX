@@ -1,3 +1,3 @@
 release: python3 manage.py migrate
-web: bin/start-pgbouncer-stunnel daphne hoohacks.asgi:application --port $PORT --bind 0.0.0.0 -v2
+web: gunicorn -k uvicorn.workers.UvicornWorker hoohacks.asgi --preload
 worker: python manage.py runworker channels -v2

@@ -1,7 +1,15 @@
 from django.db import models
 from users.models import User
 
-class Application(models.Model):
+# Abstract Model to record time of any POST and PUT operation
+class TimeStampMixin(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+class Application(TimeStampMixin):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -18,6 +26,7 @@ class Application(models.Model):
     describe = models.CharField(max_length=200, default="")
     why = models.CharField(max_length=1800, default="")
     major = models.CharField(max_length=1000, default="")
+    dietary_restriction = models.CharField(max_length=100, default="")
 
     birthday = models.CharField(max_length=1000, default="")
     mlh_rules = models.BooleanField(default=False)
@@ -45,7 +54,7 @@ class Application(models.Model):
     def __str__(self):
         return  "Application - {}".format(self.user)
 
-class Confirmation(models.Model):
+class Confirmation(TimeStampMixin):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -67,7 +76,7 @@ class Confirmation(models.Model):
     def __str__(self):
         return  "Confirmation: {}".format(self.user)
         
-class TshirtOrder(models.Model):
+class TshirtOrder(TimeStampMixin):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
